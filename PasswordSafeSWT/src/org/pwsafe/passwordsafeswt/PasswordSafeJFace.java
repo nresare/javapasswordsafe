@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -672,8 +673,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 * @throws IOException
 	 *             if bad things happen during save
+	 * @throws NoSuchAlgorithmException 
+	 *             if SHA-1 implementation not found
 	 */
-	public void saveFile() throws IOException {
+	public void saveFile() throws IOException, NoSuchAlgorithmException {
 		PwsFile file = getPwsFile();
 		String fileName = file.getFilename();
 		if (fileName == null) {
@@ -687,8 +690,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * Saves the current safe under a new filename.
 	 * 
 	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 *             if SHA-1 implementation not found
 	 */
-	public void saveFileAs(String newFilename) throws IOException {
+	public void saveFileAs(String newFilename) throws IOException, NoSuchAlgorithmException {
 		getPwsFile().setFilename(newFilename);
 		getPwsFile().save();
 		getShell().setText(PasswordSafeJFace.APP_NAME + " - " + newFilename);
@@ -825,7 +830,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
                 } catch (IOException e1) {
                     displayErrorDialog("Error Saving Safe", e1.getMessage(), e1);
                     cancelled = true;
-                }
+                } catch (NoSuchAlgorithmException e) {
+                    displayErrorDialog("Error Saving Safe", e.getMessage(), e);
+                    cancelled = true;
+				}
             } else if (result == SWT.CANCEL) {
                 cancelled = true;
             }

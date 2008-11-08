@@ -6,9 +6,9 @@
  */
 package org.pwsafe.lib.crypto;
 
-import org.pwsafe.lib.Util;
+import blowfishj.BlowfishCBC;
 
-import net.sourceforge.blowfishj.BlowfishCBC;
+import org.pwsafe.lib.Util;
 
 /**
  * An extension to the BlowfishJ.BlowfishCBC to allow it to be used for PasswordSafe. Byte 
@@ -16,8 +16,10 @@ import net.sourceforge.blowfishj.BlowfishCBC;
  * 
  * @author Kevin Preece
  */
-public class BlowfishPws extends BlowfishCBC
+public class BlowfishPws
 {
+	private BlowfishCBC blowfishCbc;
+	
 	/**
 	 * Constructor, sets the initial vector to zero.
 	 * 
@@ -25,7 +27,7 @@ public class BlowfishPws extends BlowfishCBC
 	 */
 	public BlowfishPws( byte[] bfkey )
 	{
-		super(bfkey, 0, bfkey.length);
+		blowfishCbc = new BlowfishCBC(bfkey, 0, bfkey.length);
 	}
 
 	/**
@@ -36,7 +38,7 @@ public class BlowfishPws extends BlowfishCBC
 	 */
 	public BlowfishPws( byte[] bfkey, long lInitCBCIV )
 	{
-		super(bfkey, 0, bfkey.length, lInitCBCIV);
+		blowfishCbc = new BlowfishCBC(bfkey, 0, bfkey.length, lInitCBCIV);
 	}
 
 	/**
@@ -47,7 +49,7 @@ public class BlowfishPws extends BlowfishCBC
 	 */
 	public BlowfishPws( byte[] bfkey, byte[] initCBCIV )
 	{
-		super( bfkey, 0, bfkey.length );
+		blowfishCbc = new BlowfishCBC( bfkey, 0, bfkey.length );
 		setCBCIV( initCBCIV );
 	}
 
@@ -59,7 +61,7 @@ public class BlowfishPws extends BlowfishCBC
 	public void decrypt( byte[] buffer )
 	{
 		Util.bytesToLittleEndian( buffer );
-		super.decrypt( buffer, 0, buffer, 0, buffer.length );
+		blowfishCbc.decrypt( buffer, 0, buffer, 0, buffer.length );
 		Util.bytesToLittleEndian( buffer );
 	}
 
@@ -71,7 +73,7 @@ public class BlowfishPws extends BlowfishCBC
 	public void encrypt( byte[] buffer )
 	{
 		Util.bytesToLittleEndian( buffer );
-		super.encrypt(buffer, 0, buffer, 0, buffer.length);
+		blowfishCbc.encrypt(buffer, 0, buffer, 0, buffer.length);
 		Util.bytesToLittleEndian( buffer );
 	}
 
@@ -85,7 +87,7 @@ public class BlowfishPws extends BlowfishCBC
 		byte temp[] = new byte [ newCBCIV.length ];
 		System.arraycopy( newCBCIV, 0, temp, 0, newCBCIV.length );
 		Util.bytesToLittleEndian( temp );
-		super.setCBCIV( temp, 0 );
+		blowfishCbc.setCBCIV( temp, 0 );
 	}
 
 }

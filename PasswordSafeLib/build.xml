@@ -7,7 +7,7 @@
   the LICENSE file that comes with this package for details.
 
   To successfully build you need to do one of the following:
-  
+
   - Make sure that log4j and JUnit are in the CLASSPATH, or
   - Uncomment the optional pathelement tags for project.class.path and change
     to their location on your system.
@@ -27,7 +27,7 @@
 
 	<path id="project.class.path">
 		<pathelement path="${java.class.path}" />
-		<!--pathelement location="../PasswordSafeSWT/lib/blowfishj-2.14.jar" />
+		<!--pathelement location="../PasswordSafeSWT/lib/bfj241.jar" />
 		<pathelement location="../PasswordSafeSWT/lib/bcprov-jdk14-133.jar" />
 		<pathelement location="../PasswordSafeSWT/lib/commons-logging.jar" />
 		<pathelement location="/home/roxon/app/eclipse/plugins/org.junit_3.8.1/junit.jar" /-->
@@ -114,7 +114,7 @@ runtests   - Runs the JUnit tests.
 			      <attribute name="Implementation-Title" value="PasswordSafeLib"/>
 			      <attribute name="Implementation-Version" value="3.14"/>
 			      <attribute name="sealed" value="true"/>
-			   	</manifest>
+				</manifest>
 		</jar>
 	</target>
 

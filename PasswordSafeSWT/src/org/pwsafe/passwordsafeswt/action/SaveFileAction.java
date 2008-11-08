@@ -1,6 +1,7 @@
 package org.pwsafe.passwordsafeswt.action;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -28,7 +29,9 @@ public class SaveFileAction extends Action {
             app.saveFile();
         } catch (IOException e1) {
             app.displayErrorDialog("Error Saving Safe", e1.getMessage(), e1);
-        }
+        } catch (NoSuchAlgorithmException e) {
+            app.displayErrorDialog("Error Saving Safe", e.getMessage(), e);
+		}
 
     }
 

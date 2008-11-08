@@ -1,6 +1,8 @@
 package org.pwsafe.lib.file;
 
+import java.io.File;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import junit.framework.TestCase;
 
@@ -14,23 +16,48 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  */
 public class PwsFileV3Test extends TestCase {
 	
-	public void testPassphrase() throws EndOfFileException, IOException, UnsupportedFileVersionException {
-		//String filename = "/data/Java/PasswordSafeLib/sample3.psafe3";
-		//String filename = "C:/Documents and Settings/Glen/Desktop/stuff216to3.psafe3";
-		String filename = "C:/Documents and Settings/Glen/Desktop/bigsample3.psafe3";
-		String password = "Pa$$word";
+	private String filename;
+	private String password;
+	
+	@Override
+	public void setUp() {
+		filename = System.getProperty("user.dir") + File.separator + "sample3.psafe3";
+		password = "Pa$$word";
 		
-		PwsFileV3 file = new PwsFileV3(filename, password);
-		file.readAll();
-		System.out.println(file.getRecordCount());
-		file.close();
+		try {
+			createPwsFile(filename, password);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@Override
+	public void tearDown() {
+		deletePwsFile(filename);
+	}
+	
+	private static void createPwsFile(String filename, String password) throws IOException {
+		PwsFileV3 pwsFileV3 = new PwsFileV3();
+		pwsFileV3.setFilename(filename);
+		pwsFileV3.setPassphrase(password);
+		pwsFileV3.save();
+	}
+	
+	private static void deletePwsFile(String filename) {
+		File file = new File(filename);
+		file.delete();
+	}
+	
+	public void testPassphrase() throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
+		createPwsFile(filename, password);
 		
+		PwsFileV3 pwsFile = new PwsFileV3(filename, password);
+		pwsFile.readAll();
+		System.out.println(pwsFile.getRecordCount());
+		pwsFile.close();
 	}
 	
 	public void testLargeFile() throws EndOfFileException, IOException, UnsupportedFileVersionException, Exception {
-		String filename = "C:/Documents and Settings/Glen/Desktop/bigsample3.psafe3";
-		String password = "Pa$$word";
-		
 		PwsFileV3 file = (PwsFileV3) PwsFileFactory.newFile();
 		file.setPassphrase(password);
 		for (int i = 0; i < 1000; i++) {
@@ -54,9 +81,5 @@ public class PwsFileV3Test extends TestCase {
 		PwsFileV3 file2 = new PwsFileV3(filename, password);
 		file2.readAll();
 		System.out.println("Read records: " + file2.getRecordCount());
-		
 	}
-	
-	
-
 }
