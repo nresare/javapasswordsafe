@@ -7,6 +7,7 @@
 package org.pwsafe.lib.file;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
@@ -108,9 +109,10 @@ public class PwsFileHeader
 	 * @param file the file to write the header to.
 	 * 
 	 * @throws IOException
+	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
 	public void save( PwsFile file )
-	throws IOException
+	throws IOException, NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFileHeader.save" );
 
@@ -128,8 +130,9 @@ public class PwsFileHeader
 	 * Updates the header ready for saving.
 	 * 
 	 * @param passphrase the passphrase to be used to encrypt the database.
+	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
-	private void update( String passphrase )
+	private void update( String passphrase ) throws NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFileHeader.update" );
 

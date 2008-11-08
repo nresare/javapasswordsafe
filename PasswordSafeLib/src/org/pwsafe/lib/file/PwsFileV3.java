@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
 import org.pwsafe.lib.I18nHelper;
@@ -82,9 +83,10 @@ public class PwsFileV3 extends PwsFile
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public PwsFileV3( String filename, String passphrase ) 
-	throws EndOfFileException, IOException, UnsupportedFileVersionException
+	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		super( filename, passphrase );
 	}

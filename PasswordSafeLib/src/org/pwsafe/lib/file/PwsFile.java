@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -22,8 +24,6 @@ import org.pwsafe.lib.crypto.BlowfishPws;
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
-
-import net.sourceforge.blowfishj.SHA1;
 
 /**
  * This is the base class for all variations of the PasswordSafe file format.
@@ -211,9 +211,10 @@ public abstract class PwsFile
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
 	protected PwsFile( String filename, String passphrase )
-	throws EndOfFileException, IOException, UnsupportedFileVersionException
+	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFile.PwsFile( String )" );
 
@@ -402,20 +403,19 @@ public abstract class PwsFile
 	 * @param passphrase
 	 * 
 	 * @return A properly initialised {@link BlowfishPws} object.
+	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	private BlowfishPws makeBlowfish( byte [] passphrase )
+	private BlowfishPws makeBlowfish( byte [] passphrase ) throws NoSuchAlgorithmException
 	{
-		SHA1	sha1;
-		byte	salt[];
+		MessageDigest	sha1 = MessageDigest.getInstance("SHA-1");
+		byte			salt[];
 		
-		sha1 = new SHA1();
 		salt = Header.getSalt();
 
 		sha1.update( passphrase, 0, passphrase.length );
 		sha1.update( salt, 0, salt.length );
-		sha1.finalize();
 
-		return new BlowfishPws( sha1.getDigest(), Header.getIpThing() );
+		return new BlowfishPws( sha1.digest(), Header.getIpThing() );
 	}
 
 	/**
@@ -434,9 +434,10 @@ public abstract class PwsFile
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
 	protected void open( File file, String passphrase )
-	throws EndOfFileException, IOException, UnsupportedFileVersionException
+	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFile.init" );
 
@@ -613,9 +614,10 @@ public abstract class PwsFile
 	 * reset on the file and all records.
 	 * 
 	 * @throws IOException if the attempt fails.
+	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
 	public void save()
-	throws IOException
+	throws IOException, NoSuchAlgorithmException
 	{
 		PwsRecord	rec;
 		File		tempFile;

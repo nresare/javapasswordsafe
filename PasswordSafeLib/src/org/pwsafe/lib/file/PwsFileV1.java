@@ -7,6 +7,7 @@
 package org.pwsafe.lib.file;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
@@ -46,9 +47,10 @@ public class PwsFileV1 extends PwsFile
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException 
 	 */
 	public PwsFileV1( String filename, String passphrase )
-	throws EndOfFileException, IOException, UnsupportedFileVersionException
+	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		super( filename, passphrase );
 	}

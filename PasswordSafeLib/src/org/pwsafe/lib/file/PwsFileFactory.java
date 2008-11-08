@@ -6,9 +6,13 @@
  */
 package org.pwsafe.lib.file;
 
+import blowfishj.BlowfishECB;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
@@ -17,9 +21,6 @@ import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.InvalidPassphraseException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
-
-import net.sourceforge.blowfishj.BlowfishECB;
-import net.sourceforge.blowfishj.SHA1;
 
 /**
  * This is a singleton factory class used to load a PasswordSafe file.  It is able to
@@ -50,9 +51,10 @@ public class PwsFileFactory
 	 * @throws InvalidPassphraseException If the passphrase is not the correct one for the file.
 	 * @throws FileNotFoundException      If the given file does not exist.
 	 * @throws IOException                If an error occurs whilst reading from the file.
+	 * @throws NoSuchAlgorithmException   If no SHA-1 implementation is found. 
 	 */
 	private static final void checkPassword( String filename, String passphrase )
-	throws InvalidPassphraseException, FileNotFoundException, IOException 
+	throws InvalidPassphraseException, FileNotFoundException, IOException, NoSuchAlgorithmException 
 	{
 		LOG.enterMethod( "PwsFileFactory.checkPassword" );
 
@@ -136,24 +138,23 @@ public class PwsFileFactory
 	 * @param  stuff      the random bytes.
 	 * 
 	 * @return the generated checksum.
+	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
-	static final byte [] genRandHash( String passphrase, byte [] stuff )
+	static final byte [] genRandHash( String passphrase, byte [] stuff ) throws NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFileFactory.genRandHash" );
 
-		SHA1			md;
+		MessageDigest	md = MessageDigest.getInstance("SHA-1");
 		BlowfishECB		bf;
 		byte []			pw;
 		byte []			digest;
 		byte []			tmp;
 		
 		pw	= passphrase.getBytes();
-		md	= new SHA1();
 
 		md.update( stuff, 0, stuff.length );
 		md.update( pw, 0, pw.length );
-		md.finalize();
-		digest = md.getDigest();
+		digest = md.digest();
 		
 		bf	= new BlowfishECB( digest, 0, digest.length );
 		tmp	= Util.cloneByteArray( stuff, 8 );
@@ -168,12 +169,11 @@ public class PwsFileFactory
 		Util.bytesToLittleEndian( tmp );
 		tmp = Util.cloneByteArray( tmp, 10 );
 
-		md.clear(); 
+		md.reset(); 
 		md.update( tmp, 0, tmp.length );
-		md.finalize();
 		
 		LOG.leaveMethod( "PwsFileFactory.genRandHash" );
-		return md.getDigest();
+		return md.digest();
 	}
 
 	/**
@@ -189,9 +189,10 @@ public class PwsFileFactory
 	 * @throws InvalidPassphraseException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException        If no SHA-1 implementation is found.
 	 */
 	public static final PwsFile loadFile( String filename, String passphrase )
-	throws EndOfFileException, FileNotFoundException, InvalidPassphraseException, IOException, UnsupportedFileVersionException
+	throws EndOfFileException, FileNotFoundException, InvalidPassphraseException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFileFactory.loadFile" );
 		
