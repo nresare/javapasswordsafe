@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/blowfishj-2.14.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jface_3.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/passwordsafe-lib.jar"/>
+	<!-- instead of a hard path to swt lib, this should be handled via plugin dependencies... -->
+	<classpathentry kind="lib" path="platform/win32/swt.jar" sourcepath="platform/win32/swt_src.zip"/>
 	<classpathentry kind="lib" path="lib/opencsv-1.1.jar"/>
-	<classpathentry kind="lib" path="platform/win32/swt.jar"/>
-	<classpathentry kind="lib" path="lib/bcprov-jdk14-133.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.4.0.v20080421-2006.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.4.0.I20080509-2000.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<!-- instead of the passwordsafe lib one can also reference a lib project in the same workspace -->
+	<classpathentry kind="lib" path="lib/passwordsafe-lib.jar"/>
+	<!--classpathentry combineaccessrules="false" kind="src" path="/PasswordSafeLib"/-->
+	<classpathentry kind="lib" path="lib/bcprov-jdk15-141.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.4.0.v20080512.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jface_3.4.1.M20080827-2000.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.4.2.R34x_v20080826-1230.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
