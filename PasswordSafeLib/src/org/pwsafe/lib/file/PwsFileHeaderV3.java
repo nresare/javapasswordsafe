@@ -1,8 +1,11 @@
 /*
  * $Id: PwsFileHeader.java 307 2004-02-27 23:11:59 +0000 (Fri, 27 Feb 2004) preecek $
  * 
- * This file is provided under the standard terms of the Artistic Licence.  See the
- * LICENSE file that comes with this package for details.
+ * Copyright (c) 2008 David Muller <roxon@users.sourceforge.net>.
+ * All rights reserved. Use of the code is allowed under the
+ * Artistic License 2.0 terms, as specified in the LICENSE file
+ * distributed with this code, or available from
+ * http://www.opensource.org/licenses/artistic-license-2.0.php
  */
 package org.pwsafe.lib.file;
 

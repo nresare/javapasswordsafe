@@ -1,8 +1,11 @@
 /*
  * $Id: PwsRecordV2.java 561 2005-07-26 10:00:19 +0000 (Tue, 26 Jul 2005) glen_a_smith $
  * 
- * This file is provided under the standard terms of the Artistic Licence.  See the
- * LICENSE file that comes with this package for details.
+ * Copyright (c) 2008 David Muller <roxon@users.sourceforge.net>.
+ * All rights reserved. Use of the code is allowed under the
+ * Artistic License 2.0 terms, as specified in the LICENSE file
+ * distributed with this code, or available from
+ * http://www.opensource.org/licenses/artistic-license-2.0.php
  */
 package org.pwsafe.lib.file;
 
