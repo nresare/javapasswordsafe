@@ -1292,6 +1292,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					lockTask = null;
 				}
 				if (locked) {
+					app.setLocked(false);
 					log.info("trying to unlock");
 			        PasswordDialog pd = new PasswordDialog(app.getShell());
 			        String fileName = UserPreferences.getInstance().getMRUFile();
@@ -1304,7 +1305,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			                app.displayErrorDialog("Error Opening Safe", "Invalid Passphrase", anEx);
 			            }
 					}
-			        app.setLocked(false);
+			        
 				}
 
 			}
@@ -1332,8 +1333,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				}
 				
 				if (thePrefs.getBoolean(SecurityPreferences.LOCK_DB_ON_MIN)) {
-					clearView();
-					setLocked(true);
+				    app.setPassphrase(null);
+				    app.clearView();
+				    app.setPwsFile(null);
+				    app.setLocked(true);
 				}
 				startLockTimer();
 			}
