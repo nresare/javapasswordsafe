@@ -79,7 +79,7 @@ public class PasswordDialog extends Dialog {
 		lblEnterPassword.setText("Please enter the safe combination for this password database");
 
 		lblFilename = new Label(composite, SWT.NONE);
-		lblFilename.setText(new File(fileName).getName());
+		lblFilename.setText("..." + File.separator + new File(fileName).getName());
 		lblFilename.setToolTipText(fileName);
 
 		final Composite composite_2 = new Composite(composite, SWT.NONE);
