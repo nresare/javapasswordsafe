@@ -304,13 +304,6 @@ public class EditDialog extends Dialog {
 		txtPasswordExpire.setText(format(entryToEdit.getExpires()));
 		txtPasswordExpire.addKeyListener(dirtyKeypress);
 
-//        dtPasswordExpire = new DateTime(compositeFields, SWT.DATE | SWT.MEDIUM);
-//        final FormData fd_dtPasswordExpire = new FormData();
-//        fd_dtPasswordExpire.left = new FormAttachment(txtPasswordExpire, 10, SWT.RIGHT);
-//        fd_dtPasswordExpire.top = new FormAttachment(txtAutotype, 0, SWT.BOTTOM);
-//        dtPasswordExpire.setLayoutData(fd_dtPasswordExpire);
-//        dtPasswordExpire.addKeyListener(dirtyKeypress);
-
         addDateChooser (compositeFields);
         
         shell.setDefaultButton(createButtons(compositeFields, btnShowPassword));
@@ -361,31 +354,36 @@ public class EditDialog extends Dialog {
                     }
                     entryToEdit.setNotes(txtNotes.getText());
                     String fieldText = txtPasswordExpire.getText();
-					try {
-						Date expireDate = DateFormat.getDateInstance().parse(fieldText);
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(expireDate);
-						int year = cal.get(Calendar.YEAR);
-						if (year < 2000) { 
-							if (year < 100) 
-								year += 2000; // avoid years like 07 passing as 0007 (Linux / DE)
-							else
-								year += 100; // avoid years like 07 passing as 1907 (Win / US)
-							cal.set(Calendar.YEAR, year);
-							expireDate = cal.getTime();
+                    if (fieldText != null && (! fieldText.trim().equals(""))) {
+                    	try {
+							Date expireDate = DateFormat.getDateInstance().parse(fieldText);
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(expireDate);
+							int year = cal.get(Calendar.YEAR);
+							if (year < 2000) { 
+								if (year < 100) 
+									year += 2000; // avoid years like 07 passing as 0007 (Linux / DE)
+								else
+									year += 100; // avoid years like 07 passing as 1907 (Win / US)
+								cal.set(Calendar.YEAR, year);
+								expireDate = cal.getTime();
+							}
+			
+							entryToEdit.setExpires(expireDate);
+						} catch (ParseException e1) {
+				            MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
+				            mb.setText("Expiry date not valid");
+				            mb.setMessage("The password expiry date is not valid and will be ignored - continue anyway?");
+				            int result = mb.open();
+				            if (result == SWT.NO) {
+				                return;
+				            }
+	
 						}
-		
-						entryToEdit.setExpires(expireDate);
-					} catch (ParseException e1) {
-			            MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
-			            mb.setText("Expiry date not valid");
-			            mb.setMessage("The password expiry date is not valid and will be ignored - continue anyway?");
-			            int result = mb.open();
-			            if (result == SWT.NO) {
-			                return;
-			            }
-
-					}
+                    } else {
+                    	entryToEdit.setExpires(null);
+                    }
+                    	
 					entryToEdit.setUrl(txtUrl.getText());
                     entryToEdit.setAutotype(txtAutotype.getText());
                     result = entryToEdit;   
