@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Spinner;
 
 /**
  * Preferences related to locking terminal and other security stuff.
@@ -34,7 +34,8 @@ public class SecurityPreferences extends PreferencePage {
 	  public static final String LOCK_ON_IDLE_MINS = "lock.db.on.idle.minutes";
 
 	  // Text fields for user to enter preferences
-	  private Text txtMinutesIdle;
+	  private Spinner spiMinutesIdle;
+
 	  Button btnClearClipboard;
 	  Button btnLockDatabaseOnMin;
 	  Button btnConfirmSaveOnMinimize;
@@ -58,11 +59,9 @@ public class SecurityPreferences extends PreferencePage {
 	    btnClearClipboard.setText("Clear clipboard upon minimize or exit");
 	    btnClearClipboard.setSelection(preferenceStore.getBoolean(CLEAR_CLIPBOARD_ON_MIN));
 	    
-
 	    btnLockDatabaseOnMin = new Button(composite, SWT.CHECK);
 	    btnLockDatabaseOnMin.setText("Lock password database on minimize");
 	    btnLockDatabaseOnMin.setSelection(preferenceStore.getBoolean(LOCK_DB_ON_MIN));
-//	    btnLockDatabaseOnMin.setEnabled(false);
 
 	    btnConfirmSaveOnMinimize = new Button(composite, SWT.CHECK);
 	    btnConfirmSaveOnMinimize.setEnabled(false);
@@ -90,15 +89,12 @@ public class SecurityPreferences extends PreferencePage {
 	    btnLockOnIdle = new Button(composite_1, SWT.CHECK);
 	    btnLockOnIdle.setText("Lock password database after");
 	    btnLockOnIdle.setSelection(preferenceStore.getBoolean(LOCK_ON_IDLE));
-//	    btnLockOnIdle.setEnabled(false);
 
-	    txtMinutesIdle = new Text(composite_1, SWT.BORDER);
-	    txtMinutesIdle.setText(preferenceStore.getString(LOCK_ON_IDLE_MINS));
-//	    txtMinutesIdle.setEnabled(false);
+	    spiMinutesIdle = new Spinner(composite_1, SWT.BORDER);
+	    spiMinutesIdle.setSelection(preferenceStore.getInt(LOCK_ON_IDLE_MINS));
 
 	    final Label lblMinsIdle = new Label(composite_1, SWT.NONE);
 	    lblMinsIdle.setText("minutes idle");
-//	    lblMinsIdle.setEnabled(false);
 
 	    return composite;
 	  }
@@ -117,7 +113,7 @@ public class SecurityPreferences extends PreferencePage {
 	    btnConfirmCopy.setSelection(preferenceStore.getDefaultBoolean(CONFIRM_COPY_TO_CLIPBOARD));
 	    btnLockDatabaseOnWorkstationLock.setSelection(preferenceStore.getDefaultBoolean(LOCK_DB_ON_WS_LOCK));
 	    btnLockOnIdle.setSelection(preferenceStore.getDefaultBoolean(LOCK_ON_IDLE));
-	    txtMinutesIdle.setText(preferenceStore.getDefaultString(LOCK_ON_IDLE_MINS));
+	    spiMinutesIdle.setData(preferenceStore.getDefaultInt(LOCK_ON_IDLE_MINS));
 	        
 	  }
 
@@ -131,13 +127,13 @@ public class SecurityPreferences extends PreferencePage {
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 
 	    // Set the values from the fields
-	    preferenceStore.setValue(CLEAR_CLIPBOARD_ON_MIN, btnClearClipboard.getSelection());
-	    	preferenceStore.setValue(LOCK_DB_ON_MIN, btnLockDatabaseOnMin.getSelection());
-	    	preferenceStore.setValue(CONFIRM_SAVE_ON_MIN, btnConfirmSaveOnMinimize.getSelection());
-	    	preferenceStore.setValue(CONFIRM_COPY_TO_CLIPBOARD, btnConfirmCopy.getSelection());
-	    	preferenceStore.setValue(LOCK_DB_ON_WS_LOCK, btnLockDatabaseOnWorkstationLock.getSelection());
-	    	preferenceStore.setValue(LOCK_ON_IDLE, btnLockOnIdle.getSelection());
-	    	preferenceStore.setValue(LOCK_ON_IDLE_MINS, txtMinutesIdle.getText());
+    	preferenceStore.setValue(CLEAR_CLIPBOARD_ON_MIN, btnClearClipboard.getSelection());
+    	preferenceStore.setValue(LOCK_DB_ON_MIN, btnLockDatabaseOnMin.getSelection());
+    	preferenceStore.setValue(CONFIRM_SAVE_ON_MIN, btnConfirmSaveOnMinimize.getSelection());
+    	preferenceStore.setValue(CONFIRM_COPY_TO_CLIPBOARD, btnConfirmCopy.getSelection());
+    	preferenceStore.setValue(LOCK_DB_ON_WS_LOCK, btnLockDatabaseOnWorkstationLock.getSelection());
+    	preferenceStore.setValue(LOCK_ON_IDLE, btnLockOnIdle.getSelection());
+    	preferenceStore.setValue(LOCK_ON_IDLE_MINS, spiMinutesIdle.getSelection());
 
 	    // Return true to allow dialog to close
 	    return true;
