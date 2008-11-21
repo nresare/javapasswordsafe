@@ -33,13 +33,13 @@ public class VisitPasswordSafeWebsiteAction extends Action {
         new Thread() {
             public void run() {
                 try {
-                		Program.launch("http://www.bytecode.com.au/passwordsafeswt/");
+                		Program.launch("http://sourceforge.net/projects/jpwsafe/");
                 } catch (Exception ioe) {
                     MessageBox mb = new MessageBox(app.getShell(),
                             SWT.ICON_ERROR);
                     mb.setText("Could not open URL");
                     mb
-                            .setText("Could not launch browser to http://passwordsafe.sourceforge.net/");
+                            .setText("Could not launch browser to http://sourceforge.net/projects/jpwsafe/");
                     mb.open();
                 }
             }
