@@ -9,6 +9,7 @@ package org.pwsafe.passwordsafeswt.action;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -22,7 +23,8 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class ClearClipboardAction extends Action {
 
     public ClearClipboardAction() {
-        super("Clear Clipboard@Ctrl+Del");
+        super("Clear Clipboard");
+        setAccelerator( SWT.MOD1 | SWT.DEL  );
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_clearclip.gif")));
         setToolTipText("Clear Clipboard");
 

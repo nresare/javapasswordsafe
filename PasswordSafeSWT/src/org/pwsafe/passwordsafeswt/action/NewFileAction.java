@@ -9,6 +9,7 @@ package org.pwsafe.passwordsafeswt.action;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.NewSafeDialog;
 
@@ -20,7 +21,8 @@ import org.pwsafe.passwordsafeswt.dialog.NewSafeDialog;
 public class NewFileAction extends Action {
 
     public NewFileAction() {
-        super("&New File@Ctrl+N");
+        super("&New File");
+        setAccelerator( SWT.MOD1 | 'N'  );
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_new.gif")));
         setToolTipText("Create New Safe");
     }

@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 
 /**
@@ -22,7 +23,8 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class SaveFileAction extends Action {
 
     public SaveFileAction() {
-        super("&Save@Ctrl+S");
+        super("&Save");
+        setAccelerator( SWT.MOD1 | 'S'  );
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_save.gif")));
         setToolTipText("Save");
     }

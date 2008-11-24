@@ -8,6 +8,7 @@
 package org.pwsafe.passwordsafeswt.action;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.SWT;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 
 /**
@@ -18,7 +19,8 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class ExitAppAction extends Action {
 
     public ExitAppAction() {
-        super("E&xit@Ctrl+Q");
+        super("E&xit");
+        setAccelerator( SWT.MOD1 | 'Q'  );
     }
 
     /**

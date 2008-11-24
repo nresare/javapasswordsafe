@@ -9,6 +9,7 @@ package org.pwsafe.passwordsafeswt.action;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.pwsafe.lib.file.PwsRecord;
 import org.pwsafe.lib.file.PwsRecordV1;
@@ -24,6 +25,7 @@ public class CopyPasswordAction extends Action {
 
     public CopyPasswordAction() {
         super("Copy Password@Ctrl+C");
+        setAccelerator( SWT.MOD1 | 'C'  );
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_pwd.gif")));
         setToolTipText("Copy Password To Clipboard");
 

@@ -9,6 +9,7 @@ package org.pwsafe.passwordsafeswt.action;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.EditDialog;
 import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
@@ -23,7 +24,8 @@ import org.pwsafe.passwordsafeswt.util.UserPreferences;
 public class AddRecordAction extends Action {
 
     public AddRecordAction() {
-        super("&Add Record@Ctrl+A");
+        super("&Add Record");
+        setAccelerator( SWT.MOD1 | 'A' );
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_add.gif")));
         setToolTipText("Add New Record");
     }
