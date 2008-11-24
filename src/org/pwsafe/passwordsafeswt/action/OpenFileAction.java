@@ -22,7 +22,8 @@ import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 public class OpenFileAction extends Action {
 
     public OpenFileAction() {
-        super("&Open File@Ctrl+O");
+        super("&Open File");
+        setAccelerator( SWT.MOD1 | 'O'  );
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_open.gif")));
         setToolTipText("Open Existing Safe");
     }
