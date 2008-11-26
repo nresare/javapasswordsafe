@@ -22,12 +22,14 @@
         <property name="platform.dir" location="platform" />
         <property name="mac.dir" location="${platform.dir}/macosx" />
         <property name="linux.dir" location="${platform.dir}/linux" />
+        <property name="linux-x86_64.dir" location="${platform.dir}/linux-x86_64" />
         <property name="win32.dir" location="${platform.dir}/win32" />
 
         <!-- where resulting binaries are placed -->
         <property name="dist.src.dir" location="${deploy.dir}/src" />
         <property name="dist.mac.dir" location="${deploy.dir}/mac" />
         <property name="dist.linux.dir" location="${deploy.dir}/linux" />
+        <property name="dist.linux-x86_64.dir" location="${deploy.dir}/linux-x86_64" />
         <property name="dist.win32.dir" location="${deploy.dir}/win32" />
 
         <!-- Setup our version info -->
@@ -113,9 +115,9 @@
         <exe4j projectfile="${win32.dir}/PasswordSafeSWT.exe4j" release="${build.version}" />
 
         <copy todir="${dist.win32.dir}/${zip.dir.name}">
-            <fileset dir="${platform.dir}/win32/dll">
+            <!--fileset dir="${platform.dir}/win32/dll">
                 <include name="*.dll" />
-            </fileset>
+            </fileset-->
             <fileset dir="${basedir}">
                 <include name="*.exe" />
             </fileset>
@@ -133,9 +135,9 @@
         <mkdir dir="${dist.linux.dir}/${zip.dir.name}" />
 
         <copy todir="${dist.linux.dir}/${zip.dir.name}">
-            <fileset dir="${linux.dir}/dll">
+            <!--fileset dir="${linux.dir}/dll">
                 <include name="*.so" />
-            </fileset>
+            </fileset-->
             <fileset dir="${linux.dir}">
                 <include name="pwsafe.sh" />
                 <include name="*.jar" />
@@ -144,10 +146,9 @@
             <fileset dir="${deploy.dir}" includes="*.jar" />
         </copy>
 
-        <!-- And set the laucher script and dlls executable... -->
+        <!-- And set the launcher script and dlls executable... -->
         <chmod perm="a+x">
             <fileset dir="${dist.linux.dir}/${zip.dir.name}">
-                <include name="*.so" />
                 <include name="*.sh" />
             </fileset>
         </chmod>
@@ -161,6 +162,38 @@
 
     </target>
 
+    <target name="deploy.linux-x86_64" depends="jar" description="Build PasswordSafeSWT for Linux">
+
+        <delete dir="${dist.linux-x86_64.dir}/${zip.dir.name}" />
+        <mkdir dir="${dist.linux-x86_64.dir}/${zip.dir.name}" />
+
+        <copy todir="${dist.linux-x86_64.dir}/${zip.dir.name}">
+            <!--fileset dir="${linux.dir}/dll">
+                <include name="*.so" />
+            </fileset-->
+            <fileset dir="${linux.dir}">
+                <include name="pwsafe.sh" />
+                <include name="*.jar" />
+            </fileset>
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
+            <fileset dir="${deploy.dir}" includes="*.jar" />
+        </copy>
+
+        <!-- And set the launcher script and dlls executable... -->
+        <chmod perm="a+x">
+            <fileset dir="${dist.linux-x86_64.dir}/${zip.dir.name}">
+                <include name="*.sh" />
+            </fileset>
+        </chmod>
+
+        <tar destfile="${dist.linux-x86_64.dir}/${zip.dir.name}-linux.tar"
+                       basedir="${dist.linux-x86_64.dir}" includes="${zip.dir.name}/**/*"
+                  />
+
+        <gzip src="${dist.linux-x86_64.dir}/${zip.dir.name}-linux.tar" destfile="${dist.linux-x86_64.dir}/${zip.dir.name}-linux-x86_64.tar.gz"/>
+
+
+    </target>
 
 
     <target name="deploy.mac" depends="jar" description="Builds PasswordSafeSWT for Mac">
