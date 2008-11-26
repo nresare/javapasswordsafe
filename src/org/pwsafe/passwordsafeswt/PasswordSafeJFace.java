@@ -47,9 +47,8 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellListener;
-
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -244,8 +243,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * showing and hiding the tray.
 	 */
 	private void setupTrayItem() {
+		UserPreferences thePrefs = UserPreferences.getInstance();
+		
+		if (! thePrefs.getBoolean(DisplayPreferences.SHOW_ICON_IN_SYSTEM_TRAY)) {
+			return;
+		}
+		
 		Image image = SWTResourceManager.getImage(PasswordSafeJFace.class,
 				"/org/pwsafe/passwordsafeswt/images/cpane.ico");
+		
 		final Tray tray = getShell().getDisplay().getSystemTray();
 		if (tray == null) {
 			if (log.isInfoEnabled())
@@ -255,14 +261,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				log.debug("Setting up System Tray");
 
 			trayItem = new TrayItem(tray, SWT.NONE);
-//			trayItem.setVisible(false);
 			trayItem.setToolTipText(PasswordSafeJFace.APP_NAME);
 
 			trayItem.addListener(SWT.DefaultSelection, new Listener() {
 				public void handleEvent(Event event) {
 					getShell().setVisible(true);
 					getShell().setMinimized(false);
-					trayItem.setVisible(false);
 				}
 			});
 			final Menu menu = new Menu(getShell(), SWT.POP_UP);
@@ -272,7 +276,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				public void widgetSelected(SelectionEvent arg0) {
 					getShell().setVisible(true);
 					getShell().setMinimized(false);
-					trayItem.setVisible(false);
 				}
 			});
 			new MenuItem(menu, SWT.SEPARATOR);
@@ -296,7 +299,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 							&& thePrefs.getBoolean(DisplayPreferences.SHOW_ICON_IN_SYSTEM_TRAY)) {
 						if (log.isDebugEnabled())
 							log.debug("Shrinking to tray");
-						trayItem.setVisible(true);
 						getShell().setVisible(false);
 					}
 				}
@@ -577,7 +579,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	protected StatusLineManager createStatusLineManager() {
 		StatusLineManager statusLineManager = new StatusLineManager();
-		statusLineManager.setMessage("http://passwordsafe.sf.net");
+		statusLineManager.setMessage("http://jpwsafe.sf.net");
 		return statusLineManager;
 	}
 
@@ -601,7 +603,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				setStatusMessage("Double Click to edit entry");
 			}
 		} else {
-			setStatusMessage("http://passwordsafe.sf.net");
+			setStatusMessage("http://jpwsafe.sf.net");
 		}
 
 	}
@@ -936,6 +938,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		tidyUpOnExit();
 //		getShell().dispose();
 		getShell().close();
+		if (trayItem != null)
+			trayItem.dispose();
 	}
 
 	/**
