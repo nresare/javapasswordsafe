@@ -15,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,6 +26,8 @@ import org.pwsafe.lib.crypto.BlowfishPws;
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
+
+import net.sourceforge.blowfishj.SHA1;
 
 /**
  * This is the base class for all variations of the PasswordSafe file format.
@@ -71,8 +72,9 @@ public abstract class PwsFile
 	/**
 	 * Block length - the minimum size of a data block.  All data written to the database is
 	 * in blocks that are an integer multiple of <code>BLOCK_LENGTH</code> in size. 
+	 * The exception is time field, there the size used is 4.
 	 */
-	public static final int BLOCK_LENGTH	= 4; // used to be 8, but time field has only 4
+	public static final int BLOCK_LENGTH	= 8; 
 
 	/**
 	 * This provides a wrapper around the <code>Iterator</code> that is returned by the
@@ -406,19 +408,20 @@ public abstract class PwsFile
 	 * @param passphrase
 	 * 
 	 * @return A properly initialised {@link BlowfishPws} object.
-	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	private BlowfishPws makeBlowfish( byte [] passphrase ) throws NoSuchAlgorithmException
+	private BlowfishPws makeBlowfish( byte [] passphrase )
 	{
-		MessageDigest	sha1 = MessageDigest.getInstance("SHA-1");
-		byte			salt[];
+		SHA1	sha1;
+		byte	salt[];
 		
+		sha1 = new SHA1();
 		salt = Header.getSalt();
 
 		sha1.update( passphrase, 0, passphrase.length );
 		sha1.update( salt, 0, salt.length );
+		sha1.finalize();
 
-		return new BlowfishPws( sha1.digest(), Header.getIpThing() );
+		return new BlowfishPws( sha1.getDigest(), Header.getIpThing() );
 	}
 
 	/**
@@ -530,7 +533,7 @@ public abstract class PwsFile
 
 	/**
 	 * Reads bytes from the file and decryps them.  <code>buff</code> may be any length provided
-	 * that is a multiple of <code>BLOCK_LENGTH</code> bytes in length.
+	 * that is a multiple of <code>getBlockSize()</code> bytes in length.
 	 * 
 	 * @param buff the buffer to read the bytes into.
 	 * 
@@ -541,7 +544,7 @@ public abstract class PwsFile
 	protected void readDecryptedBytes( byte [] buff )
 	throws EndOfFileException, IOException
 	{
-		if ( (buff.length == 0) || ((buff.length % BLOCK_LENGTH) != 0) )
+		if ( (buff.length == 0) || ((buff.length % getBlockSize()) != 0) )
 		{
 			throw new IllegalArgumentException( I18nHelper.getInstance().formatMessage("E00001") );
 		}
@@ -801,7 +804,7 @@ public abstract class PwsFile
 	protected void writeEncryptedBytes( byte [] buff )
 	throws IOException
 	{
-		if ( (buff.length == 0) || ((buff.length % BLOCK_LENGTH) != 0) )
+		if ( (buff.length == 0) || ((buff.length % getBlockSize()) != 0) )
 		{
 			throw new IllegalArgumentException( I18nHelper.getInstance().formatMessage("E00001") );
 		}

@@ -7,6 +7,8 @@
  */
 package org.pwsafe.lib.file;
 
+import java.net.URL;
+
 import org.pwsafe.lib.exception.PasswordSafeException;
 
 import junit.framework.TestCase;
@@ -68,6 +70,15 @@ public class PwsFileFactoryTest extends TestCase {
 		assertEquals(5, file.getRecordCount());
 		
 		//TODO proper tests here
+	}
+	
+	public void testLoadFile () throws Exception {
+		PwsFile theFile = PwsFileFactory.loadFile("password_file_2.dat", "THEFISH");
+		
+		assertNotNull(theFile);
+		assertTrue(theFile instanceof PwsFileV2);
+		
+		assertEquals (1, theFile.getRecordCount());
 	}
 	
 }

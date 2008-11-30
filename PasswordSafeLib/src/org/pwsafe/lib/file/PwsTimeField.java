@@ -49,11 +49,14 @@ public class PwsTimeField extends PwsField
 	 */
 	public byte[] getBytes()
 	{
-		long		value;
+		long	value;
 		byte	retval[];
 
 		value	= (long) ((Date) getValue()).getTime();
-		retval	= PwsFile.allocateBuffer( 4 );
+		
+		// Force a size of 4, otherwise ot would be set to a size of blocklength 
+//		retval	= PwsFile.allocateBuffer( 4 );
+		retval  = new byte[4];
 
 		Util.putMillisToByteArray( retval, value, 0 );
 

@@ -9,12 +9,9 @@
  */
 package org.pwsafe.lib.file;
 
-import blowfishj.BlowfishECB;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.pwsafe.lib.I18nHelper;
@@ -24,6 +21,9 @@ import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.InvalidPassphraseException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
+
+import net.sourceforge.blowfishj.BlowfishECB;
+import net.sourceforge.blowfishj.SHA1;
 
 /**
  * This is a singleton factory class used to load a PasswordSafe file.  It is able to
@@ -141,23 +141,24 @@ public class PwsFileFactory
 	 * @param  stuff      the random bytes.
 	 * 
 	 * @return the generated checksum.
-	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
 	static final byte [] genRandHash( String passphrase, byte [] stuff ) throws NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFileFactory.genRandHash" );
 
-		MessageDigest	md = MessageDigest.getInstance("SHA-1");
+		SHA1			md;
 		BlowfishECB		bf;
 		byte []			pw;
 		byte []			digest;
 		byte []			tmp;
 		
 		pw	= passphrase.getBytes();
+		md	= new SHA1();
 
 		md.update( stuff, 0, stuff.length );
 		md.update( pw, 0, pw.length );
-		digest = md.digest();
+		md.finalize();
+		digest = md.getDigest();
 		
 		bf	= new BlowfishECB( digest, 0, digest.length );
 		tmp	= Util.cloneByteArray( stuff, 8 );
@@ -172,11 +173,12 @@ public class PwsFileFactory
 		Util.bytesToLittleEndian( tmp );
 		tmp = Util.cloneByteArray( tmp, 10 );
 
-		md.reset(); 
+		md.clear(); 
 		md.update( tmp, 0, tmp.length );
+		md.finalize();
 		
 		LOG.leaveMethod( "PwsFileFactory.genRandHash" );
-		return md.digest();
+		return md.getDigest();
 	}
 
 	/**
