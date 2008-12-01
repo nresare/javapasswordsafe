@@ -49,8 +49,11 @@ public class DisplayPreferences extends PreferencePage {
 		composite.setLayout(new GridLayout());
 		
 		// Get the preference store and setup defaults
-	    IPreferenceStore preferenceStore = getPreferenceStore();	
-		preferenceStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, true);
+	    IPreferenceStore preferenceStore = getPreferenceStore();
+	    
+	    // don't use defaults until we do it correctly - defaults would
+	    // be ignored at the moment!
+//		preferenceStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, true);
 
 		btnAlwaysOnTop = new Button(composite, SWT.CHECK);
 		btnAlwaysOnTop.setText("Always keep Password Safe on top");
