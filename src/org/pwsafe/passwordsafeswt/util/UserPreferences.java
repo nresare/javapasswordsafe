@@ -21,10 +21,15 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.preference.JFacePreferences;
 
 /**
  * Interface to all user preference activity (such as password policy, MRU, and
  * all that jazz).
+ * TODO: Refactor this to wrap a IPreferenceStore, maybe finally get rid of this 
+ * class altogether (change OptionsActions at the same time!).
+ * 
+ * @see JFacePreferences for a central place for accessing a preference store.
  *  
  * @author Glen Smith
  */

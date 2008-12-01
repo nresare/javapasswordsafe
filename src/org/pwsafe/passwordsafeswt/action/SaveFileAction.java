@@ -36,6 +36,8 @@ public class SaveFileAction extends Action {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         try {
             app.saveFile();
+            //TODO: more use for status line 
+//            app.setStatusMessage("file saved successfully");
         } catch (IOException e1) {
             app.displayErrorDialog("Error Saving Safe", e1.getMessage(), e1);
         } catch (NoSuchAlgorithmException e) {

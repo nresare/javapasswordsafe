@@ -28,7 +28,9 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
 /**
- * Widget related preferences
+ * Widget related preferences.
+ * TODO: Maybe also the same store as UserPreferences 
+ * and get rid of load and save code. 
  * 
  * @author shamilbi
  */
