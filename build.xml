@@ -1,11 +1,8 @@
 <project name="PasswordSafeSWT" default="run">
 
     <!--
-
         PasswordSafeSWT build script for Ant.
-
         Initial work by Glen Smith.
-
     -->
     <target name="init" description="Initialise build parameters">
     	<property name="exe4j.bin" location="/home/roxon/app/exe4j/bin/ant.jar" />
@@ -72,6 +69,7 @@
         <copy todir="${classes.dir}">
             <fileset dir="${src.dir}">
                 <include name="**/*.gif" />
+                <include name="**/*.ico" />
             </fileset>
         </copy>
     	
@@ -115,9 +113,6 @@
         <exe4j projectfile="${win32.dir}/PasswordSafeSWT.exe4j" release="${build.version}" />
 
         <copy todir="${dist.win32.dir}/${zip.dir.name}">
-            <!--fileset dir="${platform.dir}/win32/dll">
-                <include name="*.dll" />
-            </fileset-->
             <fileset dir="${basedir}">
                 <include name="*.exe" />
             </fileset>
@@ -135,30 +130,32 @@
         <mkdir dir="${dist.linux.dir}/${zip.dir.name}" />
 
         <copy todir="${dist.linux.dir}/${zip.dir.name}">
-            <!--fileset dir="${linux.dir}/dll">
-                <include name="*.so" />
-            </fileset-->
-            <fileset dir="${linux.dir}">
+           <fileset dir="${linux.dir}">
                 <include name="pwsafe.sh" />
                 <include name="*.jar" />
             </fileset>
             <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
             <fileset dir="${deploy.dir}" includes="*.jar" />
+        	<fileset dir="${basedir}" includes="LICENSE"/>
         </copy>
 
-        <!-- And set the launcher script and dlls executable... -->
+        <!-- And set the launcher script executable... -->
         <chmod perm="a+x">
             <fileset dir="${dist.linux.dir}/${zip.dir.name}">
                 <include name="*.sh" />
             </fileset>
         </chmod>
 
-        <tar destfile="${dist.linux.dir}/${zip.dir.name}-linux.tar"
-                       basedir="${dist.linux.dir}" includes="${zip.dir.name}/**/*"
-                  />
-
-        <gzip src="${dist.linux.dir}/${zip.dir.name}-linux.tar" destfile="${dist.linux.dir}/${zip.dir.name}-linux.tar.gz"/>
-
+        <tar destfile="${dist.linux.dir}/${zip.dir.name}-linux.tar.gz"
+                       compression="gzip">
+    	  <tarfileset dir="${dist.linux.dir}/${zip.dir.name}" mode="755">
+    	    <include name="*.sh"/>
+    	  </tarfileset>
+    	  <tarfileset dir="${dist.linux.dir}/${zip.dir.name}">
+    	    <include name="**"/>
+    	    <exclude name="*.sh"/>
+       	  </tarfileset>
+        </tar>
 
     </target>
 
@@ -168,15 +165,13 @@
         <mkdir dir="${dist.linux-x86_64.dir}/${zip.dir.name}" />
 
         <copy todir="${dist.linux-x86_64.dir}/${zip.dir.name}">
-            <!--fileset dir="${linux.dir}/dll">
-                <include name="*.so" />
-            </fileset-->
-            <fileset dir="${linux.dir}">
+            <fileset dir="${linux-x86_64.dir}">
                 <include name="pwsafe.sh" />
                 <include name="*.jar" />
             </fileset>
             <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
             <fileset dir="${deploy.dir}" includes="*.jar" />
+        	<fileset dir="${basedir}" includes="LICENSE"/>
         </copy>
 
         <!-- And set the launcher script and dlls executable... -->
@@ -186,12 +181,16 @@
             </fileset>
         </chmod>
 
-        <tar destfile="${dist.linux-x86_64.dir}/${zip.dir.name}-linux.tar"
-                       basedir="${dist.linux-x86_64.dir}" includes="${zip.dir.name}/**/*"
-                  />
-
-        <gzip src="${dist.linux-x86_64.dir}/${zip.dir.name}-linux.tar" destfile="${dist.linux-x86_64.dir}/${zip.dir.name}-linux-x86_64.tar.gz"/>
-
+        <tar destfile="${dist.linux-x86_64.dir}/${zip.dir.name}-linux-x86_64.tar.gz"
+                        compression="gzip">
+     	  <tarfileset dir="${dist.linux-x86_64.dir}/${zip.dir.name}" mode="755">
+     	    <include name="*.sh"/>
+     	  </tarfileset>
+     	  <tarfileset dir="${dist.linux-x86_64.dir}/${zip.dir.name}">
+     	    <include name="**"/>
+     	    <exclude name="*.sh"/>
+       	  </tarfileset>
+         </tar>
 
     </target>
 
@@ -200,7 +199,6 @@
 
         <delete dir="${dist.mac.dir}/${zip.dir.name}" />
         <mkdir dir="${dist.mac.dir}/${zip.dir.name}" />
-
 
         <!-- http://www.loomcom.com/jarbundler/ -->
         <taskdef name="jarbundler" classpath="${lib.dir}/jarbundler-1.8.1.jar" classname="net.sourceforge.jarbundler.JarBundler" />
@@ -242,7 +240,6 @@
 
     <target name="deploy.src" depends="jar" description="Deploys a source code distro">
 
-
         <delete dir="${dist.src.dir}/${zip.dir.name}" />
         <mkdir dir="${dist.src.dir}/${zip.dir.name}" />
 
@@ -251,6 +248,7 @@
                 <include name="src/**/*.*" />
                 <include name="lib/**/*.*" />
                 <include name="platform/**/*.*" />
+            	<include name="LICENSE"/>
             	<exclude name="deploy/**/*.*" />
             </fileset>
             <fileset dir="${basedir}" includes="*.*" excludes="*.exe"/>
@@ -258,15 +256,10 @@
 
         <property name="src.tar.name" value="${dist.src.dir}/${zip.dir.name}-src-with-libs.tar"/>
 
-        <tar destfile="${src.tar.name}"
+        <tar destfile="${src.tar.name}.gz"
                    basedir="${dist.src.dir}" includes="${zip.dir.name}/**/*.*"
+                   compression="gzip"
               />
-
-        <gzip src="${src.tar.name}" destfile="${src.tar.name}.gz"/>
-
-        <delete file="${src.tar.name}"/>
-
-
     </target>
 
 
@@ -276,6 +269,7 @@
     </target>
 
 
+	<!-- TODO: convert this to svn ? -->
     <target name="version" depends="init" description="Update the version file and tag the CVS build">
 
             <cvs command="update ${version.file}" failonerror="true"/>
@@ -288,13 +282,13 @@
                 <entry key="build.user" type="string" value="${user.name}"/>
             </propertyfile>
 
-            <cvs command="commit -m Release ${version.file}" failonerror="true"/>
+            <!--cvs command="commit -m Release ${version.file}" failonerror="true"/-->
 
             <property file="${version.file}" />
 
-            <echo>CVS Tag is ${build.version.tag}. Version is ${build.version}</echo>
+            <echo>SVN Tag is ${build.version.tag}. Version is ${build.version}</echo>
 
-            <cvs command="tag -R ${build.version.tag}" failonerror="true"/>
+            <!--cvs command="tag -R ${build.version.tag}" failonerror="true"/-->
 
     </target>
 
