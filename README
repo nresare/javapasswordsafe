@@ -1,0 +1,56 @@
+Introduction:
+=============
+Password Safe SWT is a password database utility. Like many other such
+products, commercial and otherwise, it stores your passwords in an
+encrypted file, allowing you to remember only one password (the "safe
+combination"), instead of all the username/password combinations that
+you use. Password Safe SWT is a java clone of
+http://passwordsafe.sourceforge.net
+
+What makes Password Safe different? Three things:
+1. Simplicity: Password Safe is designed to do one thing, and to do it
+well. Start the application, enter your "combination", double-click on
+the right entry - presto - the password is now on your clipboard,ready
+for pasting.
+2. Security: The original version was designed and written by Bruce
+Schneier - 'nuff said.
+3. Open Source: The source code for the project is available for
+inspection. For more information, see http://jpwsafe.sourceforge.net
+
+Password Safe SWT currently runs on Windows 2000, XP and Vista, Mac OS X
+and Linux (x86 and x86_64). Support for additional platforms
+is planned for future releases. 
+
+How to Build
+============
+This is the Eclipse project for the SWT Gui for PasswordSafe, 
+Eclipse 3.4 is recommmended.
+
+In order to compile in Eclipse, you need to satisfy two project dependencies: 
+org.eclipse.swt and PasswordSafeLib
+
+For a howto for the org.eclipse.swt project, see http://www.eclipse.org/swt/eclipse.php
+In short, download the swt.zip for your platform and import it as a project into eclipse.
+
+to get PasswordSafeLib, create a new eclipse project "Checkout projects from svn",
+choose http(s)://jpwsafe.svn.sourceforge.net/svnroot/jpwsafe as a repository and 
+navigate to /trunk/PasswordSafeLib.
+Alternatively, modify your build path to use the passwordsafelib.jar instead.
+
+Helping Out:
+============
+Please report bugs via the project's bug tracking form, at
+http://sourceforge.net/tracker/?atid=1122415&group_id=243370 (you might
+want to browse the list, to see if the issue hasn't been reported
+already).
+
+Requests for features and enhancements should be submitted to the RFE
+(Request For Enhancements) page, at
+http://sourceforge.net/tracker/?atid=1122418&group_id=243370
+
+You can also post questions, suggestions, rants, raves, etc. to the
+Help or Open Discussion forums, at
+http://sourceforge.net/forum/forum.php?forum_id=880711
+
+If you wish to contribute to the project by writing code and/or
+documentation, please drop a note to the admins. 
