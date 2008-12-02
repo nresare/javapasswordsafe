@@ -6,13 +6,13 @@
 	<classpathentry kind="lib" path="lib/opencsv-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.4.0.v20080421-2006.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.4.0.I20080509-2000.jar"/>
-	<classpathentry kind="lib" path="lib/bfj241.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.preferences_3.2.201.R34x_v20080709.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/passwordsafe-lib.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk15-141.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.4.0.v20080512.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.jface_3.4.1.M20080827-2000.jar"/>
 	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.4.2.R34x_v20080826-1230.jar"/>
-	<classpathentry kind="lib" path="platform/linux/swt.jar" sourcepath="platform/linux/swt_src.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/PasswordSafeLib"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
