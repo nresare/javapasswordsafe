@@ -231,10 +231,10 @@
     	<!-- Finally, create a DMG file for the distro -->
     	<property name="dist.dmg.file" value="${zip.dir.name}.dmg"/>
     	<delete file="${dist.mac.dir}/${dist.dmg.file}"/>
-    	
-    	<exec executable="hdiutil">
-    		<arg line="create -srcfolder ${dist.mac.dir}/${zip.dir.name} ${dist.mac.dir}/${dist.dmg.file}"/>
-    	</exec>    	
+
+      <exec executable="hdiutil" dir="${dist.mac.dir}">
+        <arg line="create -srcfolder ${zip.dir.name} ${dist.dmg.file}"/>
+      </exec>
 
     </target>
 
