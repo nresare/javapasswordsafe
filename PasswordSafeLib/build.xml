@@ -28,7 +28,7 @@
 	<path id="project.class.path">
 		<pathelement path="${java.class.path}" />
 		<!--pathelement location="../PasswordSafeSWT/lib/bfj241.jar" />
-		<pathelement location="../PasswordSafeSWT/lib/bcprov-jdk14-133.jar" />
+		<pathelement location="../PasswordSafeSWT/lib/bcprov-jdk14-141.jar" />
 		<pathelement location="../PasswordSafeSWT/lib/commons-logging.jar" />
 		<pathelement location="/home/roxon/app/eclipse/plugins/org.junit_3.8.1/junit.jar" /-->
 		<pathelement location="bin" />
@@ -90,7 +90,9 @@ runtests   - Runs the JUnit tests.
 	</target>
 
 	<target name="compile" depends="cleanbin">
-		<javac srcdir="${srcdir}" destdir="${bindir}" deprecation="on">
+		<javac srcdir="${srcdir}" destdir="${bindir}" deprecation="on"
+	         source="1.4"
+	         target="1.4">
 			<classpath refid="project.class.path" />
 		</javac>
 		<copy todir="${bindir}">

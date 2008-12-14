@@ -26,7 +26,6 @@ public class PwsFileV3Test extends TestCase {
 	private String filename;
 	private String password;
 	
-	@Override
 	public void setUp() {
 		filename = System.getProperty("user.dir") + File.separator + "sample3.psafe3";
 		password = "Pa$$word";
@@ -38,7 +37,6 @@ public class PwsFileV3Test extends TestCase {
 		}
 	}
 	
-	@Override
 	public void tearDown() {
 		deletePwsFile(filename);
 	}
