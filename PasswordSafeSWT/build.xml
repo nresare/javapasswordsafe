@@ -64,7 +64,12 @@
 
     <target name="build" depends="init" description="Compile PasswordSafeSWT">
 
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="useful.jars" />
+        <javac srcdir="${src.dir}" 
+        	destdir="${classes.dir}" 
+        	classpathref="useful.jars" 
+	         source="1.5"
+	         target="1.5"
+		/>
 
         <copy todir="${classes.dir}">
             <fileset dir="${src.dir}">
