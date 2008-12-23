@@ -17,7 +17,7 @@ import org.pwsafe.lib.Log;
 import org.pwsafe.lib.UUID;
 import org.pwsafe.lib.Util;
 import org.pwsafe.lib.exception.EndOfFileException;
-import org.pwsafe.lib.exception.UnimplementedConversionException;
+
 
 /**
  * Support for new v3 Record type.
@@ -86,7 +86,7 @@ public class PwsRecordV3 extends PwsRecord
 	/**
 	 * Constant for the passphrase policy field.
 	 */
-	public static final int		PASSWORD_POLICY		= 11;
+	public static final int		PASSWORD_POLICY_DEPRECATED		= 11;
 
 	/**
 	 * Constant for the last modification time field.
@@ -106,7 +106,19 @@ public class PwsRecordV3 extends PwsRecord
 	/**
 	 * History of recently used passwords.
 	 */
-	public static final int     PASSWORD_HISTORY = 15;
+	public static final int     	PASSWORD_HISTORY = 15;
+	
+	/**
+	 * Constant for the password policy field.
+	 */
+	public static final int     	PASSWORD_POLICY = 16;
+	
+	
+	/**
+	 * History of recently used passwords.
+	 */
+	public static final int  		PASSWORD_EXPIRY_INTERVAL = 17;
+
 	
 	/**
 	 * Constant for the end of record marker field.
@@ -129,11 +141,13 @@ public class PwsRecordV3 extends PwsRecord
 		new Object [] { new Integer(PASSWORD_MOD_TIME),	"PASSWORD_MOD_TIME",	PwsTimeField.class },
 		new Object [] { new Integer(LAST_ACCESS_TIME),	"LAST_ACCESS_TIME",		PwsTimeField.class },
 		new Object [] { new Integer(PASSWORD_LIFETIME),	"PASSWORD_LIFETIME",	PwsTimeField.class },
-		new Object [] { new Integer(PASSWORD_POLICY),	"PASSWORD_POLICY",		PwsStringUnicodeField.class },
+		new Object [] { new Integer(PASSWORD_POLICY_DEPRECATED),	"PASSWORD_POLICY_OLD",		PwsStringUnicodeField.class },
 		new Object [] { new Integer(LAST_MOD_TIME),		"LAST_MOD_TIME",		PwsTimeField.class },
 		new Object [] { new Integer(URL),				"URL",					PwsStringUnicodeField.class },
 		new Object [] { new Integer(AUTOTYPE),			"AUTOTYPE",				PwsStringUnicodeField.class },
 		new Object [] { new Integer(PASSWORD_HISTORY),	"PASSWORD_HISTORY",		PwsStringUnicodeField.class },
+		new Object [] { new Integer(PASSWORD_POLICY),	"PASSWORD_POLICY",		PwsStringUnicodeField.class },
+		new Object [] { new Integer(PASSWORD_EXPIRY_INTERVAL),	"PASSWORD_EXPIRY_INTERVAL",		PwsStringUnicodeField.class },
 	};
 	
 
@@ -170,7 +184,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * ids to standard types.
 	 * 
 	 * @param file the file to read data from.
-	 * @param validTypes the types allowable in the incoing data
+	 * @param validTypes the types allowable in the incoming data
 	 * @throws EndOfFileException If end of file is reached
 	 * @throws IOException        If a read error occurs.
 	 */
@@ -395,11 +409,9 @@ public class PwsRecordV3 extends PwsRecord
 						itemVal	= new PwsTimeField( item.getType(), item.getByteData() );
 						break;
 	
-//					case PASSWORD_POLICY :
+//					case PASSWORD_EXPIRY_INTERVAL :
 //						break;
 //					
-//					case PASSWORD_HISTORY : 
-//						break;
 					
 					default :
 						itemVal = new PwsUnknownField(item.getType(), item.getByteData());

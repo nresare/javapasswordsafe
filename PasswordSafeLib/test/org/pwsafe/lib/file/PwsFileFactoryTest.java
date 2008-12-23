@@ -7,8 +7,6 @@
  */
 package org.pwsafe.lib.file;
 
-import java.net.URL;
-
 import org.pwsafe.lib.exception.PasswordSafeException;
 
 import junit.framework.TestCase;

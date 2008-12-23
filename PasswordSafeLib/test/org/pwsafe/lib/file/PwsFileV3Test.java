@@ -10,6 +10,7 @@ package org.pwsafe.lib.file;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Iterator;
 
 import junit.framework.TestCase;
 
@@ -86,5 +87,20 @@ public class PwsFileV3Test extends TestCase {
 		PwsFileV3 file2 = new PwsFileV3(filename, password);
 		file2.readAll();
 		System.out.println("Read records: " + file2.getRecordCount());
+	}
+	
+	/**
+	 * Checks if a record with a new password policy field (#16) can be loaded.
+	 * @throws Exception
+	 */
+	public void testNewPasswordPolicyField () throws Exception {
+		PwsFileV3 theFile = (PwsFileV3) PwsFileFactory.loadFile("new_policy_bug.psafe3", "test");
+		assertEquals(1,theFile.getRecordCount());
+		Iterator i = theFile.getRecords();
+		assertTrue(i.hasNext());
+		PwsRecordV3 theRow = (PwsRecordV3) i.next();
+		PwsField theField = theRow.getField(16);
+		assertNotNull(theField);
+		
 	}
 }
