@@ -112,15 +112,23 @@
 
         <delete dir="${dist.win32.dir}/${zip.dir.name}" />
         <mkdir dir="${dist.win32.dir}/${zip.dir.name}" />
+    	<mkdir dir="${dist.win32.dir}/${zip.dir.name}/lib" />
 
-        <taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="${exe4j.bin}" />
+        <!--taskdef name="exe4j" classname="com.exe4j.Exe4JTask" classpath="${exe4j.bin}" / -->
 
-        <exe4j projectfile="${win32.dir}/PasswordSafeSWT.exe4j" release="${build.version}" />
+        <!--exe4j projectfile="${win32.dir}/PasswordSafeSWT.exe4j" release="${build.version}" / -->
 
         <copy todir="${dist.win32.dir}/${zip.dir.name}">
-            <fileset dir="${basedir}">
+            <fileset dir="${win32.dir}">
                 <include name="*.exe" />
             </fileset>
+            <fileset dir="${deploy.dir}" includes="*.jar" />
+           	<fileset dir="${basedir}" includes="LICENSE"/>
+        </copy>
+    	
+        <copy todir="${dist.win32.dir}/${zip.dir.name}/lib">
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
+            <fileset dir="${win32.dir}" includes="*.jar" />
         </copy>
 
         <zip destfile="${dist.win32.dir}/${zip.dir.name}-win32.zip"
@@ -133,6 +141,7 @@
 
         <delete dir="${dist.linux.dir}/${zip.dir.name}" />
         <mkdir dir="${dist.linux.dir}/${zip.dir.name}" />
+    	<mkdir dir="${dist.linux.dir}/${zip.dir.name}/lib" />
 
         <copy todir="${dist.linux.dir}/${zip.dir.name}">
            <fileset dir="${linux.dir}">
@@ -168,6 +177,7 @@
 
         <delete dir="${dist.linux-x86_64.dir}/${zip.dir.name}" />
         <mkdir dir="${dist.linux-x86_64.dir}/${zip.dir.name}" />
+    	<mkdir dir="${dist.linux.dir}/${zip.dir.name}/lib" />
 
         <copy todir="${dist.linux-x86_64.dir}/${zip.dir.name}">
             <fileset dir="${linux-x86_64.dir}">
@@ -236,10 +246,10 @@
     	<!-- Finally, create a DMG file for the distro -->
     	<property name="dist.dmg.file" value="${zip.dir.name}.dmg"/>
     	<delete file="${dist.mac.dir}/${dist.dmg.file}"/>
-
-      <exec executable="hdiutil" dir="${dist.mac.dir}">
-        <arg line="create -srcfolder ${zip.dir.name} ${dist.dmg.file}"/>
-      </exec>
+    	
+    	<exec executable="hdiutil">
+    		<arg line="create -srcfolder ${dist.mac.dir}/${zip.dir.name} ${dist.mac.dir}/${dist.dmg.file}"/>
+    	</exec>    	
 
     </target>
 
