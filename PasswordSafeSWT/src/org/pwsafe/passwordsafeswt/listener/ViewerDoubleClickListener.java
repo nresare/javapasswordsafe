@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.pwsafe.passwordsafeswt.action.CopyPasswordAction;
 import org.pwsafe.passwordsafeswt.action.EditRecordAction;
-import org.pwsafe.passwordsafeswt.preference.MiscPreferences;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
 /**
@@ -33,7 +33,7 @@ public class ViewerDoubleClickListener implements IDoubleClickListener {
 	 */
 	public void doubleClick(DoubleClickEvent dce) {
 		if (UserPreferences.getInstance().getBoolean(
-				MiscPreferences.DOUBLE_CLICK_COPIES_TO_CLIPBOARD)) {
+				JpwPreferenceConstants.DOUBLE_CLICK_COPIES_TO_CLIPBOARD)) {
 			cpa.run();
 		} else {
 			era.run();

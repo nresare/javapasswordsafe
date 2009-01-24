@@ -8,26 +8,24 @@
 package org.pwsafe.passwordsafeswt.util;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.preference.PreferenceStore;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceInitializer;
 
 /**
  * Interface to all user preference activity (such as password policy, MRU, and
  * all that jazz).
- * TODO: Refactor this to wrap a IPreferenceStore, maybe finally get rid of this 
- * class altogether (change OptionsActions at the same time!).
  * 
  * @see JFacePreferences for a central place for accessing a preference store.
  *  
@@ -38,13 +36,15 @@ public class UserPreferences {
 	private static final Log log = LogFactory.getLog(UserPreferences.class);
 
 	private static UserPreferences prefs;
-	private static Properties props;
 
 	private static final String MRU = "mru.";
 	private static int MAX_MRU = 5;
 
 	public static final String PROPS_DIR = ".passwordsafe";
 	private static final String PREFS_FILENAME = "preferences.properties";
+	
+    private PreferenceStore prefStore;
+
 
 	/**
 	 * Private constructor enforces singleton.
@@ -64,13 +64,17 @@ public class UserPreferences {
 		return userDir;
 	}
 
+	public IPreferenceStore getPreferenceStore() {
+		return prefStore;
+	}
+
     /**
      * Loads preferences from a properties file.
      * 
      * @throws IOException if there are problems loading the preferences file
      */
 	private void loadPreferences() throws IOException {
-		props = new Properties();
+//		props = new Properties();
 		String userFile = getPreferencesFilename();
 		if (log.isDebugEnabled())
 			log.debug("Loading from [" + userFile + "]");
@@ -81,15 +85,18 @@ public class UserPreferences {
 				prefsDir.mkdir();
 			}
 		}
+
+		prefStore = new PreferenceStore(getPreferencesFilename());
+		JFacePreferences.setPreferenceStore(prefStore);
+		new  JpwPreferenceInitializer().initializeDefaultPreferences();
+		
 		if (prefsFile.exists()) {
-			FileInputStream fis = new FileInputStream(userFile);
-			props.load(fis);
-			fis.close();
-		} else {
-			props = new Properties();
+			prefStore.load();
 		}
+		//TODO: Check what happens if no file exists?
+			
 		if (log.isDebugEnabled())
-			log.debug("Loaded " + props.size()
+			log.debug("Loaded " + prefStore
 					+ " preference settings from file");
 	}
 
@@ -103,13 +110,12 @@ public class UserPreferences {
 		String userFile = getPreferencesFilename();
 		if (log.isDebugEnabled())
 			log.debug("Saving to [" + userFile + "]");
-		FileOutputStream fos = new FileOutputStream(userFile);
-		props.store(fos, "User Preferences for PasswordSafeSWT");
-		fos.close();
+		prefStore.save();
 		if (log.isDebugEnabled())
-			log.debug("Saved " + props.size()
+			log.debug("Saved " + prefStore
 					+ " preference settings from file");
 	}
+
 
     /**
      * Sets the name of the most recently opened file.
@@ -134,7 +140,7 @@ public class UserPreferences {
 				&& mruCounter <= MAX_MRU;) {
 			mruCounter++;
 			String nextFilename = (String) iter.next();
-			props.setProperty(MRU + mruCounter, nextFilename);
+			prefStore.setValue(MRU + mruCounter, nextFilename);
 		}
         try {
 			savePreferences();
@@ -152,8 +158,9 @@ public class UserPreferences {
 
 		List allFiles = new ArrayList();
 		for (int i = 0; i <= MAX_MRU; i++) {
-			String nextFile = props.getProperty(MRU + i);
-			if (nextFile != null)
+//			String nextFile = props.getProperty(MRU + i);
+			String nextFile = prefStore.getString(MRU + i);
+			if (nextFile != null && nextFile.length() > 0)
 				allFiles.add(nextFile);
 		}
 		return (String[]) allFiles.toArray(new String[0]);
@@ -177,15 +184,15 @@ public class UserPreferences {
     }
     
     public String getString(String propName) {
-    	return props.getProperty(propName, "");
+    	return prefStore.getString(propName);
     }
     
     public void setString(String propName, String propValue) {
-    	props.setProperty(propName, propValue);
+    	prefStore.setValue(propName, propValue);
     }
     
     public boolean getBoolean(String propName) {
-    	return Boolean.valueOf(props.getProperty(propName, "false")).booleanValue();
+    	return prefStore.getBoolean(propName);
     }
 
     /**

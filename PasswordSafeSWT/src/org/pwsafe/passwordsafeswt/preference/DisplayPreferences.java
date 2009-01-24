@@ -7,6 +7,11 @@
  */
 package org.pwsafe.passwordsafeswt.preference;
 
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ALWAYS_ON_TOP;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_PASSWORD_IN_LIST;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -21,14 +26,6 @@ import org.eclipse.swt.widgets.Control;
  * @author Glen Smith
  */
 public class DisplayPreferences extends PreferencePage {
-
-	// Names for preferences
-	public static final String ALWAYS_ON_TOP = "display.always.on.top";
-	public static final String SHOW_PASSWORD_IN_LIST = "show.password.in.list";
-	public static final String SHOW_PASSWORD_IN_EDIT_MODE = "show.password.in.edit.mode";
-	public static final String SHOW_ICON_IN_SYSTEM_TRAY = "show.icon.in.system.tray";
-	public static final String TREE_COLUMN_SIZE = "tree.width.column";
-	public static final String TABLE_COLUMN_SIZE = "table.width.column";
 
 	Button btnAlwaysOnTop;
 	Button btnShowPasswordInList;
@@ -51,10 +48,6 @@ public class DisplayPreferences extends PreferencePage {
 		// Get the preference store and setup defaults
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 	    
-	    // don't use defaults until we do it correctly - defaults would
-	    // be ignored at the moment!
-//		preferenceStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, true);
-
 		btnAlwaysOnTop = new Button(composite, SWT.CHECK);
 		btnAlwaysOnTop.setText("Always keep Password Safe on top");
 		btnAlwaysOnTop.setSelection(preferenceStore.getBoolean(ALWAYS_ON_TOP));

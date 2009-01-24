@@ -7,6 +7,14 @@
  */
 package org.pwsafe.passwordsafeswt.preference;
 
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_COPY_TO_CLIPBOARD;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_SAVE_ON_MIN;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_DB_ON_MIN;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_DB_ON_WS_LOCK;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_ON_IDLE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_ON_IDLE_MINS;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -23,15 +31,6 @@ import org.eclipse.swt.widgets.Spinner;
  * @author Glen Smith
  */
 public class SecurityPreferences extends PreferencePage {
-
-	  // Names for preferences	  
-	  public static final String CLEAR_CLIPBOARD_ON_MIN = "clear.clipboard.on.minimize";
-	  public static final String LOCK_DB_ON_MIN = "lock.database.on.minimize";
-	  public static final String CONFIRM_SAVE_ON_MIN = "confirm.save.on.minimize";
-	  public static final String CONFIRM_COPY_TO_CLIPBOARD = "confirm.copy.to.clipboard";
-	  public static final String LOCK_DB_ON_WS_LOCK = "lock.database.on.workstation.lock";
-	  public static final String LOCK_ON_IDLE = "lock.db.on.idle";
-	  public static final String LOCK_ON_IDLE_MINS = "lock.db.on.idle.minutes";
 
 	  // Text fields for user to enter preferences
 	  private Spinner spiMinutesIdle;

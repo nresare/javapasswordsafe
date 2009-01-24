@@ -8,13 +8,14 @@
 package org.pwsafe.passwordsafeswt.action;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.EditDialog;
 import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
-import org.pwsafe.passwordsafeswt.preference.UsernamePreferences;
-import org.pwsafe.passwordsafeswt.util.UserPreferences;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Adds a new record to the password safe.
@@ -35,10 +36,10 @@ public class AddRecordAction extends Action {
      */
     public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        PwsEntryDTO newEntry = PwsEntryDTO.fromPwsRecord(app.getPwsFile().newRecord());     
-		UserPreferences prefs = UserPreferences.getInstance();
-		if (prefs.getBoolean(UsernamePreferences.USE_DEFAULT_USERNAME)) {
-			newEntry.setUsername(prefs.getString(UsernamePreferences.DEFAULT_USERNAME));
+        PwsEntryDTO newEntry = PwsEntryDTO.fromPwsRecord(app.getPwsFile().newRecord());  
+        IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+		if (thePrefs.getBoolean(JpwPreferenceConstants.USE_DEFAULT_USERNAME)) {
+			newEntry.setUsername(thePrefs.getString(JpwPreferenceConstants.DEFAULT_USERNAME));
 		}
 		if (app.isTreeViewShowing()) {
 			// create new entry within existing group

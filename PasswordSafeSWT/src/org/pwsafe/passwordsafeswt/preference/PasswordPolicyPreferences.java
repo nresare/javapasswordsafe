@@ -7,6 +7,14 @@
  */
 package org.pwsafe.passwordsafeswt.preference;
 
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DEFAULT_PASSWORD_LENGTH;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_DIGITS;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_EASY_TO_READ;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_HEX_ONLY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_LOWERCASE_LETTERS;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_SYMBOLS;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_UPPERCASE_LETTERS;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -23,15 +31,6 @@ import org.eclipse.swt.widgets.Spinner;
  * @author Glen Smith
  */
 public class PasswordPolicyPreferences extends PreferencePage {
-
-	  // Names for preferences
-	  public static final String DEFAULT_PASSWORD_LENGTH = "default.password.length";
-	  public static final String USE_LOWERCASE_LETTERS = "use.lowercase.letters";
-	  public static final String USE_UPPERCASE_LETTERS = "use.uppercase.letters";
-	  public static final String USE_DIGITS = "use.digits";
-	  public static final String USE_SYMBOLS = "use.symbols";
-	  public static final String USE_EASY_TO_READ = "use.easy.to.read";
-	  public static final String USE_HEX_ONLY = "use.hex.only";
 
 	  // Text fields for user to enter preferences
 	  private Spinner spiLength;
@@ -105,7 +104,7 @@ public class PasswordPolicyPreferences extends PreferencePage {
 	    // Get the preference store
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 
-	    spiLength.setData(preferenceStore.getDefaultInt(DEFAULT_PASSWORD_LENGTH));
+	    spiLength.setSelection(preferenceStore.getDefaultInt(DEFAULT_PASSWORD_LENGTH));
 	    btnUseLowercase.setSelection(preferenceStore.getDefaultBoolean(USE_LOWERCASE_LETTERS));
 	    btnUserUppercase.setSelection(preferenceStore.getDefaultBoolean(USE_UPPERCASE_LETTERS));  
 	    btnUseDigits.setSelection(preferenceStore.getDefaultBoolean(USE_DIGITS));

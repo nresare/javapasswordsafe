@@ -42,5 +42,7 @@ public interface JpwPreferenceConstants {
 	public static final String DOUBLE_CLICK_COPIES_TO_CLIPBOARD = "double.click.copies.to.clipboard";
 
 
+	// GUI Internal
+	public static final String DISPLAY_AS_LIST_PREF = "display.as.list";
 	
 }

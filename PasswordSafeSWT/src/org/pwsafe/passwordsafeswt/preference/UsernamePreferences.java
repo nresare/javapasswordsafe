@@ -7,6 +7,10 @@
  */
 package org.pwsafe.passwordsafeswt.preference;
 
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DEFAULT_USERNAME;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.QUERY_FOR_DEFAULT_USERNAME;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_DEFAULT_USERNAME;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -24,11 +28,6 @@ import org.eclipse.swt.widgets.Text;
  * @author Glen Smith
  */
 public class UsernamePreferences extends PreferencePage {
-
-	  // Names for preferences
-	  public static final String USE_DEFAULT_USERNAME = "use.default.username";
-	  public static final String DEFAULT_USERNAME = "default.username";
-	  public static final String QUERY_FOR_DEFAULT_USERNAME = "query.for.default.username";
 
 	  // Text fields for user to enter preferences
 	  private Button btnUseDefaultUsername;

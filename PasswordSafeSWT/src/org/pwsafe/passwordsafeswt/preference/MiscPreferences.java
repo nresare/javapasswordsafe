@@ -7,6 +7,13 @@
  */
 package org.pwsafe.passwordsafeswt.preference;
 
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_ITEM_DELETION;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DOUBLE_CLICK_COPIES_TO_CLIPBOARD;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ESCAPE_KEY_EXITS_APP;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.HOT_KEY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.HOT_KEY_ACTIVE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SAVE_IMMEDIATELY_ON_EDIT;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -24,14 +31,6 @@ import org.eclipse.swt.widgets.Text;
  * @author Glen Smith
  */
 public class MiscPreferences extends PreferencePage {
-
-	  // Names for preferences
-	  public static final String CONFIRM_ITEM_DELETION = "confirm.item.deletion";
-	  public static final String SAVE_IMMEDIATELY_ON_EDIT = "save.immediately.on.edit";
-	  public static final String ESCAPE_KEY_EXITS_APP = "escape.key.exits.app";
-	  public static final String HOT_KEY_ACTIVE = "hot.key.active";
-	  public static final String HOT_KEY = "hot.key.value";
-	  public static final String DOUBLE_CLICK_COPIES_TO_CLIPBOARD = "double.click.copies.to.clipboard";
 	  
 	  // Text fields for user to enter preferences
 	  private Button btnConfirmDeletion;

@@ -7,6 +7,8 @@
  */
 package org.pwsafe.passwordsafeswt;
 
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DISPLAY_AS_LIST_PREF;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -34,7 +36,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -111,9 +113,7 @@ import org.pwsafe.passwordsafeswt.model.PasswordTableLabelProvider;
 import org.pwsafe.passwordsafeswt.model.PasswordTableSorter;
 import org.pwsafe.passwordsafeswt.model.PasswordTreeContentProvider;
 import org.pwsafe.passwordsafeswt.model.PasswordTreeLabelProvider;
-import org.pwsafe.passwordsafeswt.preference.DisplayPreferences;
-import org.pwsafe.passwordsafeswt.preference.MiscPreferences;
-import org.pwsafe.passwordsafeswt.preference.SecurityPreferences;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 import org.pwsafe.passwordsafeswt.preference.WidgetPreferences;
 import org.pwsafe.passwordsafeswt.util.IOUtils;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
@@ -173,9 +173,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private static PasswordSafeJFace app;
 
 	private PwsFile pwsFile;
-	
-	private static final String DISPLAY_AS_LIST_PREF = "display.as.list";
-	
+		
 	private static final String V1_GROUP_PLACEHOLDER = "UntitledGroup";
 
 	/**
@@ -243,9 +241,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * showing and hiding the tray.
 	 */
 	private void setupTrayItem() {
-		UserPreferences thePrefs = UserPreferences.getInstance();
 		
-		if (! thePrefs.getBoolean(DisplayPreferences.SHOW_ICON_IN_SYSTEM_TRAY)) {
+		IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+		
+		if (! thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
 			return;
 		}
 		
@@ -294,9 +293,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			trayItem.setImage(image);
 			getShell().addShellListener(new ShellAdapter() {
 				public void shellIconified(ShellEvent e) {
-					UserPreferences thePrefs = UserPreferences.getInstance();
+					final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 					if (trayItem != null
-							&& thePrefs.getBoolean(DisplayPreferences.SHOW_ICON_IN_SYSTEM_TRAY)) {
+							&& thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
 						if (log.isDebugEnabled())
 							log.debug("Shrinking to tray");
 						getShell().setVisible(false);
@@ -328,6 +327,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		tableViewer.setInput(new Object());
         tableViewer.setSorter(new PasswordTableSorter());
 
+        final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+
 		final TableColumn tableColumn = new TableColumn(table, SWT.NONE);
 		tableColumn.setWidth(100);
 		tableColumn.setText("Title");
@@ -346,7 +347,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		tableColumn_2.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, 3));
         WidgetPreferences.tuneTableColumn(tableColumn_2, getClass(), "table/notes");
 
-		if (UserPreferences.getInstance().getBoolean(DisplayPreferences.SHOW_PASSWORD_IN_LIST)) {
+		if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_PASSWORD_IN_LIST)) {
 			final TableColumn tableColumn_3 = new TableColumn(table, SWT.NONE);
 			tableColumn_3.setWidth(100);
 			tableColumn_3.setText("Password");
@@ -385,14 +386,13 @@ public class PasswordSafeJFace extends ApplicationWindow {
         WidgetPreferences.tuneTreeColumn(treeColumn_2, getClass(), "tree/notes");
 //        treeColumn_2.addSelectionListener(new TreeColumnSelectionAdaptor(treeViewer, 3));
 
-        if (UserPreferences.getInstance().getBoolean(DisplayPreferences.SHOW_PASSWORD_IN_LIST)) {
+        if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_PASSWORD_IN_LIST)) {
         	final TreeColumn treeColumn_3 = new TreeColumn(tree, SWT.LEFT);
             treeColumn_3.setText("Password");
             treeColumn_3.setWidth(100);
             WidgetPreferences.tuneTreeColumn(treeColumn_3, getClass(), "tree/password");
 //            treeColumn_3.addSelectionListener(new TreeColumnSelectionAdaptor(treeViewer, 4));
         }
-        IPreferenceStore ps = new PreferenceStore(UserPreferences.getInstance().getPreferencesFilename());
         
         TreeColumn[] columns = tree.getColumns();
         for (int i = 0; i < columns.length; i++) {
@@ -403,7 +403,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 //        treeViewer.setExpandedState(arg0, arg1)
 
 
-		if (UserPreferences.getInstance().getBoolean(DISPLAY_AS_LIST_PREF)) {
+		if (thePrefs.getBoolean(DISPLAY_AS_LIST_PREF)) {
 			showListView();
 			viewAsListAction.setChecked(true);
 			viewAsTreeAction.setChecked(false);
@@ -597,7 +597,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		final PwsFile pwsf = getPwsFile();
         if (pwsf != null && pwsf.getRecordCount() > 0) {
-			if (UserPreferences.getInstance().getBoolean(MiscPreferences.DOUBLE_CLICK_COPIES_TO_CLIPBOARD)) {
+        	final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+			if (thePrefs.getBoolean(JpwPreferenceConstants.DOUBLE_CLICK_COPIES_TO_CLIPBOARD)) {
 				setStatusMessage("Double Click on entry to copy password");
 			} else {
 				setStatusMessage("Double Click to edit entry");
@@ -812,7 +813,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 */
 	private void saveOnUpdateOrEditCheck() {
-		if (UserPreferences.getInstance().getBoolean(MiscPreferences.SAVE_IMMEDIATELY_ON_EDIT)) {
+		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();		
+		if (thePrefs.getBoolean(JpwPreferenceConstants.SAVE_IMMEDIATELY_ON_EDIT)) {
 			if (log.isDebugEnabled())
 				log.debug("Save on Edit option active. Saving database.");
 			saveFileAction.run();
@@ -919,10 +921,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 *
 	 */
 	private void tidyUpOnExit() {
-		if (UserPreferences.getInstance().getBoolean(SecurityPreferences.CLEAR_CLIPBOARD_ON_MIN)) {
+		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+
+		if (thePrefs.getBoolean(JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN)) {
 			clearClipboardAction.run();
 		}
-		UserPreferences.getInstance().setString(DISPLAY_AS_LIST_PREF, Boolean.toString(stackLayout.topControl == table));
+		thePrefs.setValue(DISPLAY_AS_LIST_PREF, stackLayout.topControl == table);
 		try {
 			UserPreferences.getInstance().savePreferences();
 		} catch (IOException e) {
@@ -1028,7 +1032,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			CSVWriter csvWriter = new CSVWriter(fw, '\t');
 			while (iter.hasNext()) {
 				PwsRecord nextRecord = (PwsRecord) iter.next();
-				List nextEntry = new ArrayList();
+				List<String> nextEntry = new ArrayList<String>();
 				
 				if (nextRecord instanceof PwsRecordV1) {
 					nextEntry.add(V1_GROUP_PLACEHOLDER);
@@ -1041,7 +1045,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					nextEntry.add(nextRecord.getField(PwsRecordV2.USERNAME).getValue().toString());
 					nextEntry.add(nextRecord.getField(PwsRecordV2.PASSWORD).getValue().toString());
 				}
-				String[] nextLine = (String[])nextEntry.toArray(new String[0]);
+				String[] nextLine = nextEntry.toArray(new String[0]);
 				csvWriter.writeNext(nextLine);
 				
 			}
@@ -1179,7 +1183,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		PwsFile pwsFile = getPwsFile();
 		if (pwsFile != null) {
-			List entryList = new ArrayList();
+			List<PwsEntryDTO> entryList = new ArrayList<PwsEntryDTO>();
 			for (Iterator iter = pwsFile.getRecords(); iter.hasNext();) {
 				PwsEntryDTO nextDTO = PwsEntryDTO.fromPwsRecord((PwsRecord) iter.next());
 				entryList.add(nextDTO);
@@ -1250,7 +1254,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 * @param e an event containing information about the activation
 			 */
 			public void shellActivated(ShellEvent e) {
-				final UserPreferences thePrefs = UserPreferences.getInstance();
 				if (lockTask != null) {
 					lockTask.cancel();
 					lockTask = null;
@@ -1258,7 +1261,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				if (locked) {
 					log.info("trying to unlock");
 			        PasswordDialog pd = new PasswordDialog(app.getShell());
-			        String fileName = thePrefs.getMRUFile();
+			        String fileName = UserPreferences.getInstance().getMRUFile();
 			        pd.setFileName(fileName);
 			        String password = (String) pd.open();
 			        if (password != null) {
@@ -1321,14 +1324,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 * @param e an event containing information about the minimization
 			 */
 			public void shellIconified(ShellEvent e) {
-				final UserPreferences thePrefs = UserPreferences.getInstance();
-				if (thePrefs.getBoolean(SecurityPreferences.CLEAR_CLIPBOARD_ON_MIN)) {
+				final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+				if (thePrefs.getBoolean(JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN)) {
 					clearClipboardAction.run();
 				}
 				
 				//handle Save and DB lock
 				if (isDirty()) {
-					if (thePrefs.getBoolean(SecurityPreferences.CONFIRM_SAVE_ON_MIN)) {
+					if (thePrefs.getBoolean(JpwPreferenceConstants.CONFIRM_SAVE_ON_MIN)) {
 						//TODO
 						saveFileAction.run();
 					} else {
@@ -1336,7 +1339,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					}
 				}
 				
-				if (thePrefs.getBoolean(SecurityPreferences.LOCK_DB_ON_MIN)) {
+				if (thePrefs.getBoolean(JpwPreferenceConstants.LOCK_DB_ON_MIN)) {
 				    app.setPassphrase(null);
 				    app.clearView();
 				    app.setPwsFile(null);
@@ -1346,12 +1349,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			}
 			
 			private void startLockTimer() {
-				final UserPreferences thePrefs = UserPreferences.getInstance();
-				if (pwsFile != null && thePrefs.getBoolean(SecurityPreferences.LOCK_ON_IDLE)){
+				final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+				if (pwsFile != null && thePrefs.getBoolean(JpwPreferenceConstants.LOCK_ON_IDLE)){
 					if (lockTask != null) {//be on the safe side:
 						lockTask.cancel();
 					}
-					String idleMins = thePrefs.getString(SecurityPreferences.LOCK_ON_IDLE_MINS);
+					String idleMins = thePrefs.getString(JpwPreferenceConstants.LOCK_ON_IDLE_MINS);
 					try {
 						int mins = Integer.parseInt(idleMins);
 						lockTask = lockDbAction.createTaskTimer();

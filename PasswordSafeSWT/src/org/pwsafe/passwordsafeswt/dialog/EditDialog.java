@@ -39,8 +39,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
-import org.pwsafe.passwordsafeswt.preference.DisplayPreferences;
-import org.pwsafe.passwordsafeswt.preference.PasswordPolicyPreferences;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 import org.pwsafe.passwordsafeswt.util.ShellHelpers;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
@@ -221,7 +220,7 @@ public class EditDialog extends Dialog {
 		formData_7.right = new FormAttachment(txtUsername, 0 , SWT.RIGHT);
 		txtPassword.setLayoutData(formData_7);
 		txtPassword.addKeyListener(dirtyKeypress);
-		if (!UserPreferences.getInstance().getBoolean(DisplayPreferences.SHOW_PASSWORD_IN_EDIT_MODE)) {
+		if (!UserPreferences.getInstance().getBoolean(JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE)) {
         txtPassword.setEchoChar('*');
 		}
         if (entryToEdit.getPassword() != null)
@@ -245,7 +244,7 @@ public class EditDialog extends Dialog {
 		formData_8.top = new FormAttachment(txtUsername, 10, SWT.BOTTOM);
 		formData_8.right = new FormAttachment(70, 0);
 		btnShowPassword.setLayoutData(formData_8);
-		if (UserPreferences.getInstance().getBoolean(DisplayPreferences.SHOW_PASSWORD_IN_EDIT_MODE)) {
+		if (UserPreferences.getInstance().getBoolean(JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE)) {
 			btnShowPassword.setText("Hide Password");
 		} else {
 			btnShowPassword.setText("Show Password");
@@ -515,12 +514,12 @@ public class EditDialog extends Dialog {
 		String BASE_DIGITS = "1234567890";
         String BASE_DIGITS_EASY = "23456789";
 		String BASE_SYMBOLS = "!@#$%^&*()";
-		StringBuffer pwSet = new StringBuffer();
+		StringBuilder pwSet = new StringBuilder();
 		
 		UserPreferences.reload(); // make sure we have a fresh copy
 		UserPreferences preferenceStore = UserPreferences.getInstance();
 		
-		String passwordLengthStr = preferenceStore.getString(PasswordPolicyPreferences.DEFAULT_PASSWORD_LENGTH);
+		String passwordLengthStr = preferenceStore.getString(JpwPreferenceConstants.DEFAULT_PASSWORD_LENGTH);
 		int passwordLength = 0;
 		if (passwordLengthStr != null && passwordLengthStr.trim().length() > 0) {
 			passwordLength = Integer.parseInt(passwordLengthStr);
@@ -528,11 +527,11 @@ public class EditDialog extends Dialog {
 		if (passwordLength <= 0)
 			passwordLength = 8; //let's be sensible about this..
 		
-		boolean useLowerCase = preferenceStore.getBoolean(PasswordPolicyPreferences.USE_LOWERCASE_LETTERS);
-		boolean useUpperCase = preferenceStore.getBoolean(PasswordPolicyPreferences.USE_UPPERCASE_LETTERS);
-		boolean useDigits = preferenceStore.getBoolean(PasswordPolicyPreferences.USE_DIGITS);
-		boolean useSymbols = preferenceStore.getBoolean(PasswordPolicyPreferences.USE_SYMBOLS);
-		boolean useEasyToRead = preferenceStore.getBoolean(PasswordPolicyPreferences.USE_EASY_TO_READ);
+		boolean useLowerCase = preferenceStore.getBoolean(JpwPreferenceConstants.USE_LOWERCASE_LETTERS);
+		boolean useUpperCase = preferenceStore.getBoolean(JpwPreferenceConstants.USE_UPPERCASE_LETTERS);
+		boolean useDigits = preferenceStore.getBoolean(JpwPreferenceConstants.USE_DIGITS);
+		boolean useSymbols = preferenceStore.getBoolean(JpwPreferenceConstants.USE_SYMBOLS);
+		boolean useEasyToRead = preferenceStore.getBoolean(JpwPreferenceConstants.USE_EASY_TO_READ);
 		
 		if (useLowerCase) {
 			if (useEasyToRead) {
