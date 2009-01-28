@@ -29,7 +29,9 @@ public class ChangeSafeCombinationAction extends Action {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         PasswordDialog pd = new PasswordDialog(app.getShell());
         if (app.getPwsFile() != null) {
-            pd.setFileName(app.getPwsFile().getFilename());
+            //pd.setFileName(app.getPwsFile().getFilename());
+        	// FIXME
+        	pd.setFileName("FIXME");
             String newPassword = (String) pd.open();
             if (newPassword != null) {
                 app.setPassphrase(newPassword);

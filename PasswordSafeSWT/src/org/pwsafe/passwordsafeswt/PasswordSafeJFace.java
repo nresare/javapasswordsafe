@@ -74,6 +74,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.file.PwsFile;
 import org.pwsafe.lib.file.PwsFileFactory;
+import org.pwsafe.lib.file.PwsFileStorage;
 import org.pwsafe.lib.file.PwsRecord;
 import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsRecordV2;
@@ -688,8 +689,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	public void saveFile() throws IOException, NoSuchAlgorithmException {
 		PwsFile file = getPwsFile();
-		String fileName = file.getFilename();
-		if (fileName == null) {
+		if (file.getStorage() == null) {
 			saveFileAsAction.run();
 		} else {
 			file.save();
@@ -704,7 +704,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 *             if SHA-1 implementation not found
 	 */
 	public void saveFileAs(String newFilename) throws IOException, NoSuchAlgorithmException {
-		getPwsFile().setFilename(newFilename);
+		PwsFileStorage s = new PwsFileStorage(newFilename);
+		getPwsFile().setStorage(s);
 		getPwsFile().save();
 		getShell().setText(PasswordSafeJFace.APP_NAME + " - " + newFilename);
 		UserPreferences.getInstance().setMostRecentFilename(newFilename);
