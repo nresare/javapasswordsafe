@@ -14,6 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
+import net.sourceforge.blowfishj.BlowfishECB;
+import net.sourceforge.blowfishj.SHA1;
+
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
@@ -21,9 +24,6 @@ import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.InvalidPassphraseException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
-
-import net.sourceforge.blowfishj.BlowfishECB;
-import net.sourceforge.blowfishj.SHA1;
 
 /**
  * This is a singleton factory class used to load a PasswordSafe file.  It is able to
@@ -34,6 +34,7 @@ import net.sourceforge.blowfishj.SHA1;
  */
 public class PwsFileFactory
 {
+	public static String S3EXT = "pws3";
 	private static final Log LOG = Log.getInstance(PwsFileFactory.class.getPackage().getName());
 
 	/**
@@ -142,7 +143,7 @@ public class PwsFileFactory
 	 * 
 	 * @return the generated checksum.
 	 */
-	static final byte [] genRandHash( String passphrase, byte [] stuff ) throws NoSuchAlgorithmException
+	static final byte [] genRandHash( String passphrase, byte [] stuff )
 	{
 		LOG.enterMethod( "PwsFileFactory.genRandHash" );
 
@@ -203,6 +204,13 @@ public class PwsFileFactory
 		
 		PwsFile		file;
 		
+		if (filename.endsWith(S3EXT)) {
+			file = new PwsFileV3(new PwsS3Storage(filename, null, passphrase), passphrase);
+			file.readAll();
+			file.close();
+			return file;			
+		}
+		
 		// First check for a v3 file...
 		FileInputStream fis = new FileInputStream(filename);
 		byte[] first4Bytes = new byte[4];
@@ -210,7 +218,7 @@ public class PwsFileFactory
 		fis.close();
 		if (Util.bytesAreEqual("PWS3".getBytes(), first4Bytes)) {
 			LOG.debug1( "This is a V3 format file." );
-			file = new PwsFileV3( filename, passphrase);
+			file = new PwsFileV3(new PwsFileStorage(filename), passphrase);
 			file.readAll();
 			file.close();
 			return file;
@@ -221,7 +229,7 @@ public class PwsFileFactory
 
 		checkPassword( filename, passphrase );
 
-		file	= new PwsFileV1( filename, passphrase );
+		file	= new PwsFileV1( new PwsFileStorage(filename), passphrase );
 		rec		= (PwsRecordV1) file.readRecord();
 
 		file.close();
@@ -233,12 +241,12 @@ public class PwsFileFactory
 		if ( rec.getField(PwsRecordV1.TITLE).equals(PwsFileV2.ID_STRING) )
 		{
 			LOG.debug1( "This is a V2 format file." );
-			file = new PwsFileV2( filename, passphrase );
+			file = new PwsFileV2( new PwsFileStorage(filename), passphrase );
 		}
 		else
 		{
 			LOG.debug1( "This is a V1 format file." );
-			file = new PwsFileV1( filename, passphrase );
+			file = new PwsFileV1( new PwsFileStorage(filename), passphrase );
 		}
 		file.readAll();
 		file.close();

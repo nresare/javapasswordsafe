@@ -7,9 +7,10 @@
  */
 package org.pwsafe.lib.file;
 
+import junit.framework.TestCase;
+
 import org.pwsafe.lib.exception.PasswordSafeException;
 
-import junit.framework.TestCase;
 
 public class PwsFileFactoryTest extends TestCase {
 
@@ -70,6 +71,12 @@ public class PwsFileFactoryTest extends TestCase {
 		//TODO proper tests here
 	}
 	
+	/* So far, this test just makes sure no exceptions are thrown */
+	public void testFileStorage() throws Exception {
+		PwsFileStorage pfs = new PwsFileStorage("password_file_2.dat");
+		byte[] data = pfs.load();
+	}
+
 	public void testLoadFile () throws Exception {
 		PwsFile theFile = PwsFileFactory.loadFile("password_file_2.dat", "THEFISH");
 		

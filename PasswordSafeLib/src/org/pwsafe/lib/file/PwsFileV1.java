@@ -52,10 +52,10 @@ public class PwsFileV1 extends PwsFile
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException 
 	 */
-	public PwsFileV1( String filename, String passphrase )
+	public PwsFileV1( PwsStorage storage, String passphrase )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
-		super( filename, passphrase );
+		super( storage, passphrase );
 	}
 
 	/**

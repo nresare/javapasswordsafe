@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/bcprov-jdk14-141.jar"/>
 	<classpathentry kind="lib" path="lib/blowfishj-2.14.jar"/>
+	<classpathentry kind="lib" path="lib/s3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

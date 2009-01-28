@@ -44,7 +44,8 @@ public class PwsFileV3Test extends TestCase {
 	
 	private static void createPwsFile(String filename, String password) throws IOException {
 		PwsFileV3 pwsFileV3 = new PwsFileV3();
-		pwsFileV3.setFilename(filename);
+		PwsFileStorage storage = new PwsFileStorage(filename);
+		pwsFileV3.setStorage(storage);
 		pwsFileV3.setPassphrase(password);
 		pwsFileV3.save();
 	}
@@ -57,7 +58,8 @@ public class PwsFileV3Test extends TestCase {
 	public void testPassphrase() throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
 		createPwsFile(filename, password);
 		
-		PwsFileV3 pwsFile = new PwsFileV3(filename, password);
+		PwsFileStorage storage = new PwsFileStorage(filename);
+		PwsFileV3 pwsFile = new PwsFileV3(storage, password);
 		pwsFile.readAll();
 		System.out.println(pwsFile.getRecordCount());
 		pwsFile.close();
@@ -77,14 +79,17 @@ public class PwsFileV3Test extends TestCase {
             v3.setField(new PwsStringUnicodeField(PwsRecordV3.NOTES , "notes"+i));
 			file.add(v3);
 		}
-		file.setFilename(filename);
+		
+		PwsFileStorage storage = new PwsFileStorage(filename);
+		file.setStorage(storage);
 		System.out.println("\nDone.");
 		
 		file.save();
 		System.out.println("Wrote records: " + file.getRecordCount());
 		file.close();
 		
-		PwsFileV3 file2 = new PwsFileV3(filename, password);
+		PwsFileStorage storage2 = new PwsFileStorage(filename);
+		PwsFileV3 file2 = new PwsFileV3(storage2, password);
 		file2.readAll();
 		System.out.println("Read records: " + file2.getRecordCount());
 	}

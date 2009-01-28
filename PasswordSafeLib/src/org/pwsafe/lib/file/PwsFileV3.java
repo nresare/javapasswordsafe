@@ -9,9 +9,8 @@
  */
 package org.pwsafe.lib.file;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
@@ -88,31 +87,22 @@ public class PwsFileV3 extends PwsFile
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException 
 	 */
-	public PwsFileV3( String filename, String passphrase ) 
+	public PwsFileV3( PwsStorage storage, String passphrase ) 
 	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
-		super( filename, passphrase );
-	}
-	
-	public void dumpBytes(String title, byte[] bytes) {
-		System.out.print(title + " [");
-		for (int i = 0; i < bytes.length; i++) {
-			System.out.print(bytes[i] + " ");
-		}
-		System.out.println("]");
+		super( storage, passphrase );
 	}
 
-	protected void open( File file, String passphrase )
+	protected void open( String passphrase )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException
 	{
 		LOG.enterMethod( "PwsFileV3.init" );
 
-		setFilename( file );
-
 		Passphrase		= passphrase;
 		
-
-		InStream		= new FileInputStream( file );
+		if (storage!=null) {
+			InStream		= new ByteArrayInputStream(storage.load());
+		}
 		headerV3		= new PwsFileHeaderV3( this );
 		
 		int iter = Util.getIntFromByteArray(headerV3.getIter(), 0);
@@ -156,15 +146,8 @@ public class PwsFileV3 extends PwsFile
 	throws IOException
 	{
 		PwsRecordV3	rec;
-		File		tempFile;
-		File		oldFile;
-		File		bakFile;
-
-		// For safety we'll write to a temporary file which will be renamed to the
-		// real name if we manage to write it successfully.
-
-		tempFile	= File.createTempFile( "pwsafe", null, new File(FilePath) );
-		OutStream	= new FileOutputStream( tempFile );
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		OutStream	= baos;
 
 		try
 		{
@@ -187,44 +170,13 @@ public class PwsFileV3 extends PwsFile
 	
 			OutStream.close();
 	
-			oldFile		= new File( FilePath, FileName );
-			bakFile		= new File( FilePath, FileName + "~" );
-
-			if ( bakFile.exists() )
-			{	
-				if ( !bakFile.delete() )
-				{
-					LOG.error( I18nHelper.getInstance().formatMessage("E00012", new Object [] { bakFile.getCanonicalPath() } ) );
-					// TODO Throw an exception here
-					return;
-				}
-			}
-
-			if ( oldFile.exists() )
-			{
-				if ( !oldFile.renameTo( bakFile ) )
-				{
-					LOG.error( I18nHelper.getInstance().formatMessage("E00011", new Object [] { tempFile.getCanonicalPath() } ) );
-					// TODO Throw an exception here?
-					return;
-				}
-				LOG.debug1( "Old file successfully renamed to " + bakFile.getCanonicalPath() );
-			}
-
-			if ( tempFile.renameTo( oldFile ) )
-			{
-				LOG.debug1( "Temp file successfully renamed to " + oldFile.getCanonicalPath() );
-
-				for ( Iterator iter = getRecords(); iter.hasNext(); )
-				{
-					rec = (PwsRecordV3) iter.next();
-					rec.resetModified();
-				}
+			if (storage.save(baos.toByteArray())) {
 				Modified = false;
 			}
 			else
 			{
-				LOG.error( I18nHelper.getInstance().formatMessage("E00010", new Object [] { tempFile.getCanonicalPath() } ) );
+				// FIXME: What is the proper error code (see PwsFile::save).
+				LOG.error( I18nHelper.getInstance().formatMessage("E00010", new Object [] { "Storage" } ) );
 				// TODO Throw an exception here?
 				return;
 			}
@@ -322,7 +274,7 @@ public class PwsFileV3 extends PwsFile
 	}
 	
 	/**
-	 * Reads bytes from the file and decryps them.  <code>buff</code> may be any length provided
+	 * Reads bytes from the file and decrypts them.  <code>buff</code> may be any length provided
 	 * that is a multiple of <code>BLOCK_LENGTH</code> bytes in length.
 	 * 
 	 * @param buff the buffer to read the bytes into.
@@ -331,7 +283,7 @@ public class PwsFileV3 extends PwsFile
 	 * @throws IOException If a read error occurs.
 	 * @throws IllegalArgumentException If <code>buff.length</code> is not an integral multiple of <code>BLOCK_LENGTH</code>.
 	 */
-	protected void readDecryptedBytes( byte [] buff )
+	public void readDecryptedBytes( byte [] buff )
 	throws EndOfFileException, IOException
 	{
 		if ( (buff.length == 0) || ((buff.length % getBlockSize()) != 0) )
@@ -361,7 +313,7 @@ public class PwsFileV3 extends PwsFile
 	 * 
 	 * @throws IOException
 	 */
-	protected void writeEncryptedBytes( byte [] buff )
+	public void writeEncryptedBytes( byte [] buff )
 	throws IOException
 	{
 		if ( (buff.length == 0) || ((buff.length % getBlockSize()) != 0) )

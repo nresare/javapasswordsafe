@@ -1,21 +1,22 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
  * http://www.opensource.org/licenses/artistic-license-2.0.php
  */
-package org.pwsafe.test;
+package org.pwsafe.lib.file;
+
+import junit.framework.TestCase;
 
 import org.pwsafe.lib.file.PwsFile;
+import org.pwsafe.lib.file.PwsFileStorage;
 import org.pwsafe.lib.file.PwsFileV1;
 import org.pwsafe.lib.file.PwsRecord;
 import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsStringField;
-
-import junit.framework.TestCase;
 
 /**
  *
@@ -34,7 +35,7 @@ public class FileTest extends TestCase
 	
 			v1File	= new PwsFileV1();
 	
-			v1File.setFilename( "V1 New File.dat" );
+			v1File.setStorage( new PwsFileStorage("V1 New File.dat") );
 			v1File.setPassphrase( "passphrase" );
 	
 			rec = v1File.newRecord();

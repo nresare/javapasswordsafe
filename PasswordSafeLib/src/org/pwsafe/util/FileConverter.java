@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.pwsafe.lib.file.PwsFile;
+import org.pwsafe.lib.file.PwsFileStorage;
 import org.pwsafe.lib.file.PwsFileV1;
 import org.pwsafe.lib.file.PwsFileV2;
 import org.pwsafe.lib.file.PwsRecord;
@@ -76,7 +77,13 @@ public class FileConverter
 		newFile = new PwsFileV2();
 
 		newFile.setPassphrase( oldFile.getPassphrase() );
-		newFile.setFilename( makeNewFilename(oldFile.getFilename(), "v2-") );
+//<<<<<<< .working
+//		newFile.setFilename( makeNewFilename(oldFile.getFilename(), "v2-") );
+//=======
+		PwsFileStorage oldStorage = (PwsFileStorage)oldFile.getStorage();
+		PwsFileStorage newStorage = new PwsFileStorage(makeNewFilename(oldStorage.getFilename(), "v2-"));
+		newFile.setStorage( newStorage );
+//>>>>>>> .merge-right.r320
 
 		for ( Iterator iter = oldFile.getRecords(); iter.hasNext(); )
 		{
@@ -113,7 +120,13 @@ public class FileConverter
 		newFile = new PwsFileV1();
 
 		newFile.setPassphrase( oldFile.getPassphrase() );
-		newFile.setFilename( makeNewFilename(oldFile.getFilename(), "v1-") );
+//<<<<<<< .working
+//		newFile.setFilename( makeNewFilename(oldFile.getFilename(), "v1-") );
+//=======
+		PwsFileStorage oldStorage = (PwsFileStorage)oldFile.getStorage();
+		PwsFileStorage newStorage = new PwsFileStorage(makeNewFilename(oldStorage.getFilename(), "v1-"));
+		newFile.setStorage( newStorage );
+//>>>>>>> .merge-right.r320
 
 		for ( Iterator iter = oldFile.getRecords(); iter.hasNext(); )
 		{
