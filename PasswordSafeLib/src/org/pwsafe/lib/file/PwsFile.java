@@ -18,12 +18,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import net.sourceforge.blowfishj.SHA1;
-
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
 import org.pwsafe.lib.crypto.BlowfishPws;
+import org.pwsafe.lib.crypto.SHA1;
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
@@ -542,7 +541,11 @@ public abstract class PwsFile
 			throw new IllegalArgumentException( I18nHelper.getInstance().formatMessage("E00001") );
 		}
 		readBytes( buff );
-		Algorithm.decrypt( buff );
+		try {
+			Algorithm.decrypt( buff );
+		} catch (PasswordSafeException e) {
+			LOG.error(e.getMessage());
+		}
 	}
 
 	/**
@@ -726,7 +729,11 @@ public abstract class PwsFile
 		}
 		
 		byte [] temp = Util.cloneByteArray( buff );
-		Algorithm.encrypt( temp );
+		try {
+			Algorithm.encrypt( temp );
+		} catch (PasswordSafeException e) {
+			LOG.error(e.getMessage());
+		}
 		writeBytes( temp );
 	}
 

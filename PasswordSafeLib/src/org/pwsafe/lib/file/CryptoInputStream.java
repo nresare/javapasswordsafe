@@ -3,9 +3,10 @@ package org.pwsafe.lib.file;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.blowfishj.SHA1;
-
+import org.pwsafe.lib.Log;
 import org.pwsafe.lib.crypto.BlowfishPws;
+import org.pwsafe.lib.crypto.SHA1;
+import org.pwsafe.lib.exception.PasswordSafeException;
 
 /**
  * This class is used to decrypt an existing InputStream
@@ -18,6 +19,8 @@ import org.pwsafe.lib.crypto.BlowfishPws;
  *
  */
 public class CryptoInputStream extends InputStream {
+	private static final Log LOG = Log.getInstance(CryptoInputStream.class.getPackage().getName());
+	
 	private byte [] block = new byte[16];
 	private int index = 0;
 	private int curBlockSize = 0;
@@ -58,7 +61,11 @@ public class CryptoInputStream extends InputStream {
 			engine = makeBlowfish(passphrase.getBytes());
 			curBlockSize = rawStream.read(block);
 			if (curBlockSize==-1) { return -1; } 
-			engine.decrypt(block);
+			try {
+				engine.decrypt(block);
+			} catch (PasswordSafeException e) {
+				LOG.error(e.getMessage());
+			}
 		}
 		if (index<curBlockSize) {
 			/** Get next byte in existing buffer */
@@ -68,7 +75,11 @@ public class CryptoInputStream extends InputStream {
 			/** Read a new block */
 			curBlockSize = rawStream.read(block);
 			if (curBlockSize==-1) { return -1; }
-			engine.decrypt(block);
+			try {
+				engine.decrypt(block);
+			} catch (PasswordSafeException e) {
+				LOG.error(e.getMessage());
+			}
 			index = 1;
 			return (int)block[0] & 0xff;
 		}

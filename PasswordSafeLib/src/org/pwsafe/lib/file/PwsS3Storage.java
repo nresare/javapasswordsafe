@@ -9,8 +9,7 @@ import java.io.InputStreamReader;
 import java.util.Vector;
 
 import org.pwsafe.lib.Log;
-
-import net.sourceforge.blowfishj.SHA1;
+import org.pwsafe.lib.crypto.SHA1;
 
 import com.amazonaws.crypto.Base64;
 import com.amazonaws.s3.S3;

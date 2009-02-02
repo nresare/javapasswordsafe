@@ -3,10 +3,11 @@ package org.pwsafe.lib.file;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sourceforge.blowfishj.SHA1;
-
+import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
 import org.pwsafe.lib.crypto.BlowfishPws;
+import org.pwsafe.lib.crypto.SHA1;
+import org.pwsafe.lib.exception.PasswordSafeException;
 
 /**
  * This class is used to encrypt an existing OutputStream
@@ -25,6 +26,8 @@ import org.pwsafe.lib.crypto.BlowfishPws;
  *
  */
 public class CryptoOutputStream extends OutputStream {
+	private static final Log LOG = Log.getInstance(CryptoOutputStream.class.getPackage().getName());
+	
 	private byte [] block = new byte[16];
 	private int index = 0;
 	/* Header info */
@@ -94,7 +97,11 @@ public class CryptoOutputStream extends OutputStream {
 		if (salt==null) initialize();
 		for(;index<16;index++) { block[index] = 0; }
 		index = 0;
-		engine.encrypt(block);
+		try {
+			engine.encrypt(block);
+		} catch (PasswordSafeException e) {
+			LOG.error(e.getMessage());
+		}
 		rawStream.write(block);
 		rawStream.close();
 		super.close();
@@ -106,7 +113,11 @@ public class CryptoOutputStream extends OutputStream {
 		/** first time through, parse header and set up engine */
 		if (salt==null) initialize();
 		if (index==16) {
-			engine.encrypt(block);
+			try {
+				engine.encrypt(block);
+			} catch (PasswordSafeException e) {
+				LOG.error(e.getMessage());
+			}
 			rawStream.write(block);
 			index = 0;
 		}
