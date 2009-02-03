@@ -16,6 +16,7 @@
 <project name="PasswordSafeLib" default="help">
 
 	<property name="srcdir" location="src" />
+	<property name="testsrcdir" location="test" />
 	<property name="bindir" location="bin" />
 	<property name="docdir" location="doc" />
     <property name="libdir" location="lib" />
@@ -94,7 +95,13 @@ runtests   - Runs the JUnit tests.
 	         source="1.4"
 	         target="1.4">
 			<classpath refid="project.class.path" />
+		</javac>		
+		<javac srcdir="${testsrcdir}" destdir="${bindir}" deprecation="on"
+	        source="1.4"
+	        target="1.4">
+			<classpath refid="project.class.path" />
 		</javac>
+
 		<copy todir="${bindir}">
 			<fileset refid="resources-1" />
 			<fileset refid="resources-2" />
@@ -108,6 +115,7 @@ runtests   - Runs the JUnit tests.
 	<target name="jar" depends="compile">
 		<zip  destfile="${jar.doc}" basedir="${docdir}" />
 		<jar destfile="${jar.bin}" basedir="${bindir}" index="true">
+			<!-- TODO: Exclude test classes ! Or use another target path for them -->
 			   <manifest>
 			      <!-- Who is building this jar? -->
 			      <attribute name="Built-By" value="${user.name}"/>
@@ -126,7 +134,7 @@ runtests   - Runs the JUnit tests.
 
 			<classpath refid="project.class.path" />
 
-			<test name="org.pwsafe.test.AllTests" />
+			<test name="org.pwsafe.AllTests" />
 		</junit>
 	</target>
 
