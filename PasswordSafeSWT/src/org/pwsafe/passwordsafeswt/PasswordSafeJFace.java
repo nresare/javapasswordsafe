@@ -135,14 +135,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	private ImportFromXMLAction importFromXMLAction;
 	private ExportToXMLAction exportToXMLAction;
-	private OptionsAction optionsAction;
+	protected OptionsAction optionsAction;
 	private TreeViewer treeViewer;
 	private Tree tree;
 	private HelpAction helpAction;
-	private AboutAction aboutAction;
+	protected AboutAction aboutAction;
 	private ChangeSafeCombinationAction changeSafeCombinationAction;
 	private VisitPasswordSafeWebsiteAction visitPasswordSafeWebsiteAction;
-	private ExitAppAction exitAppAction;
+	protected ExitAppAction exitAppAction;
 	private TableViewer tableViewer;
 	private NewFileAction newFileAction;
 	private DeleteRecordAction deleteRecordAction;
@@ -167,7 +167,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private Timer lockTimer = new Timer("SWTPassword lock timer", true);
 	private TimerTask lockTask;
 
-	private static final Log log = LogFactory.getLog(PasswordSafeJFace.class);
+	protected static final Log log = LogFactory.getLog(PasswordSafeJFace.class);
 
 	public static final String APP_NAME = "PasswordSafeSWT";
 

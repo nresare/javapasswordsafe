@@ -13,6 +13,7 @@
         <property name="lib.dir" location="lib" />
         <property name="runme.jar" value="${deploy.dir}/PasswordSafeSWT.jar" />
         <property name="main.class" value="org.pwsafe.passwordsafeswt.PasswordSafeJFace" />
+        <property name="main.class.mac" value="org.pwsafe.passwordsafeswt.PasswordSafeMacOSX" />
         <property name="app.name" value="PasswordSafeSWT" />
 
         <!-- platform specific bundling stuff -->
@@ -99,6 +100,23 @@
          </manifest>
         </jar>
     </target>
+	
+	<target name="jar.mac" depends="build" description="Create PasswordSafeSWT jar file">
+	        <mkdir dir="${deploy.dir}" />
+
+	        <jar destfile="${runme.jar}" basedir="${classes.dir}" index="true">
+	            <include name="**/*.gif" />
+	          <include name="**/*.ico" />
+	            <include name="**/*.class" />
+	            <manifest>
+	                <attribute name="Main-Class" value="${main.class.mac}" />
+	            <!--attribute name="Implementation-Vendor" value="ACME inc."/-->
+	              <attribute name="Implementation-Title" value="${app.name}"/>
+	              <attribute name="Implementation-Version" value="${build.version}"/>
+	                <attribute name="sealed" value="true"/>
+	         </manifest>
+	        </jar>
+	    </target>
 
 
     <target name="run" depends="jar" description="Run PasswordSafeSWT">
@@ -210,7 +228,7 @@
     </target>
 
 
-    <target name="deploy.mac" depends="jar" description="Builds PasswordSafeSWT for Mac">
+    <target name="deploy.mac" depends="jar.mac" description="Builds PasswordSafeSWT for Mac">
 
         <delete dir="${dist.mac.dir}/${zip.dir.name}" />
         <mkdir dir="${dist.mac.dir}/${zip.dir.name}" />
@@ -218,7 +236,7 @@
         <!-- http://www.loomcom.com/jarbundler/ -->
         <taskdef name="jarbundler" classpath="${lib.dir}/jarbundler-1.8.1.jar" classname="net.sourceforge.jarbundler.JarBundler" />
 
-        <jarbundler dir="${dist.mac.dir}/${zip.dir.name}" name="${app.name}" mainclass="${main.class}" icon="${mac.dir}/PasswordSafe.icns" version="1.0" aboutmenuname="${app.name}" jvmversion="1.5+" infostring="PasswordSafeSWT, (c) 2008">
+        <jarbundler dir="${dist.mac.dir}/${zip.dir.name}" name="${app.name}" mainclass="${main.class.mac}" icon="${mac.dir}/PasswordSafe.icns" version="1.0" aboutmenuname="${app.name}" jvmversion="1.5+" infostring="PasswordSafeSWT, (c) 2008">
             <jarfileset dir="${deploy.dir}">
                 <include name="PasswordSafeSWT.jar" />
             </jarfileset>
@@ -247,8 +265,9 @@
     	<property name="dist.dmg.file" value="${zip.dir.name}.dmg"/>
     	<delete file="${dist.mac.dir}/${dist.dmg.file}"/>
     	
+    	<echo>create -srcfolder ${dist.mac.dir}/${zip.dir.name} ${dist.mac.dir}/${dist.dmg.file}</echo>
     	<exec executable="hdiutil">
-    		<arg line="create -srcfolder ${dist.mac.dir}/${zip.dir.name} ${dist.mac.dir}/${dist.dmg.file}"/>
+    		<arg line='create -srcfolder "${dist.mac.dir}/${zip.dir.name}" "${dist.mac.dir}/${dist.dmg.file}"'/>
     	</exec>    	
 
     </target>
