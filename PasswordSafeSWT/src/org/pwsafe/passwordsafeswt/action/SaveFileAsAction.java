@@ -23,7 +23,7 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class SaveFileAsAction extends Action {
 
     public SaveFileAsAction() {
-        super("Save &As");
+        super(Messages.getString("SaveFileAsAction.Label")); //$NON-NLS-1$
     }
 
     /**
@@ -37,9 +37,9 @@ public class SaveFileAsAction extends Action {
             try {
                 app.saveFileAs(newFilename);
             } catch (IOException e1) {
-                app.displayErrorDialog("Error Saving Safe", e1.getMessage(), e1);
+                app.displayErrorDialog(Messages.getString("SaveFileAsAction.ErrorDialog.Title"), e1.getMessage(), e1); //$NON-NLS-1$
             } catch (NoSuchAlgorithmException e) {
-                app.displayErrorDialog("Error Saving Safe", e.getMessage(), e);
+                app.displayErrorDialog(Messages.getString("SaveFileAsAction.ErrorDialog.Title"), e.getMessage(), e); //$NON-NLS-1$
 			}
 
         }

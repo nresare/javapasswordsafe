@@ -22,10 +22,10 @@ import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 public class OpenFileAction extends Action {
 
     public OpenFileAction() {
-        super("&Open File");
+        super(Messages.getString("OpenFileAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | 'O'  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_open.gif")));
-        setToolTipText("Open Existing Safe");
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_open.gif"))); //$NON-NLS-1$
+        setToolTipText(Messages.getString("OpenFileAction.Tooltip")); //$NON-NLS-1$
     }
 
     /**
@@ -36,8 +36,8 @@ public class OpenFileAction extends Action {
         boolean cancelled = app.saveAppIfDirty();
         if (!cancelled) {
             FileDialog fod = new FileDialog(app.getShell(), SWT.OPEN);
-            fod.setFilterExtensions(new String[] { "*.psafe3", "*.dat", "*.*" });
-            fod.setFilterNames(new String[] { "PasswordSafe v3 Files (*.psafe3)", "PasswordSafe v1/v2 Files (*.dat)", "All Files (*.*)"} );
+            fod.setFilterExtensions(new String[] { "*.psafe3", "*.dat", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            fod.setFilterNames(new String[] { Messages.getString("OpenFileAction.FilterLabel.V3Files"), Messages.getString("OpenFileAction.FilterLabel.V2Files"), Messages.getString("OpenFileAction.FilterLabel.AllFiles")} ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             String fileName = fod.open();
             if (fileName != null) {
                 PasswordDialog pd = new PasswordDialog(app.getShell());
@@ -47,7 +47,7 @@ public class OpenFileAction extends Action {
                     try {
                         app.openFile(fileName, password);
                     } catch (Exception e) {
-                        app.displayErrorDialog("Error Opening Safe", "Invalid Passphrase", e);
+                        app.displayErrorDialog(Messages.getString("OpenFileAction.ErrorDialog.Label"), Messages.getString("OpenFileAction.ErrorDialog.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             }

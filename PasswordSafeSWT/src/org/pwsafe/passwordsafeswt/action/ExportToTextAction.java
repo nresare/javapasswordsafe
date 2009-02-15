@@ -20,7 +20,7 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class ExportToTextAction extends Action {
 
     public ExportToTextAction() {
-        super("Plain Text (tab separated)...");
+        super(Messages.getString("ExportToTextAction.Label")); //$NON-NLS-1$
     }
 
     /**

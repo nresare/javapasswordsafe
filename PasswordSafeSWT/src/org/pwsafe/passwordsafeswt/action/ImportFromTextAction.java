@@ -22,7 +22,7 @@ import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 public class ImportFromTextAction extends Action {
 
 	public ImportFromTextAction() {
-		super("Plain Text (tab separated)...");
+		super(Messages.getString("ImportFromTextAction.Label")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class ImportFromTextAction extends Action {
 				try {
 					app.importFromText(fileName);
 				} catch (Exception e) {
-					app.displayErrorDialog("Error Importing Text", "Invalid Source File", e);
+					app.displayErrorDialog(Messages.getString("ImportFromTextAction.ErrorDialog.Title"), Messages.getString("ImportFromTextAction.ErrorDialog.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 			

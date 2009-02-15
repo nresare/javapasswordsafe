@@ -19,7 +19,7 @@ import org.pwsafe.passwordsafeswt.dialog.AboutDialog;
 public class AboutAction extends Action {
 
     public AboutAction() {
-        super("About");
+        super(Messages.getString("AboutAction.Label")); //$NON-NLS-1$
     }
 
     /**

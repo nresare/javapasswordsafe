@@ -23,10 +23,10 @@ import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
 public class EditRecordAction extends Action {
 
     public EditRecordAction() {
-        super("&Edit Record");
+        super(Messages.getString("EditRecordAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | Character.LINE_SEPARATOR  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_edit.gif")));
-        setToolTipText("Edit Selected Record");
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_edit.gif"))); //$NON-NLS-1$
+        setToolTipText(Messages.getString("EditRecordAction.Tooltip")); //$NON-NLS-1$
     }
 
     /**

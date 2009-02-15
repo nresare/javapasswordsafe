@@ -32,7 +32,7 @@ import com.swtdesigner.SWTResourceManager;
 public class OptionsAction extends Action {
 
     public OptionsAction() {
-        super("Options...");
+        super(Messages.getString("OptionsAction.Label")); //$NON-NLS-1$
     }
 
     /**
@@ -45,14 +45,14 @@ public class OptionsAction extends Action {
         PreferenceManager mgr = new PreferenceManager();
 
         // Create the nodes
-        PreferenceNode displayPrefs = new PreferenceNode("display", "Display", null, DisplayPreferences.class.getName());
-		PreferenceNode securityPrefs = new PreferenceNode("security", "Security", null, SecurityPreferences.class
+        PreferenceNode displayPrefs = new PreferenceNode("display", Messages.getString("OptionsAction.DisplayNode"), null, DisplayPreferences.class.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+		PreferenceNode securityPrefs = new PreferenceNode("security", Messages.getString("OptionsAction.SecurityNode"), null, SecurityPreferences.class //$NON-NLS-1$ //$NON-NLS-2$
 				.getName());
-		PreferenceNode passwordPolicyPrefs = new PreferenceNode("policy", "Password Policy", null,
+		PreferenceNode passwordPolicyPrefs = new PreferenceNode("policy", Messages.getString("OptionsAction.PolicyNode"), null, //$NON-NLS-1$ //$NON-NLS-2$
 				PasswordPolicyPreferences.class.getName());
-		PreferenceNode usernamePrefs = new PreferenceNode("username", "Username", null, UsernamePreferences.class
+		PreferenceNode usernamePrefs = new PreferenceNode("username", Messages.getString("OptionsAction.UserNameNode"), null, UsernamePreferences.class //$NON-NLS-1$ //$NON-NLS-2$
 				.getName());
-        PreferenceNode miscPrefs = new PreferenceNode("misc", "Misc", null, MiscPreferences.class.getName());
+        PreferenceNode miscPrefs = new PreferenceNode("misc", Messages.getString("OptionsAction.MiscNode"), null, MiscPreferences.class.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add the nodes
         mgr.addToRoot(displayPrefs);
@@ -64,7 +64,7 @@ public class OptionsAction extends Action {
         // Create the preferences dialog
         PreferenceDialog dlg = new PreferenceDialog(app.getShell(), mgr);
 		PreferenceDialog.setDefaultImage(SWTResourceManager.getImage(PasswordSafeJFace.class,
-				"/org/pwsafe/passwordsafeswt/images/clogo.gif"));
+				"/org/pwsafe/passwordsafeswt/images/clogo.gif")); //$NON-NLS-1$
 
         // Set the preference store
         dlg.setPreferenceStore(JFacePreferences.getPreferenceStore());

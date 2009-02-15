@@ -24,10 +24,10 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class CopyUsernameAction extends Action {
 
     public CopyUsernameAction() {
-        super("Copy Username");
+        super(Messages.getString("CopyUsernameAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | 'U'  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_user.gif")));
-        setToolTipText("Copy Username To Clipboard");
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_user.gif"))); //$NON-NLS-1$
+        setToolTipText(Messages.getString("CopyUsernameAction.Tooltip")); //$NON-NLS-1$
 
     }
 

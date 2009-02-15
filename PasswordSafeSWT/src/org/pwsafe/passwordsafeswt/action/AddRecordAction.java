@@ -25,10 +25,10 @@ import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 public class AddRecordAction extends Action {
 
     public AddRecordAction() {
-        super("&Add Record");
+        super(Messages.getString("AddRecordAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | 'A' );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_add.gif")));
-        setToolTipText("Add New Record");
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_add.gif"))); //$NON-NLS-1$
+        setToolTipText(Messages.getString("AddRecordAction.Tooltip")); //$NON-NLS-1$
     }
 
     /**

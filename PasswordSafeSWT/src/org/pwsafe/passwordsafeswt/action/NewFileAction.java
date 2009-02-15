@@ -21,10 +21,10 @@ import org.pwsafe.passwordsafeswt.dialog.NewSafeDialog;
 public class NewFileAction extends Action {
 
     public NewFileAction() {
-        super("&New File");
+        super(Messages.getString("NewFileAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | 'N'  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_new.gif")));
-        setToolTipText("Create New Safe");
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_new.gif"))); //$NON-NLS-1$
+        setToolTipText(Messages.getString("NewFileAction.Tooltip")); //$NON-NLS-1$
     }
 
     /**

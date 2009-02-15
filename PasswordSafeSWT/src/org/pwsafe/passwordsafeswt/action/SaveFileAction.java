@@ -23,25 +23,26 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class SaveFileAction extends Action {
 
     public SaveFileAction() {
-        super("&Save");
+        super(Messages.getString("SaveFileAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | 'S'  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_save.gif")));
-        setToolTipText("Save");
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_save.gif"))); //$NON-NLS-1$
+        setToolTipText(Messages.getString("SaveFileAction.Tooltip")); //$NON-NLS-1$
     }
 
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         try {
             app.saveFile();
             //TODO: more use for status line 
 //            app.setStatusMessage("file saved successfully");
         } catch (IOException e1) {
-            app.displayErrorDialog("Error Saving Safe", e1.getMessage(), e1);
+            app.displayErrorDialog(Messages.getString("SaveFileAction.ErrorDialog.Title"), e1.getMessage(), e1); //$NON-NLS-1$
         } catch (NoSuchAlgorithmException e) {
-            app.displayErrorDialog("Error Saving Safe", e.getMessage(), e);
+            app.displayErrorDialog(Messages.getString("SaveFileAction.ErrorDialog.Title"), e.getMessage(), e); //$NON-NLS-1$
 		}
 
     }

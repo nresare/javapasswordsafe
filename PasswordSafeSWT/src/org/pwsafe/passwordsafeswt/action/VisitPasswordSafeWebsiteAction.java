@@ -22,24 +22,25 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class VisitPasswordSafeWebsiteAction extends Action {
 
     public VisitPasswordSafeWebsiteAction() {
-        super("Visit Password Safe website");
+        super(Messages.getString("VisitPwWebsiteAction.Label")); //$NON-NLS-1$
     }
 
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         final PasswordSafeJFace app = PasswordSafeJFace.getApp();
         new Thread() {
-            public void run() {
+            @Override
+			public void run() {
                 try {
-                		Program.launch("http://jpwsafe.sf.net/");
+                		Program.launch("http://jpwsafe.sf.net/"); //$NON-NLS-1$
                 } catch (Exception ioe) {
                     MessageBox mb = new MessageBox(app.getShell(),
                             SWT.ICON_ERROR);
-                    mb.setText("Could not open URL");
-                    mb
-                            .setText("Could not launch browser to http://jpwsafe.sf.net/");
+                    mb.setText(Messages.getString("VisitPwWebsiteAction.ErrorDialog.Title")); //$NON-NLS-1$
+                    mb.setMessage(Messages.getString("VisitPwWebsiteAction.ErrorDialog.Message")); //$NON-NLS-1$
                     mb.open();
                 }
             }

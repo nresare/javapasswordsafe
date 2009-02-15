@@ -22,7 +22,7 @@ import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 public class ImportFromXMLAction extends Action {
 
 	public ImportFromXMLAction() {
-		super("&XML File...");
+		super(Messages.getString("ImportFromXMLAction.Label")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class ImportFromXMLAction extends Action {
 				try {
 					app.importFromXML(fileName);
 				} catch (Exception e) {
-					app.displayErrorDialog("Error Importing XML", "Invalid Source File", e);
+					app.displayErrorDialog(Messages.getString("ImportFromXMLAction.ErrorDialog.Title"), Messages.getString("ImportFromXMLAction.ErrorDialog.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
 			

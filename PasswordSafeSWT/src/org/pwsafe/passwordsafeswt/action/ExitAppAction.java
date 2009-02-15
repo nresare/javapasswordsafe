@@ -19,7 +19,7 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class ExitAppAction extends Action {
 
     public ExitAppAction() {
-        super("E&xit");
+        super(Messages.getString("ExitAppAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | 'Q'  );
     }
 

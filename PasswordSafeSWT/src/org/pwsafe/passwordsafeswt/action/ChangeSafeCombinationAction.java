@@ -19,7 +19,7 @@ import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 public class ChangeSafeCombinationAction extends Action {
 
     public ChangeSafeCombinationAction() {
-        super("Change Safe Combination");
+        super(Messages.getString("ChangeSafeCombinationAction.Label")); //$NON-NLS-1$
     }
 
     /**
@@ -31,7 +31,7 @@ public class ChangeSafeCombinationAction extends Action {
         if (app.getPwsFile() != null) {
             //pd.setFileName(app.getPwsFile().getFilename());
         	// FIXME
-        	pd.setFileName("FIXME");
+        	pd.setFileName("FIXME"); //$NON-NLS-1$
             String newPassword = (String) pd.open();
             if (newPassword != null) {
                 app.setPassphrase(newPassword);

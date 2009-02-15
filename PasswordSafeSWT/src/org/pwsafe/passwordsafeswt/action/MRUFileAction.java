@@ -38,17 +38,17 @@ public class MRUFileAction extends Action {
         if (app.isDirty()) {
             int style = SWT.APPLICATION_MODAL | SWT.YES | SWT.NO | SWT.CANCEL;
             MessageBox messageBox = new MessageBox(app.getShell(), style);
-            messageBox.setText("Save Changes");
-            messageBox.setMessage("Do you want to save changes to the password list?");
+            messageBox.setText(Messages.getString("MRUFileAction.Dialog.Text")); //$NON-NLS-1$
+            messageBox.setMessage(Messages.getString("MRUFileAction.Dialog.Message")); //$NON-NLS-1$
             int result = messageBox.open();
             if (result == SWT.YES) {
                 try {
                     app.saveFile();
                 } catch (IOException e1) {
-                    app.displayErrorDialog("Error Saving Safe", e1.getMessage(), e1);
+                    app.displayErrorDialog(Messages.getString("MRUFileAction.ErrorDialog.Title"), e1.getMessage(), e1); //$NON-NLS-1$
                     return;
                 } catch (NoSuchAlgorithmException e) {
-                    app.displayErrorDialog("Error Saving Safe", e.getMessage(), e);
+                    app.displayErrorDialog(Messages.getString("MRUFileAction.ErrorDialog.Title"), e.getMessage(), e); //$NON-NLS-1$
                     return;
 				}
             } else if (result == SWT.CANCEL) {
@@ -62,7 +62,7 @@ public class MRUFileAction extends Action {
             try {
                 app.openFile(fileName, password);
             } catch (Exception e) {
-                app.displayErrorDialog("Error Opening Safe", "Invalid Passphrase", e);
+                app.displayErrorDialog(Messages.getString("MRUFileAction.OpenError.Title"), Messages.getString("MRUFileAction.OpenError.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
         }

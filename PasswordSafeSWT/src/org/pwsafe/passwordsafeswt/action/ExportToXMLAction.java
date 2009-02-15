@@ -20,7 +20,7 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class ExportToXMLAction extends Action {
 
 	public ExportToXMLAction() {
-		super("XML File...");
+		super(Messages.getString("ExportToXMLAction.Label")); //$NON-NLS-1$
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class ExportToXMLAction extends Action {
 			try {
 				app.exportToXML(newFilename);
 			} catch (Exception e) {
-				app.displayErrorDialog("Error Exporting XML", "Error Saving File", e);
+				app.displayErrorDialog(Messages.getString("ExportToXMLAction.ErrorDialog.Title"), Messages.getString("ExportToXMLAction.ErrorDialog.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

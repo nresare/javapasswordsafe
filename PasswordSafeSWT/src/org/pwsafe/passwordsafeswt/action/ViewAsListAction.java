@@ -18,7 +18,7 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class ViewAsListAction extends Action {
 
     public ViewAsListAction() {
-        super("List", AS_RADIO_BUTTON);
+        super(Messages.getString("ViewAsListAction.Label"), AS_RADIO_BUTTON); //$NON-NLS-1$
         setChecked(true); // default radio
     }
 

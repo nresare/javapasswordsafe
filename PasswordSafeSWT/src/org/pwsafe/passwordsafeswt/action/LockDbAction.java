@@ -26,20 +26,22 @@ public class LockDbAction extends Action {
 	private static final Log log = LogFactory.getLog(LockDbAction.class);
 
     public LockDbAction() {
-        super("Lock Database");
-        setToolTipText("Lock Database");
+        super(Messages.getString("LockDbAction.Label")); //$NON-NLS-1$
+        setToolTipText(Messages.getString("LockDbAction.Tooltip")); //$NON-NLS-1$
     }
 
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
     	performLock();
     }
     
     public TimerTask createTaskTimer() { 
     	return new TimerTask() {
-    		public void run () {
+    		@Override
+			public void run () {
     			//calls outer class
     			PasswordSafeJFace.getApp().getShell().getDisplay().syncExec(
     					new Runnable () {
@@ -55,7 +57,7 @@ public class LockDbAction extends Action {
     protected void performLock () {
 	    PasswordSafeJFace app = PasswordSafeJFace.getApp();
 	    if (app.getPwsFile() != null) {
-		    log.debug("locking database... ");
+		    log.debug(Messages.getString("LockDbAction.LogMessage.Locking")); //$NON-NLS-1$
 		    app.setPassphrase(null);
 		    app.clearView();
 		    app.setPwsFile(null);

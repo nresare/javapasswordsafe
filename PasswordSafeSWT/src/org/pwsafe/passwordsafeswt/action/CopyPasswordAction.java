@@ -24,10 +24,10 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 public class CopyPasswordAction extends Action {
 
     public CopyPasswordAction() {
-        super("Copy Password@Ctrl+C");
+        super(Messages.getString("CopyPasswordAction.Label")); //$NON-NLS-1$
         setAccelerator( SWT.MOD1 | 'C'  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_pwd.gif")));
-        setToolTipText("Copy Password To Clipboard");
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_pwd.gif"))); //$NON-NLS-1$
+        setToolTipText(Messages.getString("CopyPasswordAction.Tooltip")); //$NON-NLS-1$
 
     }
 
