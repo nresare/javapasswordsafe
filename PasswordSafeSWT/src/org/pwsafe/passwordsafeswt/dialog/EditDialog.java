@@ -114,7 +114,7 @@ public class EditDialog extends Dialog {
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.RESIZE | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shell.setSize(590, 603);
-		shell.setText("Edit/View Entry");
+		shell.setText(Messages.getString("EditDialog.Title")); //$NON-NLS-1$
 		final GridLayout gridLayout_2 = new GridLayout();
 		gridLayout_2.marginWidth = 10;
 		gridLayout_2.marginHeight = 10;
@@ -147,7 +147,7 @@ public class EditDialog extends Dialog {
 		gridData_1.widthHint = 550;
 
 		labelInfo.setLayoutData(gridData_1);
-		labelInfo.setText("To edit this entry from the current password file, simply make the desired changes in the fields below. Note that at least a title and a password are still required.");
+		labelInfo.setText(Messages.getString("EditDialog.Info")); //$NON-NLS-1$
 
 		final Composite compositeFields = new Composite(shell, SWT.NONE);
 		compositeFields.setLayout(new FormLayout());
@@ -160,7 +160,7 @@ public class EditDialog extends Dialog {
 		formData.top = new FormAttachment(0, 10);
 		formData.left = new FormAttachment(0, 17);
 		lblGroup.setLayoutData(formData);
-		lblGroup.setText("Group:");
+		lblGroup.setText(Messages.getString("EditDialog.Group")); //$NON-NLS-1$
 
 		txtGroup = new Text(compositeFields, SWT.BORDER);
 		txtGroup.addKeyListener(dirtyKeypress);
@@ -177,7 +177,7 @@ public class EditDialog extends Dialog {
 		formData_2.top = new FormAttachment(txtGroup, 10, SWT.BOTTOM);
 		formData_2.left = new FormAttachment(lblGroup, 0, SWT.LEFT);
 		lblTitle.setLayoutData(formData_2);
-		lblTitle.setText("Title:");
+		lblTitle.setText(Messages.getString("EditDialog.TitleLabel")); //$NON-NLS-1$
 
 		txtTitle = new Text(compositeFields, SWT.BORDER);
 		final FormData formData_3 = new FormData();
@@ -194,7 +194,7 @@ public class EditDialog extends Dialog {
 		formData_4.top = new FormAttachment(txtTitle, 10, SWT.BOTTOM);
 		formData_4.left = new FormAttachment(lblTitle, 0, SWT.LEFT);
 		lblUsername.setLayoutData(formData_4);
-		lblUsername.setText("Username:");
+		lblUsername.setText(Messages.getString("EditDialog.Username")); //$NON-NLS-1$
 
 		txtUsername = new Text(compositeFields, SWT.BORDER);
 		final FormData formData_5 = new FormData();
@@ -211,7 +211,7 @@ public class EditDialog extends Dialog {
 		formData_6.top = new FormAttachment(txtUsername, 10, SWT.BOTTOM);
 		formData_6.left = new FormAttachment(lblUsername, 0, SWT.LEFT);
 		lblPassword.setLayoutData(formData_6);
-		lblPassword.setText("Password:");
+		lblPassword.setText(Messages.getString("EditDialog.Password")); //$NON-NLS-1$
 
 		txtPassword = new Text(compositeFields, SWT.BORDER);
 		final FormData formData_7 = new FormData();
@@ -232,9 +232,9 @@ public class EditDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
                 if (txtPassword.getEchoChar() != '\0') {
                 	txtPassword.setEchoChar('\0');
-                	btnShowPassword.setText("Hide Password");
+                	btnShowPassword.setText(Messages.getString("EditDialog.HidePasswordButton")); //$NON-NLS-1$
                 } else {
-                	btnShowPassword.setText("Show Password");
+                	btnShowPassword.setText(Messages.getString("EditDialog.ShowPasswordButton")); //$NON-NLS-1$
                 	txtPassword.setEchoChar('*');
                 }
 			}
@@ -245,9 +245,9 @@ public class EditDialog extends Dialog {
 		formData_8.right = new FormAttachment(70, 0);
 		btnShowPassword.setLayoutData(formData_8);
 		if (UserPreferences.getInstance().getBoolean(JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE)) {
-			btnShowPassword.setText("Hide Password");
+			btnShowPassword.setText(Messages.getString("EditDialog.HidePasswordButton")); //$NON-NLS-1$
 		} else {
-			btnShowPassword.setText("Show Password");
+			btnShowPassword.setText(Messages.getString("EditDialog.ShowPasswordButton")); //$NON-NLS-1$
 		}
 		
 		final Label lblNotes = new Label(compositeFields, SWT.NONE);
@@ -255,7 +255,7 @@ public class EditDialog extends Dialog {
 		formData_9.top = new FormAttachment(txtPassword, 5, SWT.BOTTOM);
 		formData_9.left = new FormAttachment(lblPassword, 0, SWT.LEFT);
 		lblNotes.setLayoutData(formData_9);
-		lblNotes.setText("Notes:");
+		lblNotes.setText(Messages.getString("EditDialog.Notes")); //$NON-NLS-1$
 
 		txtNotes = new Text(compositeFields, SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.WRAP);
 		final FormData formData_10 = new FormData(SWT.DEFAULT, 100);
@@ -275,7 +275,7 @@ public class EditDialog extends Dialog {
 		formDataTemp.top = new FormAttachment(txtNotes, 10, SWT.BOTTOM);
 		formDataTemp.left = new FormAttachment(lblNotes, 0, SWT.LEFT);
 		lblUrl.setLayoutData(formDataTemp);
-		lblUrl.setText("URL:");
+		lblUrl.setText(Messages.getString("EditDialog.Url")); //$NON-NLS-1$
 
 		txtUrl = new Text(compositeFields, SWT.BORDER);
 		formDataTemp = new FormData();
@@ -292,7 +292,7 @@ public class EditDialog extends Dialog {
 		formDataTemp.top = new FormAttachment(txtUrl, 10, SWT.BOTTOM);
 		formDataTemp.left = new FormAttachment(lblUrl, 0, SWT.LEFT);
 		lblAutotype.setLayoutData(formDataTemp);
-		lblAutotype.setText("Autotype:");
+		lblAutotype.setText(Messages.getString("EditDialog.Autotype")); //$NON-NLS-1$
 
 		txtAutotype = new Text(compositeFields, SWT.BORDER);
 		formDataTemp = new FormData();
@@ -310,7 +310,7 @@ public class EditDialog extends Dialog {
 		fd_lblPasswordExpire.top = new FormAttachment(txtAutotype, 10, SWT.BOTTOM);
 		fd_lblPasswordExpire.left = new FormAttachment(lblAutotype, 0, SWT.LEFT);
 		lblPasswordExpire.setLayoutData(fd_lblPasswordExpire);
-		lblPasswordExpire.setText("Password expires:");
+		lblPasswordExpire.setText(Messages.getString("EditDialog.PasswordExpires")); //$NON-NLS-1$
 
 		txtPasswordExpire = new Text(compositeFields, SWT.BORDER);
 		final FormData fd_txtPasswordExpire = new FormData();
@@ -335,7 +335,7 @@ public class EditDialog extends Dialog {
 		fd_dtPasswordExpire.top = new FormAttachment(txtPasswordExpire, 0, SWT.TOP);
 		fd_dtPasswordExpire.bottom = new FormAttachment(txtPasswordExpire, 0, SWT.BOTTOM);
 		open.setLayoutData(fd_dtPasswordExpire);
-		open.setText ("Calendar");
+		open.setText (Messages.getString("EditDialog.Calendar")); //$NON-NLS-1$
 		open.addSelectionListener (new SelectionAdapter () {
 			public void widgetSelected (SelectionEvent e) {
 				DateDialog dialog = new DateDialog(shell);
@@ -372,7 +372,7 @@ public class EditDialog extends Dialog {
                     }
                     entryToEdit.setNotes(txtNotes.getText());
                     String fieldText = txtPasswordExpire.getText();
-                    if (fieldText != null && (! fieldText.trim().equals(""))) {
+                    if (fieldText != null && (! fieldText.trim().equals(""))) { //$NON-NLS-1$
                     	try {
 							Date expireDate = DateFormat.getDateInstance().parse(fieldText);
 							Calendar cal = Calendar.getInstance();
@@ -390,8 +390,8 @@ public class EditDialog extends Dialog {
 							entryToEdit.setExpires(expireDate);
 						} catch (ParseException e1) {
 				            MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
-				            mb.setText("Expiry date not valid");
-				            mb.setMessage("The password expiry date is not valid and will be ignored - continue anyway?");
+				            mb.setText(Messages.getString("EditDialog.ExpiryNotValidMessage.Title")); //$NON-NLS-1$
+				            mb.setMessage(Messages.getString("EditDialog.ExpiryNotValidMessage.Text")); //$NON-NLS-1$
 				            int result = mb.open();
 				            if (result == SWT.NO) {
 				                return;
@@ -416,7 +416,7 @@ public class EditDialog extends Dialog {
 		formData_11.left = new FormAttachment(100,-80);
 		formData_11.right = new FormAttachment(100, -10);
 		btnOk.setLayoutData(formData_11);
-		btnOk.setText("OK");
+		btnOk.setText(Messages.getString("EditDialog.OkButton")); //$NON-NLS-1$
 
 		final Button btnCancel = new Button(compositeFields, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -430,7 +430,7 @@ public class EditDialog extends Dialog {
 		formData_12.left = new FormAttachment(btnOk, 0, SWT.LEFT);
 		formData_12.right = new FormAttachment(btnOk, 0, SWT.RIGHT);
 		btnCancel.setLayoutData(formData_12);
-		btnCancel.setText("Cancel");
+		btnCancel.setText(Messages.getString("EditDialog.CancelButton")); //$NON-NLS-1$
 
 		final Button btnHelp = new Button(compositeFields, SWT.NONE);
 		final FormData formData_13 = new FormData();
@@ -438,11 +438,11 @@ public class EditDialog extends Dialog {
 		formData_13.left = new FormAttachment(btnCancel, 0, SWT.LEFT);
 		formData_13.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
 		btnHelp.setLayoutData(formData_13);
-		btnHelp.setText("Help");
+		btnHelp.setText(Messages.getString("EditDialog.HelpButton")); //$NON-NLS-1$
 
 		final Group group = new Group(compositeFields, SWT.NONE);
 		group.setLayout(new GridLayout());
-		group.setText("Random Password");
+		group.setText(Messages.getString("EditDialog.RandonPassword")); //$NON-NLS-1$
 		final FormData formData_14 = new FormData();
 //		formData_14.left = new FormAttachment(txtNotes, 10, SWT.RIGHT);
 		formData_14.left = new FormAttachment(100, -160);
@@ -458,10 +458,10 @@ public class EditDialog extends Dialog {
 			}
 		});
 		btnGenerate.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		btnGenerate.setText("Generate");
+		btnGenerate.setText(Messages.getString("EditDialog.Generate")); //$NON-NLS-1$
 
 		final Button chkOverride = new Button(group, SWT.CHECK);
-		chkOverride.setText("Override Policy");
+		chkOverride.setText(Messages.getString("EditDialog.OverridePolicyButton")); //$NON-NLS-1$
 		chkOverride.setEnabled(false); //TODO: Open policy dialog and generate a password with it on exit
 		
 		return btnOk;
@@ -484,36 +484,36 @@ public class EditDialog extends Dialog {
 
 
 		final CLabel createdLbl = new CLabel(timesGroup, SWT.NONE);
-		createdLbl.setText("Created");
+		createdLbl.setText(Messages.getString("EditDialog.Created")); //$NON-NLS-1$
 
 		createTime = new CLabel(timesGroup, SWT.NONE);			
 		createTime.setText(format(entryToEdit.getCreated()));
 
 		final CLabel lastAccessLbl = new CLabel(timesGroup, SWT.NONE);
-		lastAccessLbl.setText("Last Access");
+		lastAccessLbl.setText(Messages.getString("EditDialog.LastAccess")); //$NON-NLS-1$
 
 		lastAccess = new CLabel(timesGroup, SWT.NONE);
 		lastAccess.setText(format(entryToEdit.getLastAccess()));
 
 		final CLabel changedLbl = new CLabel(timesGroup, SWT.NONE);
-		changedLbl.setText("Changed");
+		changedLbl.setText(Messages.getString("EditDialog.Changed")); //$NON-NLS-1$
 
 		changed = new CLabel(timesGroup, SWT.NONE);
 		changed.setText(format(entryToEdit.getLastChange()));
 
 		final CLabel passwordChangeLbl = new CLabel(timesGroup, SWT.NONE);
-		passwordChangeLbl.setText("Password Change");
+		passwordChangeLbl.setText(Messages.getString("EditDialog.PasswordChange")); //$NON-NLS-1$
 
 		passwordChange = new CLabel(timesGroup, SWT.NONE);
 		passwordChange.setText(format(entryToEdit.getLastPwChange()));
 	}
 	
 	private String generatePassword() {
-		String BASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
-        String BASE_LETTERS_EASY = "abcdefghjkmnpqrstuvwxyz";
-		String BASE_DIGITS = "1234567890";
-        String BASE_DIGITS_EASY = "23456789";
-		String BASE_SYMBOLS = "!@#$%^&*()";
+		String BASE_LETTERS = "abcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
+        String BASE_LETTERS_EASY = "abcdefghjkmnpqrstuvwxyz"; //$NON-NLS-1$
+		String BASE_DIGITS = "1234567890"; //$NON-NLS-1$
+        String BASE_DIGITS_EASY = "23456789"; //$NON-NLS-1$
+		String BASE_SYMBOLS = "!@#$%^&*()"; //$NON-NLS-1$
 		StringBuilder pwSet = new StringBuilder();
 		
 		UserPreferences.reload(); // make sure we have a fresh copy
@@ -571,7 +571,7 @@ public class EditDialog extends Dialog {
 				sb.append(pwSet.charAt(randOffset));
 			}
 		} else {
-			sb.append("Must Edit Password Generation Options");
+			sb.append(Messages.getString("EditDialog.MessageMustEditOptions")); //$NON-NLS-1$
 		}
 
 		return sb.toString();
@@ -582,6 +582,6 @@ public class EditDialog extends Dialog {
 		if (aDate != null)
 			return DateFormat.getDateInstance().format(aDate);
 		else
-			return "";
+			return ""; //$NON-NLS-1$
 	}
 }

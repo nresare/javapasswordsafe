@@ -7,6 +7,7 @@
  */
 package org.pwsafe.passwordsafeswt.dialog;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,10 +42,10 @@ public class StartupDialog extends Dialog {
 	private String selectedFile;
 	private String selectedPassword;
 	
-	public static final String OPEN_FILE = "open-selected";  // open the selected file
-	public static final String OPEN_OTHER = "open-other"; // open file dialog for other file
-	public static final String NEW_FILE = "new";    // create a new safe
-	public static final String CANCEL = "cancel";   // exit the app
+	public static final String OPEN_FILE = "open-selected";  // open the selected file //$NON-NLS-1$
+	public static final String OPEN_OTHER = "open-other"; // open file dialog for other file //$NON-NLS-1$
+	public static final String NEW_FILE = "new";    // create a new safe //$NON-NLS-1$
+	public static final String CANCEL = "cancel";   // exit the app //$NON-NLS-1$
 	
 	public StartupDialog(Shell parent, int style) {
 		super(parent, style);
@@ -81,13 +82,13 @@ public class StartupDialog extends Dialog {
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shell.setLayout(new FormLayout());
-		shell.setImage(SWTResourceManager.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/clogo.gif"));
+		shell.setImage(SWTResourceManager.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/clogo.gif")); //$NON-NLS-1$
 		shell.setSize(550, 368);
-		shell.setText("Safe Combination Entry");
+		shell.setText(Messages.getString("StartupDialog.Title")); //$NON-NLS-1$
 
 		final Label lblTextLogo = new Label(shell, SWT.NONE);
 		lblTextLogo.setAlignment(SWT.CENTER);
-		lblTextLogo.setImage(SWTResourceManager.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/psafetxtNew.gif"));
+		lblTextLogo.setImage(SWTResourceManager.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/psafetxtNew.gif")); //$NON-NLS-1$
 		final FormData formData_10 = new FormData();
 		formData_10.left = new FormAttachment(24, 0);
 		formData_10.top = new FormAttachment(0, 15);
@@ -99,10 +100,10 @@ public class StartupDialog extends Dialog {
 		formData.top = new FormAttachment(lblTextLogo, 15);
 		formData.left = new FormAttachment(0, 55);
 		lblPleaseEnter.setLayoutData(formData);
-		lblPleaseEnter.setText("Please enter the safe combination for the password database:");
+		lblPleaseEnter.setText(Messages.getString("StartupDialog.Info")); //$NON-NLS-1$
 
 		final Label lblFilename = new Label(shell, SWT.NONE);
-		lblFilename.setText("&Filename:");
+		lblFilename.setText(Messages.getString("StartupDialog.Filename")); //$NON-NLS-1$
 		final FormData formData_1 = new FormData();
 		formData_1.top = new FormAttachment(lblPleaseEnter, 15, SWT.BOTTOM);
 		formData_1.left = new FormAttachment(lblPleaseEnter, 15, SWT.LEFT);
@@ -120,7 +121,7 @@ public class StartupDialog extends Dialog {
 		formData_2.top = new FormAttachment(lblFilename, 20);
 		formData_2.right = new FormAttachment(lblFilename, 0, SWT.RIGHT);
 		lblSafeCombination.setLayoutData(formData_2);
-		lblSafeCombination.setText("&Safe Combination:");
+		lblSafeCombination.setText(Messages.getString("StartupDialog.SafeCombination")); //$NON-NLS-1$
 
 		txtPassword = new Text(shell, SWT.BORDER);
 		txtPassword.setEchoChar('*');
@@ -135,10 +136,11 @@ public class StartupDialog extends Dialog {
 		formData_4.top = new FormAttachment(txtPassword, 15);
 		formData_4.left = new FormAttachment(txtPassword, 0, SWT.LEFT);
 		btnReadOnly.setLayoutData(formData_4);
-		btnReadOnly.setText("Open as &read-only");
+		btnReadOnly.setText(Messages.getString("StartupDialog.ReadOnlyButton")); //$NON-NLS-1$
 
 		final Button btnCreate = new Button(shell, SWT.NONE);
 		btnCreate.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result = StartupDialog.NEW_FILE;
 				shell.dispose();
@@ -148,10 +150,11 @@ public class StartupDialog extends Dialog {
         formData_5.top = new FormAttachment(cboFilename, 0, SWT.TOP);
 		formData_5.right = new FormAttachment(100, -5);
 		btnCreate.setLayoutData(formData_5);
-		btnCreate.setText("&Create new safe...  ");
+		btnCreate.setText(Messages.getString("StartupDialog.CreateNewButton")); //$NON-NLS-1$
 
 		final Button btnOpen = new Button(shell, SWT.NONE);
 		btnOpen.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result = StartupDialog.OPEN_OTHER;
 				selectedFile = cboFilename.getText();
@@ -164,11 +167,12 @@ public class StartupDialog extends Dialog {
 		formData_6.left = new FormAttachment(btnCreate, 0, SWT.LEFT);
         formData_6.right = new FormAttachment(btnCreate, 0, SWT.RIGHT);
 		btnOpen.setLayoutData(formData_6);
-		btnOpen.setText("&Open other safe...");
+		btnOpen.setText(Messages.getString("StartupDialog.OpenOtherButton")); //$NON-NLS-1$
 
 		final Button btnOk = new Button(shell, SWT.NONE);
 		shell.setDefaultButton(btnOk);
 		btnOk.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectedFile = cboFilename.getText();
 				selectedPassword = txtPassword.getText();
@@ -181,10 +185,11 @@ public class StartupDialog extends Dialog {
 		formData_7.left = new FormAttachment(50, -80);
 		formData_7.bottom = new FormAttachment(100, -10);
 		btnOk.setLayoutData(formData_7);
-		btnOk.setText("OK");
+		btnOk.setText(Messages.getString("StartupDialog.OkButton")); //$NON-NLS-1$
 
 		final Button btnCancel = new Button(shell, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result = StartupDialog.CANCEL;
 				shell.dispose();
@@ -195,7 +200,7 @@ public class StartupDialog extends Dialog {
 		formData_8.left = new FormAttachment(btnOk, 10);
 		formData_8.top = new FormAttachment(btnOk, 0, SWT.TOP);
 		btnCancel.setLayoutData(formData_8);
-		btnCancel.setText("Cancel");
+		btnCancel.setText(Messages.getString("StartupDialog.CancelButton")); //$NON-NLS-1$
 
 		final Button btnHelp = new Button(shell, SWT.NONE);
 		final FormData formData_9 = new FormData();
@@ -203,7 +208,7 @@ public class StartupDialog extends Dialog {
 		formData_9.top = new FormAttachment(btnCancel, 0, SWT.TOP);		
 		formData_9.left = new FormAttachment(btnCancel, 10);
 		btnHelp.setLayoutData(formData_9);
-		btnHelp.setText("Help");
+		btnHelp.setText(Messages.getString("StartupDialog.HelpButton")); //$NON-NLS-1$
 		btnHelp.setEnabled(false);    // there is no help yet
 
 		final Label lblVersion = new Label(shell, SWT.NONE);
@@ -211,7 +216,7 @@ public class StartupDialog extends Dialog {
 		formData_11.top = new FormAttachment(btnReadOnly, 0, SWT.TOP);
 		formData_11.left = new FormAttachment(btnOpen, 0, SWT.LEFT);
 		lblVersion.setLayoutData(formData_11);
-		lblVersion.setText("Version: " + VersionInfo.getVersion());
+		lblVersion.setText(NLS.bind(Messages.getString("StartupDialog.Version"), VersionInfo.getVersion())); //$NON-NLS-1$
 	}
 	
 	/**

@@ -14,6 +14,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -76,11 +77,13 @@ public class DateDialog extends Dialog {
 		calendar.setYear(cal.get(Calendar.YEAR));
 		
 		Button ok = new Button (shell, SWT.PUSH);
-		ok.setText ("OK");
+		ok.setText (Messages.getString("DateDialog.OkButton")); //$NON-NLS-1$
 		ok.setLayoutData(new GridData (SWT.FILL, SWT.CENTER, false, false));
 		ok.addSelectionListener (new SelectionAdapter () {
+			@Override
 			public void widgetSelected (SelectionEvent e) {
-				log.debug ("Calendar date selected (MM/DD/YYYY) = " + (calendar.getMonth () + 1) + "/" + calendar.getDay () + "/" + calendar.getYear ());
+				//if (log.isDebugEnabled())
+					log.debug (NLS.bind(Messages.getString("DateDialog.LogMessage.DateSelected"),new Integer []{calendar.getMonth () + 1, calendar.getDay (),calendar.getYear ()}) ); //$NON-NLS-1$ 
 				cal.set(Calendar.DAY_OF_MONTH, calendar.getDay());
 				cal.set(Calendar.MONTH, calendar.getMonth());
 				cal.set(Calendar.YEAR, calendar.getYear());
@@ -90,11 +93,12 @@ public class DateDialog extends Dialog {
 		shell.setDefaultButton (ok);
 		
 		Button cancel = new Button (shell, SWT.PUSH);
-		cancel.setText ("Cancel");
+		cancel.setText (Messages.getString("DateDialog.CancelButton")); //$NON-NLS-1$
 		cancel.setLayoutData(new GridData (SWT.FILL, SWT.CENTER, false, false));
 		cancel.addSelectionListener (new SelectionAdapter () {
+			@Override
 			public void widgetSelected (SelectionEvent e) {
-				log.debug ("Calendar date selected (MM/DD/YYYY) = null");
+				log.debug (NLS.bind(Messages.getString("DateDialog.LogMessage.DateSelected"),new Integer []{0, 0,0}) ); //$NON-NLS-1$
 				cal = null;
 				shell.close ();
 			}

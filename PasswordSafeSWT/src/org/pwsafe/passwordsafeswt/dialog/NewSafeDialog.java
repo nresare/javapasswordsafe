@@ -56,21 +56,21 @@ public class NewSafeDialog extends Dialog {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shell.setLayout(new FormLayout());
 		shell.setSize(380, 250);
-		shell.setText("Safe Combination Setup");
+		shell.setText(Messages.getString("NewSafeDialog.Title")); //$NON-NLS-1$
 		final Label label = new Label(shell, SWT.WRAP);
 		final FormData formData = new FormData();
 		formData.top = new FormAttachment(0, 5);
 		formData.right = new FormAttachment(100, -5);
 		formData.left = new FormAttachment(0, 5);
 		label.setLayoutData(formData);
-		label.setText("A new password database will be created. The safe combination you enter will be used to encrypt the password database file. The safe combination can use any keyboard character and is case sensitive.");
+		label.setText(Messages.getString("NewSafeDialog.Info")); //$NON-NLS-1$
 
 		final Label lblCombination = new Label(shell, SWT.NONE);
 		final FormData formData_1 = new FormData();
 		formData_1.top = new FormAttachment(label, 30, SWT.BOTTOM);
 		formData_1.left = new FormAttachment(10, 0);
 		lblCombination.setLayoutData(formData_1);
-		lblCombination.setText("Safe Combination:");
+		lblCombination.setText(Messages.getString("NewSafeDialog.SafeCombination")); //$NON-NLS-1$
 
 		txtCombination = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		final FormData formData_2 = new FormData();
@@ -84,7 +84,7 @@ public class NewSafeDialog extends Dialog {
 		formData_3.top = new FormAttachment(lblCombination, 20);
 		formData_3.right = new FormAttachment(lblCombination, 0, SWT.RIGHT);
 		lblVerify.setLayoutData(formData_3);
-		lblVerify.setText("Verify:");
+		lblVerify.setText(Messages.getString("NewSafeDialog.Verify")); //$NON-NLS-1$
 
 		txtVerify = new Text(shell, SWT.PASSWORD | SWT.BORDER);
 		final FormData formData_4 = new FormData();
@@ -104,7 +104,7 @@ public class NewSafeDialog extends Dialog {
 		formData_7.bottom = new FormAttachment(100, -10);
 		formData_7.left = new FormAttachment(50, -5);
 		btnCancel.setLayoutData(formData_7);
-		btnCancel.setText("Cancel");
+		btnCancel.setText(Messages.getString("NewSafeDialog.CancelButton")); //$NON-NLS-1$
 
 		final Button btnOk = new Button(shell, SWT.NONE);
 		shell.setDefaultButton(btnOk);
@@ -115,8 +115,8 @@ public class NewSafeDialog extends Dialog {
 					shell.dispose();
 				} else {
 					MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-					mb.setText("Password Mismatch");
-					mb.setMessage("The two entries do not match");
+					mb.setText(Messages.getString("NewSafeDialog.PasswordMismatchMessage.Title")); //$NON-NLS-1$
+					mb.setMessage(Messages.getString("NewSafeDialog.PasswordMismatchMessage.Text")); //$NON-NLS-1$
 					mb.open();
 				}
 			}
@@ -126,7 +126,7 @@ public class NewSafeDialog extends Dialog {
 		formData_6.top = new FormAttachment(btnCancel, 0, SWT.TOP);
 		formData_6.right = new FormAttachment(btnCancel, -10, SWT.LEFT);
 		btnOk.setLayoutData(formData_6);
-		btnOk.setText("OK");
+		btnOk.setText(Messages.getString("NewSafeDialog.OkButton")); //$NON-NLS-1$
 
 		final Button btnHelp = new Button(shell, SWT.NONE);
 		final FormData formData_8 = new FormData();
@@ -134,6 +134,6 @@ public class NewSafeDialog extends Dialog {
 		formData_8.top = new FormAttachment(btnCancel, 0, SWT.TOP);
 		formData_8.left = new FormAttachment(btnCancel, 10, SWT.RIGHT);
 		btnHelp.setLayoutData(formData_8);
-		btnHelp.setText("Help");
+		btnHelp.setText(Messages.getString("NewSafeDialog.HelpButton")); //$NON-NLS-1$
 	}
 }

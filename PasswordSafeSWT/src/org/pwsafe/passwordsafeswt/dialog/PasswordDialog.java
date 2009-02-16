@@ -63,23 +63,23 @@ public class PasswordDialog extends Dialog {
 		gridLayout.numColumns = 2;
 		shell.setLayout(gridLayout);
 		shell.setSize(500, 172);
-		shell.setText("Safe Combination Entry");
+		shell.setText(Messages.getString("PasswordDialog.Title")); //$NON-NLS-1$
 
 		final Composite composite_1 = new Composite(shell, SWT.NONE);
 		composite_1.setLayout(new GridLayout());
 
 		final Label lblLogo = new Label(composite_1, SWT.NONE);
-		lblLogo.setImage(SWTResourceManager.getImage(PasswordDialog.class, "/org/pwsafe/passwordsafeswt/images/clogo.gif"));
+		lblLogo.setImage(SWTResourceManager.getImage(PasswordDialog.class, "/org/pwsafe/passwordsafeswt/images/clogo.gif")); //$NON-NLS-1$
 
 		final Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		composite.setLayout(new GridLayout());
 
 		final Label lblEnterPassword = new Label(composite, SWT.NONE);
-		lblEnterPassword.setText("Please enter the safe combination for this password database");
+		lblEnterPassword.setText(Messages.getString("PasswordDialog.Info")); //$NON-NLS-1$
 
 		lblFilename = new Label(composite, SWT.NONE);
-		lblFilename.setText("..." + File.separator + new File(fileName).getName());
+		lblFilename.setText("..." + File.separator + new File(fileName).getName()); //$NON-NLS-1$
 		lblFilename.setToolTipText(fileName);
 
 		final Composite composite_2 = new Composite(composite, SWT.NONE);
@@ -89,7 +89,7 @@ public class PasswordDialog extends Dialog {
 		composite_2.setLayout(gridLayout_1);
 
 		final Label lblCombination = new Label(composite_2, SWT.NONE);
-		lblCombination.setText("Safe Combination:");
+		lblCombination.setText(Messages.getString("PasswordDialog.SafeCombination")); //$NON-NLS-1$
 
 		final Text txtCombination = new Text(composite_2, SWT.BORDER);
 		txtCombination.setEchoChar('*');
@@ -111,7 +111,7 @@ public class PasswordDialog extends Dialog {
 		});
 		btnOk.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		shell.setDefaultButton(btnOk);
-		btnOk.setText("OK");
+		btnOk.setText(Messages.getString("PasswordDialog.OkButton")); //$NON-NLS-1$
 
 		final Button btnCancel = new Button(composite_3, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -120,11 +120,11 @@ public class PasswordDialog extends Dialog {
 			}
 		});
 		btnCancel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		btnCancel.setText("Cancel");
+		btnCancel.setText(Messages.getString("PasswordDialog.CancelButton")); //$NON-NLS-1$
 
 		final Button btnHelp = new Button(composite_3, SWT.NONE);
 		btnHelp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		btnHelp.setText("Help");
+		btnHelp.setText(Messages.getString("PasswordDialog.HelpButton")); //$NON-NLS-1$
 		//
 	}
 	/**

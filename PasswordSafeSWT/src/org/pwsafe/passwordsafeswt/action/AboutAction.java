@@ -25,7 +25,8 @@ public class AboutAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         AboutDialog ad = new AboutDialog(app.getShell());
         ad.open();
