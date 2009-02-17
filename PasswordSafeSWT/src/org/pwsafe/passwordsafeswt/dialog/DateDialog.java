@@ -83,7 +83,7 @@ public class DateDialog extends Dialog {
 			@Override
 			public void widgetSelected (SelectionEvent e) {
 				//if (log.isDebugEnabled())
-					log.debug (NLS.bind(Messages.getString("DateDialog.LogMessage.DateSelected"),new Integer []{calendar.getMonth () + 1, calendar.getDay (),calendar.getYear ()}) ); //$NON-NLS-1$ 
+					log.debug (NLS.bind(Messages.getString("DateDialog.Log.DateSelected"),new Integer []{calendar.getMonth () + 1, calendar.getDay (),calendar.getYear ()}) ); //$NON-NLS-1$ 
 				cal.set(Calendar.DAY_OF_MONTH, calendar.getDay());
 				cal.set(Calendar.MONTH, calendar.getMonth());
 				cal.set(Calendar.YEAR, calendar.getYear());
@@ -98,7 +98,7 @@ public class DateDialog extends Dialog {
 		cancel.addSelectionListener (new SelectionAdapter () {
 			@Override
 			public void widgetSelected (SelectionEvent e) {
-				log.debug (NLS.bind(Messages.getString("DateDialog.LogMessage.DateSelected"),new Integer []{0, 0,0}) ); //$NON-NLS-1$
+				log.debug (NLS.bind(Messages.getString("DateDialog.Log.DateSelected"),new Integer []{0, 0,0}) ); //$NON-NLS-1$
 				cal = null;
 				shell.close ();
 			}

@@ -442,7 +442,7 @@ public class EditDialog extends Dialog {
 
 		final Group group = new Group(compositeFields, SWT.NONE);
 		group.setLayout(new GridLayout());
-		group.setText(Messages.getString("EditDialog.RandonPassword")); //$NON-NLS-1$
+		group.setText(Messages.getString("EditDialog.RandomPassword")); //$NON-NLS-1$
 		final FormData formData_14 = new FormData();
 //		formData_14.left = new FormAttachment(txtNotes, 10, SWT.RIGHT);
 		formData_14.left = new FormAttachment(100, -160);
