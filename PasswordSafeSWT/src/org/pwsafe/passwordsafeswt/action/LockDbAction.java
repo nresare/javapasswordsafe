@@ -13,11 +13,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
+import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
+import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
 /**
  * Locks the password database.
  * This action expects all changes to be saved 
- * BEFORE it is called!
+ * <b>BEFORE</b> it is called!
  *
  * @author David Mueller
  */
@@ -54,15 +56,34 @@ public class LockDbAction extends Action {
     	};
     }
 
-    protected void performLock () {
+    public void performLock () {
 	    PasswordSafeJFace app = PasswordSafeJFace.getApp();
 	    if (app.getPwsFile() != null) {
-		    log.debug(Messages.getString("LockDbAction.LogMessage.Locking")); //$NON-NLS-1$
+		    log.debug(Messages.getString("LockDbAction.Log.Locking")); //$NON-NLS-1$
 		    app.setPassphrase(null);
 		    app.clearView();
 		    app.setPwsFile(null);
 		    app.setLocked(true);
 	    }
+    }
+
+    public void performUnlock() {
+    	// calling code should stop a running locker timer first
+	    PasswordSafeJFace app = PasswordSafeJFace.getApp();
+    	log.info(Messages.getString("LockDbAction.Log.TryToUnlock")); //$NON-NLS-1$
+        PasswordDialog pd = new PasswordDialog(app.getShell());
+        pd.setVerified(false);
+        String fileName = UserPreferences.getInstance().getMRUFile();
+        pd.setFileName(fileName);
+        String password = (String) pd.open();
+        if (password != null) {
+            try {
+                app.openFile(fileName, password);
+            } catch (Exception anEx) {
+                app.displayErrorDialog(Messages.getString("LockDbAction.ReOpenError.Title"), Messages.getString("LockDbAction.ReOpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+		}
+        app.setLocked(false);
     }
 
 }

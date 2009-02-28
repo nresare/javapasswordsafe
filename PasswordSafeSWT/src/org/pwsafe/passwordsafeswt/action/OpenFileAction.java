@@ -41,6 +41,7 @@ public class OpenFileAction extends Action {
             String fileName = fod.open();
             if (fileName != null) {
                 PasswordDialog pd = new PasswordDialog(app.getShell());
+                pd.setVerified(false);
                 pd.setFileName(fileName);
                 String password = (String) pd.open();
                 if (password != null) {

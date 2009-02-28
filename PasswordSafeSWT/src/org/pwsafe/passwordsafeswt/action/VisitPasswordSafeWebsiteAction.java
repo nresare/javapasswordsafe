@@ -7,6 +7,8 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
@@ -21,6 +23,8 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
  */
 public class VisitPasswordSafeWebsiteAction extends Action {
 
+	private static final Log log = LogFactory.getLog(VisitPasswordSafeWebsiteAction.class);
+
     public VisitPasswordSafeWebsiteAction() {
         super(Messages.getString("VisitPwWebsiteAction.Label")); //$NON-NLS-1$
     }
@@ -34,9 +38,15 @@ public class VisitPasswordSafeWebsiteAction extends Action {
         new Thread() {
             @Override
 			public void run() {
+            	final String url = "http://jpwsafe.sf.net/"; //$NON-NLS-1$
                 try {
-                		Program.launch("http://jpwsafe.sf.net/"); //$NON-NLS-1$
+                	boolean success = Program.launch(url);
+                	if (! success) {
+                		log.warn("failed to launch a web browser for URL " + url);
+                	}
                 } catch (Exception ioe) {
+            		log.error("failed to launch a web browser for URL " + url, ioe);
+
                     MessageBox mb = new MessageBox(app.getShell(),
                             SWT.ICON_ERROR);
                     mb.setText(Messages.getString("VisitPwWebsiteAction.ErrorDialog.Title")); //$NON-NLS-1$

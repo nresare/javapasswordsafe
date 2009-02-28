@@ -56,6 +56,7 @@ public class MRUFileAction extends Action {
             }
         }
         PasswordDialog pd = new PasswordDialog(app.getShell());
+        pd.setVerified(false);
         pd.setFileName(fileName);
         String password = (String) pd.open();
         if (password != null) {

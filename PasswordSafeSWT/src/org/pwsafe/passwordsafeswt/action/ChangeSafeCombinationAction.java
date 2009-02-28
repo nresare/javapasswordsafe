@@ -8,6 +8,8 @@
 package org.pwsafe.passwordsafeswt.action;
 
 import org.eclipse.jface.action.Action;
+import org.pwsafe.lib.file.PwsFile;
+import org.pwsafe.lib.file.PwsStorage;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 
@@ -22,21 +24,24 @@ public class ChangeSafeCombinationAction extends Action {
         super(Messages.getString("ChangeSafeCombinationAction.Label")); //$NON-NLS-1$
     }
 
-    /**
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    public void run() {
-        PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        PasswordDialog pd = new PasswordDialog(app.getShell());
-        if (app.getPwsFile() != null) {
-            //pd.setFileName(app.getPwsFile().getFilename());
-        	// FIXME
-        	pd.setFileName("FIXME"); //$NON-NLS-1$
-            String newPassword = (String) pd.open();
-            if (newPassword != null) {
-                app.setPassphrase(newPassword);
-            }
-        }
-    }
+	/**
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		PasswordDialog pd = new PasswordDialog(app.getShell());
+		PwsFile pf = app.getPwsFile();
+		if (pf != null) {
+			PwsStorage pfs = pf.getStorage();
+			if (pfs == null) pd.setFileName("Untitled Safe");
+			else {
+				pd.setFileName(pfs.getIdentifier());
+			}
+			String newPassword = (String) pd.open();
+			if (newPassword != null) {
+				new SaveFileAction().run();
+			}
+		}
+	}
 
 }

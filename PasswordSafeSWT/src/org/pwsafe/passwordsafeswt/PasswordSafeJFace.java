@@ -1272,19 +1272,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					lockTask = null;
 				}
 				if (locked) {
-					log.info(Messages.getString("PasswordSafeJFace.Log.TryToUnlock")); //$NON-NLS-1$
-			        PasswordDialog pd = new PasswordDialog(app.getShell());
-			        String fileName = UserPreferences.getInstance().getMRUFile();
-			        pd.setFileName(fileName);
-			        String password = (String) pd.open();
-			        if (password != null) {
-			            try {
-			                app.openFile(fileName, password);
-			            } catch (Exception anEx) {
-			                app.displayErrorDialog(Messages.getString("PasswordSafeJFace.ReOpenError.Title"), Messages.getString("PasswordSafeJFace.ReOpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
-			            }
-					}
-			        app.setLocked(false);
+					lockDbAction.performUnlock();
 				}
 
 			}
@@ -1314,20 +1302,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					lockTask = null;
 				}
 				if (locked) {
-					app.setLocked(false);
-					log.info(Messages.getString("PasswordSafeJFace.Log.TryToUnlock")); //$NON-NLS-1$
-			        PasswordDialog pd = new PasswordDialog(app.getShell());
-			        String fileName = UserPreferences.getInstance().getMRUFile();
-			        pd.setFileName(fileName);
-			        String password = (String) pd.open();
-			        if (password != null) {
-			            try {
-			                app.openFile(fileName, password);
-			            } catch (Exception anEx) {
-			                app.displayErrorDialog(Messages.getString("PasswordSafeJFace.ReOpenError.Title"), Messages.getString("PasswordSafeJFace.ReOpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
-			            }
-					}
-			        
+					lockDbAction.performUnlock();	
 				}
 
 			}
@@ -1356,10 +1331,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				}
 				
 				if (thePrefs.getBoolean(JpwPreferenceConstants.LOCK_DB_ON_MIN)) {
-				    app.setPassphrase(null);
-				    app.clearView();
-				    app.setPwsFile(null);
-				    app.setLocked(true);
+					lockDbAction.performLock();
 				}
 				startLockTimer();
 			}

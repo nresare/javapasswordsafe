@@ -11,7 +11,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
+import java.security.SecureRandom;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -565,7 +565,8 @@ public class EditDialog extends Dialog {
 		
 		StringBuffer sb = new StringBuffer();
 		if (pwSet.length() > 0) {
-			Random rand = new Random(System.currentTimeMillis());
+			SecureRandom rand = new SecureRandom();
+			rand.setSeed(System.currentTimeMillis());
 			for (int i = 0; i < passwordLength; i++) {
 				int randOffset = rand.nextInt(pwSet.length());
 				sb.append(pwSet.charAt(randOffset));
