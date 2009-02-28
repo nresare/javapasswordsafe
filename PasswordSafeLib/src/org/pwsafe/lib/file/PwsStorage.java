@@ -1,3 +1,12 @@
+/*
+ * $Id:$
+ * 
+ * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * All rights reserved. Use of the code is allowed under the
+ * Artistic License 2.0 terms, as specified in the LICENSE file
+ * distributed with this code, or available from
+ * http://www.opensource.org/licenses/artistic-license-2.0.php
+ */
 package org.pwsafe.lib.file;
 
 import java.io.IOException;
@@ -30,7 +39,7 @@ public interface PwsStorage {
 	/**
 	 * This method takes a series of bytes as input and then attempts
 	 * to save them to the underlying storage provider.  It returns
-	 * true if the save was succesful and false otherwise.
+	 * true if the save was successful and false otherwise.
 	 * 
 	 * Note that this interface does not care what version or format the
 	 * file is.  That is handled at the PwSFile layer.
@@ -49,4 +58,10 @@ public interface PwsStorage {
 	 * @param passphrase
 	 */
 	public void setPassphrase(String passphrase);
+	
+	/**
+	 * Returns a human readable identifier of this storage that might be presented #
+	 * to the user. 
+	 */
+	public String getIdentifier();
 }

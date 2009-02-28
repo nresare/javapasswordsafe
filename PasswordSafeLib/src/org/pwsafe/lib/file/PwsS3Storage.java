@@ -208,4 +208,8 @@ public class PwsS3Storage implements PwsStorage {
 		this.passphrase = passphrase;
 	}
 
+	public String getIdentifier() {
+		return account.bucketTitle;
+	}
+
 }
