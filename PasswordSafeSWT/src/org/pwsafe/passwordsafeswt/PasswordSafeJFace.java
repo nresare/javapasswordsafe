@@ -104,7 +104,6 @@ import org.pwsafe.passwordsafeswt.action.SaveFileAsAction;
 import org.pwsafe.passwordsafeswt.action.ViewAsListAction;
 import org.pwsafe.passwordsafeswt.action.ViewAsTreeAction;
 import org.pwsafe.passwordsafeswt.action.VisitPasswordSafeWebsiteAction;
-import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 import org.pwsafe.passwordsafeswt.dialog.StartupDialog;
 import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
 import org.pwsafe.passwordsafeswt.listener.TableColumnSelectionAdaptor;
@@ -650,7 +649,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				"/org/pwsafe/passwordsafeswt/images/cpane.ico")); //$NON-NLS-1$
 		WidgetPreferences.tuneShell(newShell, getClass());
 		startOpeningDialogThread(newShell);
-		
 	}
 
 	/**
@@ -950,8 +948,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	public void exitApplication() {
 		tidyUpOnExit();
-//		getShell().dispose();
 		getShell().close();
+		getShell().dispose();
 		if (trayItem != null)
 			trayItem.dispose();
 	}
@@ -1250,6 +1248,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			@Override
 			public void shellClosed(ShellEvent event) {
 				event.doit = false; // don't close now
+				
+		    	final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+				if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
+					// minimize on close when sys tray is present
+					getShell().setMinimized(true);
+					setReturnCode(OK);
+					return;
+				}
+
 				boolean cancelled = saveAppIfDirty();
 				if (cancelled) {
 					setReturnCode(OK);
