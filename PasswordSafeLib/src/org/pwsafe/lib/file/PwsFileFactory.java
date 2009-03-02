@@ -31,9 +31,8 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * 
  * @author Kevin Preece
  */
-public class PwsFileFactory
-{
-	public static String S3EXT = "pws3";
+public class PwsFileFactory {
+	
 	private static final Log LOG = Log.getInstance(PwsFileFactory.class.getPackage().getName());
 
 	/**
@@ -208,7 +207,7 @@ public class PwsFileFactory
 		
 		PwsFile		file;
 		
-		if (filename.endsWith(S3EXT)) {
+		if (filename.endsWith(PwsS3Storage.FILE_EXTENSION)) {
 			file = new PwsFileV3(new PwsS3Storage(filename, null, passphrase), passphrase);
 			file.readAll();
 			file.close();

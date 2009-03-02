@@ -29,8 +29,13 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * 
  * @author Glen Smith (based on Kevin Preece's v2 implementation).
  */
-public class PwsFileV3 extends PwsFile
-{
+public class PwsFileV3 extends PwsFile {
+	
+	/**
+	 * File extension of the V3 password safe files.
+	 */
+	public static final String FILE_EXTENSION = ".psafe3";
+
 	private static final Log LOG = Log.getInstance(PwsFileV3.class.getPackage().getName());
 
 	/**

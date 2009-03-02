@@ -60,7 +60,7 @@ public interface PwsStorage {
 	public void setPassphrase(String passphrase);
 	
 	/**
-	 * Returns a human readable identifier of this storage that might be presented #
+	 * Returns a human readable identifier of this storage that might be presented 
 	 * to the user. 
 	 */
 	public String getIdentifier();

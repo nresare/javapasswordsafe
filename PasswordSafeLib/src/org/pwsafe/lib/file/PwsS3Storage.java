@@ -36,6 +36,12 @@ public class PwsS3Storage implements PwsStorage {
 	private static final Log LOG = Log.getInstance(PwsS3Storage.class.getPackage().getName());
 	
 	/**
+	 * File extension of the <b>local</b> file holding the s3 
+	 * account information.
+	 */
+	public static final String FILE_EXTENSION = ".pws3";
+	
+	/**
 	 * A helper class to hold the Amazon S3 credentials.  This
 	 * will probably be refactored as the handling of this
 	 * information is improved.
@@ -53,7 +59,7 @@ public class PwsS3Storage implements PwsStorage {
 		String bucketTitle;
 		String keyId;
 		String secretKey;
-		private String hashedBucket;
+		private final String hashedBucket;
 		public AccountDetails(String bucket, String id, String secret) {
 			SHA1 sha1 = new SHA1();
 			this.bucketTitle = bucket;
@@ -87,7 +93,7 @@ public class PwsS3Storage implements PwsStorage {
 		}
 	}
 	
-	private static final String DEFAULT_KEY = "passwordSafeData.dat";
+	private static final String DEFAULT_KEY = "passwordSafeData.pws3";
 	
 	/**
 	 * This object provides the interface to S3.

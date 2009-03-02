@@ -25,13 +25,19 @@ import org.pwsafe.lib.Log;
  *
  */
 public class PwsFileStorage implements PwsStorage {
+
+	/**
+	 * Default file extension of the password safe file.
+	 */
+	public static final String FILE_EXTENSION = ".psafe3";
+
 	/**
 	 * An object for logging activity in this class.
 	 */
 	private static final Log LOG = Log.getInstance(PwsFileStorage.class.getPackage().getName());
 
 	/** The filename used for storage */
-	private String filename;
+	private final String filename;
 	
 	/*
 	 * Build an implementation given the filename for the underlying storage. 
@@ -162,7 +168,7 @@ public class PwsFileStorage implements PwsStorage {
 	public String getFilename() { return filename; }
 	
 	public void setPassphrase(String passphrase) {
-		/* Do nothing since there is no additional enrypted information associated
+		/* Do nothing since there is no additional encrypted information associated
 		 * with this storage mechanism
 		 */
 	}

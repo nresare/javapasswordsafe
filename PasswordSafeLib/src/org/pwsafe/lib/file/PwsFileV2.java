@@ -20,8 +20,13 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * 
  * @author Kevin Preece
  */
-public class PwsFileV2 extends PwsFile
-{
+public class PwsFileV2 extends PwsFile {
+	
+	/**
+	 * File extension of the V2 password safe files.
+	 */
+	public static final String FILE_EXTENSION = ".dat";
+
 	/**
 	 * The PasswordSafe database version number that this class supports.
 	 */
