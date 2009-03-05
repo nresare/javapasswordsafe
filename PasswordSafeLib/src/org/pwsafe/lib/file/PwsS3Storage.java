@@ -218,4 +218,23 @@ public class PwsS3Storage implements PwsStorage {
 		return account.bucketTitle;
 	}
 
+	public boolean deleteBucket () throws IOException {
+		String hash = account.getHashedName();
+		S3BucketList bl = null;
+		try {
+			bl = s3.listMyBuckets();
+			Vector v = bl.getBuckets();
+			if (v.contains(hash)) {
+				s3.deleteBucket(hash);
+				return true;
+			} else {
+				return false;
+			}
+		} catch (IOException anIoEx) {
+			throw anIoEx;
+		} catch (Exception anEx) {
+			throw new IOException("Unable to delete bucket " + account.getHashedName()+": " + anEx.getMessage());
+
+		}
+	}
 }
