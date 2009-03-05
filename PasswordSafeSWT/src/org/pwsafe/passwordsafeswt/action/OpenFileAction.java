@@ -31,13 +31,15 @@ public class OpenFileAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         boolean cancelled = app.saveAppIfDirty();
         if (!cancelled) {
             FileDialog fod = new FileDialog(app.getShell(), SWT.OPEN);
-            fod.setFilterExtensions(new String[] { "*.psafe3", "*.dat", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            fod.setFilterNames(new String[] { Messages.getString("OpenFileAction.FilterLabel.V3Files"), Messages.getString("OpenFileAction.FilterLabel.V2Files"), Messages.getString("OpenFileAction.FilterLabel.AllFiles")} ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            // TODO get the file extension from some enum as soon as passwordsafelib is changed to Java 5
+            fod.setFilterExtensions(new String[] { "*.psafe3", "*.pws3", "*.dat", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            fod.setFilterNames(new String[] { Messages.getString("OpenFileAction.FilterLabel.V3Files"), Messages.getString("OpenFileAction.FilterLabel.S3Files"), Messages.getString("OpenFileAction.FilterLabel.V2Files"), Messages.getString("OpenFileAction.FilterLabel.AllFiles")} ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             String fileName = fod.open();
             if (fileName != null) {
                 PasswordDialog pd = new PasswordDialog(app.getShell());
