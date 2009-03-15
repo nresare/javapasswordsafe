@@ -9,6 +9,8 @@
  */
 package org.pwsafe.lib;
 
+import org.pwsafe.lib.crypto.SHA256Pws;
+
 /**
  * This class exposes various utilty methods.
  * 
@@ -470,6 +472,27 @@ public class Util
 		buff[offset+1]	= (byte)((value & 0xff00) >>> 8);
 		buff[offset+2]	= (byte)((value & 0xff0000) >>> 16);
 		buff[offset+3]	= (byte)((value & 0xff000000) >>> 24);
+		
+	}
+
+	/**
+	 * Calculate stretched key.
+	 * 
+	 * http://www.schneier.com/paper-low-entropy.pdf (Section 4.1), 
+	 * with SHA-256 as the hash function, and ITER iterations 
+	 * (at least 2048, i.e., t = 11).
+	 * @param passphrase the user entered passphrase
+	 * @param salt the salt from the file
+	 * @param iter the number of iters from the file
+	 * @return the stretched user key for comparison
+	 */
+	public static byte[] stretchPassphrase(byte[] passphrase, byte[] salt, int iter) {
+		byte[] p = mergeBytes(passphrase, salt);
+		byte[] hash = SHA256Pws.digest(p);
+		for (int i = 0; i < iter; i++) {
+			hash = SHA256Pws.digest(hash);
+		}
+		return hash;
 		
 	}
 }

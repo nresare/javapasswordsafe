@@ -49,7 +49,7 @@ public class PwsFileStorage implements PwsStorage {
 	/** Grab all the bytes in the file */
 	public byte[] load() throws IOException {
 		File file = new File(filename);
-        InputStream is = new FileInputStream(filename);
+        InputStream is = new FileInputStream(file);
         
         // Get the size of the file
         long length = file.length();
@@ -91,25 +91,25 @@ public class PwsFileStorage implements PwsStorage {
 			LOG.debug1("Number of bytes to save = "+data.length);
 			LOG.debug1("Original file: "+filename);
 
-			File file2		= new File( filename );
-			if (!file2.exists()) {
+			File file		= new File( filename );
+			if (!file.exists()) {
 				/* Original file doesn't exisit, just go ahead and write it
 				 * (no backup, temp files needed).
 				 */
-				OutputStream OutStream	= new FileOutputStream( filename );
+				OutputStream OutStream	= new FileOutputStream( file );
 
 				OutStream.write(data);
 				OutStream.close(); // TODO: needs a finally
 				return true;
 			}
-			LOG.debug1("Original file path: "+file2.getAbsolutePath());
-			File dir = file2.getCanonicalFile().getParentFile();
+			LOG.debug1("Original file path: "+file.getAbsolutePath());
+			File dir = file.getCanonicalFile().getParentFile();
 			if (dir==null) {
-				LOG.error("Couldn't find the parent directory for: "+file2.getAbsolutePath());
+				LOG.error("Couldn't find the parent directory for: "+file.getAbsolutePath());
 				return false;
 			}
 			String FilePath	= dir.getAbsolutePath();
-			String FileName	= file2.getName();
+			String FileName	= file.getName();
 
 			File oldFile		= new File( FilePath, FileName );
 			File bakFile		= new File( FilePath, FileName + "~" );

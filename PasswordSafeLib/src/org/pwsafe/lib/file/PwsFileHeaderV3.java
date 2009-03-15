@@ -10,6 +10,7 @@
 package org.pwsafe.lib.file;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
@@ -45,14 +46,14 @@ public class PwsFileHeaderV3
 	private static final Log LOG = Log.getInstance(PwsFileHeaderV3.class.getPackage().getName());
 
 	private byte [] tag 		= new byte[4];
-	private byte [] salt		= new byte[32];
-	private byte [] iter		= new byte[4];
+	private final byte [] salt		= new byte[32];
+	private final byte [] iter		= new byte[4];
 	private byte [] password	= new byte[32];
 	private byte [] b1 			= new byte[16];
 	private byte [] b2 			= new byte[16];
 	private byte [] b3 			= new byte[16];
 	private byte [] b4 			= new byte[16];
-	private byte [] IV 			= new byte[16];
+	private final byte [] IV 			= new byte[16];
 	
 
 	/**
@@ -92,6 +93,29 @@ public class PwsFileHeaderV3
 		file.readBytes( b3 );
 		file.readBytes( b4 );
 		file.readBytes( IV );
+	}
+
+	/**
+	 * Constructs the PasswordSafe file header by reading the 
+	 * header data from an <code>InputStream</code>.
+	 * 
+	 * @param stream the file to read the header from.
+	 * 
+	 * @throws IOException        If an error occurs whilst reading from the file.
+	 * @throws EndOfFileException If end of file is reached before reading all the data.
+	 */
+	public PwsFileHeaderV3( InputStream stream )
+	throws IOException, EndOfFileException
+	{
+		stream.read( tag );
+		stream.read( salt );
+		stream.read( iter );
+		stream.read( password );
+		stream.read( b1 );
+		stream.read( b2 );
+		stream.read( b3 );
+		stream.read( b4 );
+		stream.read( IV );
 	}
 
 	/**
@@ -219,7 +243,7 @@ public class PwsFileHeaderV3
 	{
 		LOG.enterMethod( "PwsFileHeaderV3.update" );
 		
-		byte[] stretchedPassword = PwsFileV3.stretchPassphrase(passphrase.getBytes(), salt, Util.getIntFromByteArray(iter, 0));
+		byte[] stretchedPassword = Util.stretchPassphrase(passphrase.getBytes(), salt, Util.getIntFromByteArray(iter, 0));
 		
 		password = SHA256Pws.digest(stretchedPassword);
 		

@@ -9,20 +9,19 @@
  */
 package org.pwsafe.lib.file;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Vector;
+import java.security.NoSuchAlgorithmException;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.crypto.SHA1;
+import org.pwsafe.lib.exception.EndOfFileException;
+import org.pwsafe.lib.exception.PasswordSafeException;
+import org.pwsafe.lib.exception.UnsupportedFileVersionException;
 
 import com.amazonaws.crypto.Base64;
 import com.amazonaws.s3.S3;
-import com.amazonaws.s3.S3BucketList;
+import com.amazonaws.s3.S3Bucket;
 import com.amazonaws.s3.S3Object;
 
 /**
@@ -93,7 +92,16 @@ public class PwsS3Storage implements PwsStorage {
 		}
 	}
 	
-	private static final String DEFAULT_KEY = "passwordSafeData.pws3";
+	/**
+	 * Group ID of the local S3 credentials store, in order
+	 * to easily identify S3 in case of future extensions.  
+	 */
+	private static final String S3_LOCAL_GROUP_ID = "S3";
+	
+	/**
+	 * S3 Object key inside the bucket.
+	 */
+	private static final String DEFAULT_KEY = "passwordSafeData.psafe3";
 	
 	/**
 	 * This object provides the interface to S3.
@@ -106,48 +114,83 @@ public class PwsS3Storage implements PwsStorage {
 	 */
 	private AccountDetails account;
 	
-	/** Keep a copy of the passphrase */
-	private String passphrase;
+	/** The filename used for local account details storage */
+	private final String filename;
+
+	/** The local PWsFile where S3 credentials are stored */
+	private PwsFileV3 localFile;
 	
 	/**
 	 * Constructs an instance of an Amazon S3 storage provider.
+	 *FIXME: does too much, split up in a create new and open existing.
+	 * 
 	 * @param bucket The bucket name
-	 * @param filename The filename the account information is stored in (if it exists) or
+	 * @param aFilename The filename the account information is stored in (if it exists) or
 	 * the file to write it to if the storage is initialized.
 	 * @param account The bucket name and access credentials for the S3 account.  These are
-	 * only required if a new storage area is being initialized.  Otherwise, they are
+	 * only required if a new storage area is being initialized. Otherwise, they are
 	 * read from the specified file.
 	 */
-	public PwsS3Storage(String filename, AccountDetails acc, String passphrase) throws IOException {
-		this.passphrase = passphrase;
-		File f = new File(filename);
-		if (f.exists()) {
-			FileInputStream fin = new FileInputStream(filename);
-			CryptoInputStream cis = new CryptoInputStream(this.passphrase, fin);
-			InputStreamReader isr = new InputStreamReader(cis);
-			BufferedReader br = new BufferedReader(isr);
-			String bucket = br.readLine();
-		    String keyId = br.readLine();
-		    String secretKey = br.readLine();
-		    cis.close();
+	public PwsS3Storage(String aFilename, AccountDetails acc, String passphrase) throws IOException {
+		this.filename = aFilename;
+		
+		File theFile = new File(aFilename);
+		if (theFile.exists()) {
+			try {
+				localFile = new PwsFileV3(new PwsFileStorage(aFilename), passphrase);
+				localFile.readAll();
+				localFile.close();
+			} catch (NoSuchAlgorithmException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				throw new IOException(e1.getMessage());
+			} catch (EndOfFileException e1) {
+				throw new IOException(e1.getMessage());
+			} catch (UnsupportedFileVersionException e1) {
+				e1.printStackTrace();
+				throw new IOException(e1.getMessage());
+			}
+			
+			//TODO: for compatibility with other local access stores, filter for S3_GROUP_ID
+			PwsRecordV3 theAccountRecord = (PwsRecordV3) localFile.getRecords().next();
+			String bucket = theAccountRecord.getField(PwsRecordV3.TITLE).toString();
+		    String keyId = theAccountRecord.getField(PwsRecordV3.USERNAME).toString();
+		    String secretKey = theAccountRecord.getField(PwsRecordV3.PASSWORD).toString();
 		    this.account = new AccountDetails(bucket, keyId, secretKey);
 			/** Note the use of HTTPS in the connection. */
 			s3 = new S3( S3.HTTPS_URL, account.keyId, account.secretKey );
 		} else {
 			this.account = acc;
+			localFile = new PwsFileV3();
+			localFile.setStorage(new PwsFileStorage(aFilename));
+			localFile.setPassphrase(passphrase);
+			PwsRecordV3 theAccountRecord;
+			try {
+				theAccountRecord = (PwsRecordV3) localFile.newRecord();
+				theAccountRecord.setField(new PwsStringUnicodeField(PwsRecordV3.GROUP, S3_LOCAL_GROUP_ID));
+				theAccountRecord.setField(new PwsStringUnicodeField(PwsRecordV3.TITLE, acc.bucketTitle));
+				theAccountRecord.setField(new PwsStringUnicodeField(PwsRecordV3.USERNAME, acc.keyId));
+				theAccountRecord.setField(new PwsStringUnicodeField(PwsRecordV3.PASSWORD, acc.secretKey));
+				localFile.add(theAccountRecord);
+			} catch (PasswordSafeException e) {
+				throw new IOException(e.getMessage());
+			}
 			if (acc!=null && acc.bucketTitle!=null && acc.keyId!=null && acc.secretKey!=null) {
 				/** Note the use of HTTPS in the connection. */
 				s3 = new S3( S3.HTTPS_URL, account.keyId, account.secretKey );
-				String hash = account.getHashedName();
-				S3BucketList bl = null;
+				final String hash = account.getHashedName();
+				S3Bucket aBucket = null;
 				try {
-					bl = s3.listMyBuckets();
+					aBucket = s3.listBucket(hash);
 				} catch (Exception e) {
-					throw new IOException("Couldn't open S3 connection");
+					//probably no bucket - only log if unknown exception
+					if (! e.getMessage().contains("NoSuchBucket"))
+						LOG.error("unexpected Error on S3 Bucket opening:", e);
 				}
 				try {
-					Vector v = bl.getBuckets();
-					if (v.contains(hash)) {
+					if (aBucket != null) {
+						// FIXME: also allow the use of existing s3 safes, 
+						// even without local credentials 
 						LOG.debug1("Bucket "+hash+" found.");
 					} else {
 						LOG.debug1("Bucket "+hash+" not found, creating...");
@@ -157,13 +200,8 @@ public class PwsS3Storage implements PwsStorage {
 				} catch (Exception e) {
 					throw new IOException("Couldn't create S3 bucket:"+e.getMessage());
 				}
-
-				FileOutputStream fos = new FileOutputStream(filename);
-				CryptoOutputStream cos = new CryptoOutputStream(passphrase, fos);
-				String output = account.bucketTitle+"\n"+account.keyId+"\n"+account.secretKey+"\n\n";
-				byte[] bytes = output.getBytes();
-				cos.write(bytes);	
-				cos.close();
+				localFile.save();
+				localFile.close();
 			} else {
 				// FIXME: What to do?
 				/* Nothing can be done...throw exception? */
@@ -210,21 +248,24 @@ public class PwsS3Storage implements PwsStorage {
 		}
 	}
 	
-	public void setPassphrase(String passphrase) {
-		this.passphrase = passphrase;
-	}
-
 	public String getIdentifier() {
-		return account.bucketTitle;
+		return filename;
 	}
 
-	public boolean deleteBucket () throws IOException {
-		String hash = account.getHashedName();
-		S3BucketList bl = null;
+	
+	/**
+	 * Tries to delete the password safe on S3 and the bucket
+	 * containung it. 
+	 * 
+	 * @return true on successful deletion
+	 * @return false if nothing was deleted
+	 * @throws IOException if there is other data in the bucket
+	 */
+	public boolean delete () throws IOException {
+		final String hash = account.getHashedName();
 		try {
-			bl = s3.listMyBuckets();
-			Vector v = bl.getBuckets();
-			if (v.contains(hash)) {
+			if (myBucketExists()) {
+				s3.deleteObject(hash, DEFAULT_KEY);
 				s3.deleteBucket(hash);
 				return true;
 			} else {
@@ -235,6 +276,40 @@ public class PwsS3Storage implements PwsStorage {
 		} catch (Exception anEx) {
 			throw new IOException("Unable to delete bucket " + account.getHashedName()+": " + anEx.getMessage());
 
+		}
+	}
+
+	/**
+	 * Tries to delete the bucket, but throws an exception 
+	 * if there is any data, including a password safe, stored in it.
+	 * 
+	 * @return true on successful deletion
+	 * @return false if nothing was deleted
+	 * @throws IOException if data is in the store
+	 */
+	public boolean deleteBucket () throws IOException {
+		final String hash = account.getHashedName();
+		try {
+			if (myBucketExists()) {
+				s3.deleteBucket(hash);
+				return true;
+			} else {
+				return false;
+			}
+		
+		} catch (IOException anIoEx) {
+			throw anIoEx;
+		} catch (Exception anEx) {
+			throw new IOException("Unable to delete bucket " + account.getHashedName()+": " + anEx.getMessage());
+
+		}
+	}
+
+	private boolean myBucketExists() {
+		try {
+			return s3.listBucket(account.getHashedName())!= null;
+		} catch (Exception e) {
+			return false;
 		}
 	}
 }

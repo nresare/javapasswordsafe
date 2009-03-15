@@ -51,14 +51,7 @@ public interface PwsStorage {
 	 * @throws IOException
 	 */
 	public boolean save(byte[] data);
-	
-	/**
-	 * This method is used by storage schemes (S3) that utilitze a passphase <b>
-	 * in addition to the actual password file</b>.
-	 * @param passphrase
-	 */
-	public void setPassphrase(String passphrase);
-	
+		
 	/**
 	 * Returns a human readable identifier of this storage that might be presented 
 	 * to the user. 

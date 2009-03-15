@@ -112,7 +112,7 @@ public class PwsFileV3 extends PwsFile {
 		
 		int iter = Util.getIntFromByteArray(headerV3.getIter(), 0);
 		LOG.debug1("Using iterations: [" + iter + "]");
-		stretchedPassword = stretchPassphrase(passphrase.getBytes(), headerV3.getSalt(), iter);
+		stretchedPassword = Util.stretchPassphrase(passphrase.getBytes(), headerV3.getSalt(), iter);
 		
 		if (!Util.bytesAreEqual(headerV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
 			throw new IOException("Invalid password");
@@ -204,27 +204,6 @@ public class PwsFileV3 extends PwsFile {
 		}
 	}
 	
-
-	/**
-	 * Calculate stretched key.
-	 * 
-	 * http://www.schneier.com/paper-low-entropy.pdf (Section 4.1), 
-	 * with SHA-256 as the hash function, and ITER iterations 
-	 * (at least 2048, i.e., t = 11).
-	 * @param passphrase the user entered passphrase
-	 * @param salt the salt from the file
-	 * @param iter the number of iters from the file
-	 * @return the stretched user key for comparison
-	 */
-	static byte[] stretchPassphrase(byte[] passphrase, byte[] salt, int iter) {
-		byte[] p = Util.mergeBytes(passphrase, salt);
-		byte[] hash = SHA256Pws.digest(p);
-		for (int i = 0; i < iter; i++) {
-			hash = SHA256Pws.digest(hash);
-		}
-		return hash;
-		
-	}
 
 	/**
 	 * Returns the major version number for the file.
