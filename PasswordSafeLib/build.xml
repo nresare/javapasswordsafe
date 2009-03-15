@@ -92,13 +92,13 @@ runtests   - Runs the JUnit tests.
 
 	<target name="compile" depends="cleanbin">
 		<javac srcdir="${srcdir}" destdir="${bindir}" deprecation="on"
-	         source="1.4"
-	         target="1.4">
+	         source="1.5"
+	         target="1.5">
 			<classpath refid="project.class.path" />
 		</javac>		
 		<javac srcdir="${testsrcdir}" destdir="${bindir}" deprecation="on"
-	        source="1.4"
-	        target="1.4">
+	        source="1.5"
+	        target="1.5">
 			<classpath refid="project.class.path" />
 		</javac>
 
