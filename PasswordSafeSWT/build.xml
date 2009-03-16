@@ -45,6 +45,12 @@
 
         <mkdir dir="${deploy.dir}" />
 
+        <path id="lib.jars">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+            </fileset>
+        </path>
+    	
         <path id="useful.jars">
             <fileset dir="${lib.dir}">
                 <include name="**/*.jar" />
@@ -87,16 +93,23 @@
     <target name="jar" depends="build" description="Create PasswordSafeSWT jar file">
         <mkdir dir="${deploy.dir}" />
 
+		<pathconvert pathsep=" " property="dist.classpath" refid="lib.jars">
+			<map from="${lib.dir}" to="." />
+		</pathconvert>
+
         <jar destfile="${runme.jar}" basedir="${classes.dir}" index="true">
             <include name="**/*.gif" />
         	<include name="**/*.ico" />
             <include name="**/*.class" />
+            <include name="**/*.properties" />
+
             <manifest>
                 <attribute name="Main-Class" value="${main.class}" />
   			    <!--attribute name="Implementation-Vendor" value="ACME inc."/-->
           		<attribute name="Implementation-Title" value="${app.name}"/>
             	<attribute name="Implementation-Version" value="${build.version}"/>
-              	<attribute name="sealed" value="true"/>
+            	<attribute name="Class-Path" value="./swt.jar ${dist.classpath}"/>
+              	<attribute name="Sealed" value="true"/>
          </manifest>
         </jar>
     </target>
@@ -166,9 +179,13 @@
                 <include name="pwsafe.sh" />
                 <include name="*.jar" />
             </fileset>
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
             <fileset dir="${deploy.dir}" includes="*.jar" />
         	<fileset dir="${basedir}" includes="LICENSE"/>
+        </copy>
+
+        <copy todir="${dist.linux.dir}/${zip.dir.name}/lib">
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
+            <fileset dir="${linux.dir}" includes="*.jar" />
         </copy>
 
         <!-- And set the launcher script executable... -->
@@ -202,9 +219,13 @@
                 <include name="pwsafe.sh" />
                 <include name="*.jar" />
             </fileset>
-            <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
             <fileset dir="${deploy.dir}" includes="*.jar" />
         	<fileset dir="${basedir}" includes="LICENSE"/>
+        </copy>
+
+        <copy todir="${dist.linux-x86_64.dir}/${zip.dir.name}/lib">
+            <fileset dir="${lib.dir}" includes="*.jar" excludes="jar*.jar" />
+            <fileset dir="${linux-x86_64.dir}" includes="*.jar" />
         </copy>
 
         <!-- And set the launcher script and dlls executable... -->
@@ -216,12 +237,12 @@
 
         <tar destfile="${dist.linux-x86_64.dir}/${zip.dir.name}-linux-x86_64.tar.gz"
                         compression="gzip">
-     	  <tarfileset dir="${dist.linux-x86_64.dir}/${zip.dir.name}" mode="755">
-     	    <include name="*.sh"/>
+     	  <tarfileset dir="${dist.linux-x86_64.dir}" mode="755">
+     	    <include name="${zip.dir.name}/**/*.sh"/>
      	  </tarfileset>
-     	  <tarfileset dir="${dist.linux-x86_64.dir}/${zip.dir.name}">
-     	    <include name="**"/>
-     	    <exclude name="*.sh"/>
+     	  <tarfileset dir="${dist.linux-x86_64.dir}">
+     	    <include name="${zip.dir.name}/**/*"/>
+     	    <exclude name="${zip.dir.name}/**/*.sh"/>
        	  </tarfileset>
          </tar>
 
