@@ -27,27 +27,33 @@ public class PwsFileV3Test extends TestCase {
 	private String filename;
 	private String password;
 	
+	private PwsFileV3 pwsFile;
+	
+	@Override
 	public void setUp() {
 		filename = System.getProperty("user.dir") + File.separator + "sample3.psafe3";
 		password = "Pa$$word";
 		
 		try {
-			createPwsFile(filename, password);
+			pwsFile = createPwsFile(filename, password);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
+	@Override
 	public void tearDown() {
 		deletePwsFile(filename);
 	}
 	
-	private static void createPwsFile(String filename, String password) throws IOException {
+	private static PwsFileV3 createPwsFile(String filename, String password) throws IOException {
 		PwsFileV3 pwsFileV3 = new PwsFileV3();
 		PwsFileStorage storage = new PwsFileStorage(filename);
 		pwsFileV3.setStorage(storage);
 		pwsFileV3.setPassphrase(password);
 		pwsFileV3.save();
+		
+		return pwsFileV3;
 	}
 	
 	private static void deletePwsFile(String filename) {
@@ -56,15 +62,26 @@ public class PwsFileV3Test extends TestCase {
 	}
 	
 	public void testPassphrase() throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
-		createPwsFile(filename, password);
 		
 		PwsFileStorage storage = new PwsFileStorage(filename);
 		PwsFileV3 pwsFile = new PwsFileV3(storage, password);
 		pwsFile.readAll();
+		assertEquals(0, pwsFile.getRecordCount());
 		System.out.println(pwsFile.getRecordCount());
 		pwsFile.close();
 	}
-	
+
+	public void testReadOnly() throws Exception {
+		
+		pwsFile.setReadOnly(true);
+		try {
+			pwsFile.save();
+			fail("save on Read only file without exception");
+		} catch (IOException anEx) {
+			//ok
+		}
+	}
+
 	public void testLargeFile() throws EndOfFileException, IOException, UnsupportedFileVersionException, Exception {
 		PwsFileV3 file = (PwsFileV3) PwsFileFactory.newFile();
 		file.setPassphrase(password);

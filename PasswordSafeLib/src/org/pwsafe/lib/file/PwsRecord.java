@@ -147,6 +147,7 @@ public abstract class PwsRecord implements Comparable
 		 * 
 		 * @return A <code>String</code> representation of this object.
 		 */
+		@Override
 		public String toString()
 		{
 			StringBuffer	sb;
@@ -249,6 +250,7 @@ public abstract class PwsRecord implements Comparable
 	 * 
 	 * @throws CloneNotSupportedException
 	 */
+	@Override
 	public abstract Object clone() throws CloneNotSupportedException;
 
 	/**
@@ -275,6 +277,7 @@ public abstract class PwsRecord implements Comparable
 	 * @return <code>true</code> if the records are equal, <code>false</code> if 
 	 *         they're unequal.
 	 */
+	@Override
 	public abstract boolean equals( Object other );
 
 	/**

@@ -84,8 +84,8 @@ public abstract class PwsFile
 	{
 		private final Log LOG = Log.getInstance(FileIterator.class.getPackage().getName());
 
-		private PwsFile		TheFile;
-		private Iterator	TheIterator;
+		private final PwsFile		TheFile;
+		private final Iterator	TheIterator;
 
 		/**
 		 * Construct the <code>Iterator</code> linking it to the given PasswordSafe
@@ -140,6 +140,9 @@ public abstract class PwsFile
 		{
 			LOG.enterMethod( "PwsFile$FileIterator.remove" );
 
+			if (isReadOnly())
+				LOG.error("Illegal remove on read only file - saving won't be possible");
+
 			TheIterator.remove();
 			TheFile.setModified();
 
@@ -148,54 +151,60 @@ public abstract class PwsFile
 	}
 
 	/** The storage implementation associated with this file */
-	protected PwsStorage	storage = null;
+	protected PwsStorage		storage = null;
 	
 	/**
 	 * The passphrase for the file.
 	 */
-	protected String			Passphrase		= null;
+	protected String			passphrase		= null;
 
 	/**
 	 * The stream used to read data from the file.  It is non-null only whilst data
 	 * are being read from the file.
 	 */
-	protected InputStream		InStream		= null;
+	protected InputStream		inStream		= null;
 
 	/**
 	 * The stream used to write data to the file.  It is non-null only whilst data are
 	 * being written to the file. 
 	 */
-	protected OutputStream	OutStream		= null;
+	protected OutputStream		outStream		= null;
 
 	/**
 	 * The file's standard header.
 	 */
-	private PwsFileHeader	Header			= null;
+	private PwsFileHeader		header			= null;
 
 	/**
 	 * The Blowfish object being used to encrypt or decrypt data as it is written to or
 	 * read from the file. 
 	 */
-	private BlowfishPws		Algorithm		= null;
+	private BlowfishPws			algorithm		= null;
 
 	/**
 	 * The records that are part of the file.
 	 */
-	protected ArrayList		RecordSet		= new ArrayList();
+	protected ArrayList			recordSet		= new ArrayList();
 
 	/**
 	 * Flag indicating whether (<code>true</code>) or not (<code>false</code>) the file
 	 * has been modified in memory and not yet written back to the filesystem.
 	 */
-	protected boolean			Modified		= false;
+	protected boolean			modified		= false;
 
+	
+	/**
+	 * Flag indicating whether the file may be changed or saved. 
+	 * 
+	 */
+	protected boolean 			readOnly 		= false;
 	
 	/**
 	 * Constructs and initialises a new, empty PasswordSafe database in memory.
 	 */
 	protected PwsFile()
 	{
-		Header	= new PwsFileHeader();
+		header	= new PwsFileHeader();
 		storage = null;
 	}
 
@@ -203,19 +212,19 @@ public abstract class PwsFile
 	 * Construct the PasswordSafe file by reading it from the file.
 	 * 
 	 * @param filename   the name of the database to open.
-	 * @param passphrase the passphrase for the database.
+	 * @param aPassphrase the passphrase for the database.
 	 * 
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	protected PwsFile( PwsStorage storage, String passphrase )
+	protected PwsFile( PwsStorage aStorage, String aPassphrase )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFile.PwsFile( String )" );
-		this.storage = storage;
-		open( passphrase );
+		this.storage = aStorage;
+		open( aPassphrase );
 
 		LOG.leaveMethod( "PwsFile.PwsFile( String )" );
 	}
@@ -232,9 +241,12 @@ public abstract class PwsFile
 	{
 		LOG.enterMethod( "PwsFile.add" );
 
+		if (isReadOnly())
+			LOG.error("Illegal add on read only file - safing won't be possible");
+
 		// TODO validate the record before adding it
 		rec.setOwner( this );
-		RecordSet.add( rec );
+		recordSet.add( rec );
 		setModified();
 
 		LOG.leaveMethod( "PwsFile.add" );
@@ -303,12 +315,12 @@ public abstract class PwsFile
 	{
 		LOG.enterMethod( "PwsFile.close" );
 
-		if ( InStream != null )
+		if ( inStream != null )
 		{	
-			InStream.close();
+			inStream.close();
 	
-			InStream	= null;
-			Algorithm	= null;
+			inStream	= null;
+			algorithm	= null;
 		}
 
 		LOG.leaveMethod( "PwsFile.close" );
@@ -343,7 +355,7 @@ public abstract class PwsFile
 	 */
 	PwsFileHeader getHeader()
 	{
-		return Header;
+		return header;
 	}
 
 	/**
@@ -353,7 +365,7 @@ public abstract class PwsFile
 	 */
 	public String getPassphrase()
 	{
-		return Passphrase;
+		return passphrase;
 	}
 
 	/**
@@ -365,7 +377,7 @@ public abstract class PwsFile
 	{
 		LOG.enterMethod( "PwsFile.getRecordCount" );
 		
-		int size = RecordSet.size();
+		int size = recordSet.size();
 
 		LOG.leaveMethod( "PwsFile.getRecordCount" );
 
@@ -380,7 +392,7 @@ public abstract class PwsFile
 	 */
 	public Iterator getRecords()
 	{
-		return new FileIterator( this, RecordSet.iterator() );
+		return new FileIterator( this, recordSet.iterator() );
 	}
 
 	/**
@@ -390,30 +402,30 @@ public abstract class PwsFile
 	 */
 	public boolean isModified()
 	{
-		return Modified;
+		return modified;
 	}
 
 	/**
 	 * Constructs and initialises the blowfish encryption routines ready to decrypt or
 	 * encrypt data.
 	 * 
-	 * @param passphrase
+	 * @param aPassphrase
 	 * 
 	 * @return A properly initialised {@link BlowfishPws} object.
 	 */
-	private BlowfishPws makeBlowfish( byte [] passphrase )
+	private BlowfishPws makeBlowfish( byte [] aPassphrase )
 	{
 		SHA1	sha1;
 		byte	salt[];
 		
 		sha1 = new SHA1();
-		salt = Header.getSalt();
+		salt = header.getSalt();
 
-		sha1.update( passphrase, 0, passphrase.length );
+		sha1.update( aPassphrase, 0, aPassphrase.length );
 		sha1.update( salt, 0, salt.length );
 		sha1.finalize();
 
-		return new BlowfishPws( sha1.getDigest(), Header.getIpThing() );
+		return new BlowfishPws( sha1.getDigest(), header.getIpThing() );
 	}
 
 	/**
@@ -427,25 +439,25 @@ public abstract class PwsFile
 	 * Opens the database.
 	 * 
 	 * @param file       the <code>File</code> to read from
-	 * @param passphrase the passphrase for the file.
+	 * @param aPassphrase the passphrase for the file.
 	 * 
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	protected void open( String passphrase )
+	protected void open( String aPassphrase )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFile.init" );
 
-		Passphrase		= passphrase;
+		passphrase		= aPassphrase;
 		
 		if (storage!=null) {
-			InStream		= new ByteArrayInputStream(storage.load());
+			inStream		= new ByteArrayInputStream(storage.load());
 		}
-		Header			= new PwsFileHeader( this );
-		Algorithm		= makeBlowfish( passphrase.getBytes() );
+		header			= new PwsFileHeader( this );
+		algorithm		= makeBlowfish( aPassphrase.getBytes() );
 
 		readExtraHeader( this );
 
@@ -508,7 +520,7 @@ public abstract class PwsFile
 	{
 		int count;
 
-		count = InStream.read( bytes );
+		count = inStream.read( bytes );
 
 		if ( count == -1 )
 		{
@@ -542,7 +554,7 @@ public abstract class PwsFile
 		}
 		readBytes( buff );
 		try {
-			Algorithm.decrypt( buff );
+			algorithm.decrypt( buff );
 		} catch (PasswordSafeException e) {
 			LOG.error(e.getMessage());
 		}
@@ -582,7 +594,7 @@ public abstract class PwsFile
 
 		if ( rec.isValid() )
 		{	
-			RecordSet.add( rec );
+			recordSet.add( rec );
 		}
 
 		return rec;
@@ -597,10 +609,10 @@ public abstract class PwsFile
 	{
 		LOG.enterMethod( "PwsFile.removeRecord" );
 
-		if ( RecordSet.contains(rec) )
+		if ( recordSet.contains(rec) )
 		{
 			LOG.debug1( "Record removed" );
-			RecordSet.remove( rec );
+			recordSet.remove( rec );
 			setModified();
 		}
 		else
@@ -621,21 +633,24 @@ public abstract class PwsFile
 	public void save()
 	throws IOException, NoSuchAlgorithmException
 	{
+		if (isReadOnly())
+			throw new IOException("File is read only");
+
 		PwsRecord	rec;
 
 		// For safety we'll write to a temporary file which will be renamed to the
 		// real name if we manage to write it successfully.
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OutStream	= baos;
+		outStream	= baos;
 
 		try
 		{
-			Header.save( this );
+			header.save( this );
 
 			// Can only be created once the V1 header's been written.
 
-			Algorithm	= makeBlowfish( Passphrase.getBytes() );
+			algorithm	= makeBlowfish( passphrase.getBytes() );
 
 			writeExtraHeader( this );
 
@@ -646,10 +661,10 @@ public abstract class PwsFile
 				rec.saveRecord( this );
 			}
 	
-			OutStream.close();
+			outStream.close();
 	
 			if (storage.save(baos.toByteArray())) {
-				Modified = false;
+				modified = false;
 			}
 			else
 			{
@@ -664,7 +679,7 @@ public abstract class PwsFile
 		{
 			try
 			{
-				OutStream.close();
+				outStream.close();
 			}
 			catch ( Exception e2 )
 			{
@@ -674,8 +689,8 @@ public abstract class PwsFile
 		}
 		finally
 		{
-			OutStream	= null;
-			Algorithm	= null;
+			outStream	= null;
+			algorithm	= null;
 		}
 	}
 
@@ -686,7 +701,7 @@ public abstract class PwsFile
 	 */
 	protected void setModified()
 	{
-		Modified = true;
+		modified = true;
 	}
 
 	/**
@@ -696,7 +711,7 @@ public abstract class PwsFile
 	 */
 	public void setPassphrase( String pass )
 	{
-		Passphrase	= pass;
+		passphrase	= pass;
 	}
 
 	/**
@@ -709,7 +724,7 @@ public abstract class PwsFile
 	public void writeBytes( byte [] buffer )
 	throws IOException
 	{
-		OutStream.write( buffer );
+		outStream.write( buffer );
 		LOG.debug1( "Wrote " + buffer.length + " bytes" );
 	}
 
@@ -730,7 +745,7 @@ public abstract class PwsFile
 		
 		byte [] temp = Util.cloneByteArray( buff );
 		try {
-			Algorithm.encrypt( temp );
+			algorithm.encrypt( temp );
 		} catch (PasswordSafeException e) {
 			LOG.error(e.getMessage());
 		}
@@ -756,4 +771,20 @@ public abstract class PwsFile
 	 * @return the size of blocks in this file type as an int
 	 */
 	abstract int getBlockSize();
+
+	/**
+	 * May this file be changed?
+	 * @return the readOnly
+	 */
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	/**
+	 * Sets whether this file may be changed.
+	 * @param readOnly the readOnly to set
+	 */
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 }

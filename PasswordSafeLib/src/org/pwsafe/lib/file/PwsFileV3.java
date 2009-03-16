@@ -85,28 +85,29 @@ public class PwsFileV3 extends PwsFile {
 	 * <b>N.B. </b>this constructor's visibility may be reduced in future releases.
 	 * </p>
 	 * @param filename   the name of the database to open.
-	 * @param passphrase the passphrase for the database.
+	 * @param aPassphrase the passphrase for the database.
 	 * 
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException 
 	 */
-	public PwsFileV3( PwsStorage storage, String passphrase ) 
+	public PwsFileV3( PwsStorage storage, String aPassphrase ) 
 	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
-		super( storage, passphrase );
+		super( storage, aPassphrase );
 	}
 
-	protected void open( String passphrase )
+	@Override
+	protected void open( String aPassphrase )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException
 	{
 		LOG.enterMethod( "PwsFileV3.init" );
 
-		Passphrase		= passphrase;
+		passphrase		= aPassphrase;
 		
 		if (storage!=null) {
-			InStream		= new ByteArrayInputStream(storage.load());
+			inStream		= new ByteArrayInputStream(storage.load());
 		}
 		headerV3		= new PwsFileHeaderV3( this );
 		
@@ -147,12 +148,17 @@ public class PwsFileV3 extends PwsFile {
 	 * 
 	 * @throws IOException if the attempt fails.
 	 */
+	@Override
 	public void save()
 	throws IOException
 	{
+		
+		if (isReadOnly())
+			throw new IOException("File is read only");
+
 		PwsRecordV3	rec;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OutStream	= baos;
+		outStream	= baos;
 
 		try
 		{
@@ -170,13 +176,13 @@ public class PwsFileV3 extends PwsFile {
 					rec.saveRecord(this);
 			}
 			
-			OutStream.write(PwsRecordV3.EOF_BYTES_RAW);
-			OutStream.write(hasher.doFinal());
+			outStream.write(PwsRecordV3.EOF_BYTES_RAW);
+			outStream.write(hasher.doFinal());
 	
-			OutStream.close();
+			outStream.close();
 	
 			if (storage.save(baos.toByteArray())) {
-				Modified = false;
+				modified = false;
 			}
 			else
 			{
@@ -186,21 +192,17 @@ public class PwsFileV3 extends PwsFile {
 				return;
 			}
 		}
-		catch ( IOException e )
-		{
-			try
-			{
-				OutStream.close();
-			}
-			catch ( Exception e2 )
-			{
+		catch ( IOException e ) {
+			try {
+				if (outStream != null) { 
+					outStream.close();
+				}
+			} catch ( Exception e2 ) {
 				// do nothing we're going to throw the original exception
 			}
 			throw e;
-		}
-		finally
-		{
-			OutStream	= null;
+		} finally {
+			outStream	= null;
 		}
 	}
 	
@@ -210,6 +212,7 @@ public class PwsFileV3 extends PwsFile {
 	 * 
 	 * @return The major version number for the file.
 	 */
+	@Override
 	public int getFileVersionMajor()
 	{
 		return VERSION;
@@ -223,6 +226,7 @@ public class PwsFileV3 extends PwsFile {
 	 * 
 	 * @see org.pwsafe.lib.file.PwsFile#newRecord()
 	 */
+	@Override
 	public PwsRecord newRecord()
 	{
 		return new PwsRecordV3();
@@ -237,6 +241,7 @@ public class PwsFileV3 extends PwsFile {
 	 * @throws IOException If an error occurs whilst reading. 
 	 * @throws UnsupportedFileVersionException If the header is not a valid V2 header.
 	 */
+	@Override
 	protected void readExtraHeader( PwsFile file )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException
 	{
@@ -251,6 +256,7 @@ public class PwsFileV3 extends PwsFile {
 	 * 
 	 * @throws IOException if an error occurs whilst writing the header. 
 	 */
+	@Override
 	protected void writeExtraHeader( PwsFile file )
 	throws IOException
 	{
@@ -267,6 +273,7 @@ public class PwsFileV3 extends PwsFile {
 	 * @throws IOException If a read error occurs.
 	 * @throws IllegalArgumentException If <code>buff.length</code> is not an integral multiple of <code>BLOCK_LENGTH</code>.
 	 */
+	@Override
 	public void readDecryptedBytes( byte [] buff )
 	throws EndOfFileException, IOException
 	{
@@ -297,6 +304,7 @@ public class PwsFileV3 extends PwsFile {
 	 * 
 	 * @throws IOException
 	 */
+	@Override
 	public void writeEncryptedBytes( byte [] buff )
 	throws IOException
 	{
@@ -317,6 +325,7 @@ public class PwsFileV3 extends PwsFile {
 	/**
 	 * @see org.pwsafe.lib.file.PwsFile#getBlockSize()
 	 */
+	@Override
 	protected int getBlockSize() {
 		return 16;
 	}
