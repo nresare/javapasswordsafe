@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import org.pwsafe.lib.I18nHelper;
@@ -108,6 +109,7 @@ public class PwsFileV3 extends PwsFile {
 		
 		if (storage!=null) {
 			inStream		= new ByteArrayInputStream(storage.load());
+			lastStorageChange = storage.getModifiedDate();
 		}
 		headerV3		= new PwsFileHeaderV3( this );
 		
@@ -149,14 +151,16 @@ public class PwsFileV3 extends PwsFile {
 	 * @throws IOException if the attempt fails.
 	 */
 	@Override
-	public void save()
-	throws IOException
-	{
-		
+	public void save() throws IOException {
+		int i = 1;
 		if (isReadOnly())
 			throw new IOException("File is read only");
 
-		PwsRecordV3	rec;
+		if (lastStorageChange != null && // check for concurrent change
+				storage.getModifiedDate().after(lastStorageChange)) {
+				throw new ConcurrentModificationException("Password store was changed independently - no save possible!");
+			}
+
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		outStream	= baos;
 
@@ -170,6 +174,7 @@ public class PwsFileV3 extends PwsFile {
 
 			writeExtraHeader( this );
 			
+			PwsRecordV3	rec;
 			for (Iterator iter = getRecords(); iter.hasNext();) {
 				rec = (PwsRecordV3) iter.next();
 				if (!rec.isHeaderRecord())
@@ -183,6 +188,7 @@ public class PwsFileV3 extends PwsFile {
 	
 			if (storage.save(baos.toByteArray())) {
 				modified = false;
+				lastStorageChange = storage.getModifiedDate();
 			}
 			else
 			{

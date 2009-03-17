@@ -10,6 +10,7 @@ package org.pwsafe.lib.file;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
@@ -80,6 +81,28 @@ public class PwsFileV3Test extends TestCase {
 		} catch (IOException anEx) {
 			//ok
 		}
+	}
+
+	public void testConcurrentMod() throws Exception {
+		File file = new File(filename);
+		file.setLastModified(System.currentTimeMillis() + 1000);
+		pwsFile.setModified();
+		try {
+			pwsFile.save();			
+			fail("save concurrently modified file without exception");
+		} catch (ConcurrentModificationException e) {
+			//ok
+		}
+		// and after save:
+		file.setLastModified(System.currentTimeMillis() + 2000);
+		pwsFile.setModified();
+		try {
+			pwsFile.save();			
+			fail("save concurrently modified file without exception");
+		} catch (ConcurrentModificationException e) {
+			//ok
+		}
+
 	}
 
 	public void testLargeFile() throws EndOfFileException, IOException, UnsupportedFileVersionException, Exception {

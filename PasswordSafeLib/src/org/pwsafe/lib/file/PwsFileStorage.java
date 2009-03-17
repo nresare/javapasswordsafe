@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
@@ -130,30 +131,29 @@ public class PwsFileStorage implements PwsStorage {
 			OutStream.write(data);
 			OutStream.close(); // TODO: needs a finally
 
-			if ( oldFile.exists() )
-			{
-				if ( !oldFile.renameTo( bakFile ) )
-				{
-					LOG.error( I18nHelper.getInstance().formatMessage("E00011", new Object [] { tempFile.getCanonicalPath() } ) );
+			if (oldFile.exists()) {
+				if (!oldFile.renameTo(bakFile)) {
+					LOG.error(I18nHelper.getInstance().formatMessage("E00011",
+							new Object[] { tempFile.getCanonicalPath() }));
 					// TODO Throw an exception here?
 					return false;
 				}
-				LOG.debug1( "Old file successfully renamed to " + bakFile.getCanonicalPath() );
+				LOG.debug1("Old file successfully renamed to "
+						+ bakFile.getCanonicalPath());
 			}
 
-			if ( tempFile.renameTo( oldFile ) )
-			{
+			if (tempFile.renameTo(oldFile)) {
 
-				LOG.debug1( "Temp file successfully renamed to " + oldFile.getCanonicalPath() );
+				LOG.debug1("Temp file successfully renamed to "
+						+ oldFile.getCanonicalPath());
 				return true;
-			}
-			else
-			{
-				LOG.error( I18nHelper.getInstance().formatMessage("E00010", new Object [] { tempFile.getCanonicalPath() } ) );
+			} else {
+				LOG.error(I18nHelper.getInstance().formatMessage("E00010",
+						new Object[] { tempFile.getCanonicalPath() }));
 				// TODO Throw an exception here?
 				return false;
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			return false;
 		}
@@ -176,4 +176,15 @@ public class PwsFileStorage implements PwsStorage {
 	public String getIdentifier() {
 		return this.filename;
 	}
+	
+	
+	public Date getModifiedDate() {
+		File file = new File(filename);
+		Date modified = null;
+		if (file.exists())
+			modified = new Date(file.lastModified());
+		return modified;
+	}
+	
+	
 }

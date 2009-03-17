@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.pwsafe.lib.I18nHelper;
@@ -198,6 +200,11 @@ public abstract class PwsFile
 	 * 
 	 */
 	protected boolean 			readOnly 		= false;
+	
+	/**
+	 * Last modification Date and time of the underlying storage.
+	 */
+	protected Date 				lastStorageChange;
 	
 	/**
 	 * Constructs and initialises a new, empty PasswordSafe database in memory.
@@ -390,7 +397,7 @@ public abstract class PwsFile
 	 * 
 	 * @return An <code>Iterator</code> over the records.
 	 */
-	public Iterator getRecords()
+	public Iterator<? extends PwsRecord> getRecords()
 	{
 		return new FileIterator( this, recordSet.iterator() );
 	}
@@ -455,6 +462,7 @@ public abstract class PwsFile
 		
 		if (storage!=null) {
 			inStream		= new ByteArrayInputStream(storage.load());
+			lastStorageChange = storage.getModifiedDate();
 		}
 		header			= new PwsFileHeader( this );
 		algorithm		= makeBlowfish( aPassphrase.getBytes() );
@@ -629,14 +637,19 @@ public abstract class PwsFile
 	 * 
 	 * @throws IOException if the attempt fails.
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
+	 * @throws ConcurrentModificationException if the underlying store was 
+	 * independently changed  
 	 */
 	public void save()
-	throws IOException, NoSuchAlgorithmException
+	throws IOException, NoSuchAlgorithmException, ConcurrentModificationException
 	{
 		if (isReadOnly())
 			throw new IOException("File is read only");
 
-		PwsRecord	rec;
+		if (lastStorageChange != null && // check for concurrent change
+			storage.getModifiedDate().after(lastStorageChange)) {
+			throw new ConcurrentModificationException("Password store was changed independently - no save possible!");
+		}
 
 		// For safety we'll write to a temporary file which will be renamed to the
 		// real name if we manage to write it successfully.
@@ -654,7 +667,8 @@ public abstract class PwsFile
 
 			writeExtraHeader( this );
 
-			for ( Iterator iter = getRecords(); iter.hasNext(); )
+			PwsRecord	rec;
+			for ( Iterator<?> iter = getRecords(); iter.hasNext(); )
 			{
 				rec = (PwsRecord) iter.next();
 	
@@ -665,6 +679,7 @@ public abstract class PwsFile
 	
 			if (storage.save(baos.toByteArray())) {
 				modified = false;
+				lastStorageChange = storage.getModifiedDate();
 			}
 			else
 			{
@@ -674,23 +689,16 @@ public abstract class PwsFile
 				// TODO Throw an exception here?
 				return;
 			}
-		}
-		catch ( IOException e )
-		{
-			try
-			{
+		} catch (IOException e) {
+			try {
 				outStream.close();
-			}
-			catch ( Exception e2 )
-			{
+			} catch (Exception e2) {
 				// do nothing we're going to throw the original exception
 			}
 			throw e;
-		}
-		finally
-		{
-			outStream	= null;
-			algorithm	= null;
+		} finally {
+			outStream = null;
+			algorithm = null;
 		}
 	}
 

@@ -12,6 +12,7 @@ package org.pwsafe.lib.file;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.crypto.SHA1;
@@ -248,11 +249,28 @@ public class PwsS3Storage implements PwsStorage {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.pwsafe.lib.file.PwsStorage#getIdentifier()
+	 */
 	public String getIdentifier() {
 		return filename;
 	}
 
 	
+	
+	/** 
+	 * S3 does not provide last modified information.
+	 * 
+	 * @see org.pwsafe.lib.file.PwsStorage#getModifiedDate()
+	 * 
+	 * @return null
+	 */
+	public Date getModifiedDate() {
+		// an implementation could explicitly store a last modified Object to S3
+		// and update after each modification.
+		return null;
+	}
+
 	/**
 	 * Tries to delete the password safe on S3 and the bucket
 	 * containung it. 
