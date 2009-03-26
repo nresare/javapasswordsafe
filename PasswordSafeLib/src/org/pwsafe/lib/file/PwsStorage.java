@@ -10,6 +10,7 @@
 package org.pwsafe.lib.file;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * This interface is an abstraction of the storage mechanism.  The idea is that
@@ -57,4 +58,11 @@ public interface PwsStorage {
 	 * to the user. 
 	 */
 	public String getIdentifier();
+	
+	/**
+	 * 
+	 * @return the modification date
+	 * @return null if the method is not supported
+	 */
+	public Date getModifiedDate ();	
 }

@@ -14,11 +14,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
@@ -76,117 +80,42 @@ public abstract class PwsFile
 	 */
 	public static final int BLOCK_LENGTH	= 8; 
 
-	/**
-	 * This provides a wrapper around the <code>Iterator</code> that is returned by the
-	 * <code>iterator()</code> method on the Collections class used to store the PasswordSafe
-	 * records.  It allows us to mark the file as modified when records are deleted file
-	 * using the iterator's <code>remove()</code> method.
-	 */
-	private class FileIterator implements Iterator
-	{
-		private final Log LOG = Log.getInstance(FileIterator.class.getPackage().getName());
-
-		private final PwsFile		TheFile;
-		private final Iterator	TheIterator;
-
-		/**
-		 * Construct the <code>Iterator</code> linking it to the given PasswordSafe
-		 * file.
-		 * 
-		 * @param file the file this iterator is linked to.
-		 * @param iter the <code>Iterator</code> over the records.
-		 */
-		public FileIterator( PwsFile file, Iterator iter )
-		{
-			LOG.enterMethod( "PwsFile$FileIterator" );
-
-			TheFile		= file;
-			TheIterator	= iter;
-			
-			LOG.leaveMethod( "PwsFile$FileIterator" );
-		}
-
-		/**
-		 * Returns <code>true</code> if the iteration has more elements. (In other words, returns
-		 * <code>true</code> if next would return an element rather than throwing an exception.)
-		 * 
-		 * @return <code>true</code> if the iterator has more elements.
-		 * 
-		 * @see java.util.Iterator#hasNext()
-		 */
-		public final boolean hasNext()
-		{
-			return TheIterator.hasNext();
-		}
-
-		/**
-		 * Returns the next PasswordSafe record in the iteration.  The object returned will
-		 * be a subclass of {@link PwsRecord}
-		 * 
-		 * @return the next element in the iteration.
-		 * 
-		 * @see java.util.Iterator#next()
-		 */
-		public final Object next()
-		{
-			return TheIterator.next();
-		}
-
-		/**
-		 * Removes the last record returned by {@link PwsFile.FileIterator#next()} from the PasswordSafe
-		 * file and marks the file as modified.
-		 * 
-		 * @see java.util.Iterator#remove()
-		 */
-		public final void remove()
-		{
-			LOG.enterMethod( "PwsFile$FileIterator.remove" );
-
-			if (isReadOnly())
-				LOG.error("Illegal remove on read only file - saving won't be possible");
-
-			TheIterator.remove();
-			TheFile.setModified();
-
-			LOG.leaveMethod( "PwsFile$FileIterator.remove" );
-		}
-	}
 
 	/** The storage implementation associated with this file */
-	protected PwsStorage		storage = null;
+	protected PwsStorage		storage;
 	
 	/**
 	 * The passphrase for the file.
 	 */
-	protected String			passphrase		= null;
+	protected StringBuilder passphrase;
 
 	/**
 	 * The stream used to read data from the file.  It is non-null only whilst data
 	 * are being read from the file.
 	 */
-	protected InputStream		inStream		= null;
+	protected InputStream		inStream;
 
 	/**
 	 * The stream used to write data to the file.  It is non-null only whilst data are
 	 * being written to the file. 
 	 */
-	protected OutputStream		outStream		= null;
+	protected OutputStream		outStream;
 
 	/**
 	 * The file's standard header.
 	 */
-	private PwsFileHeader		header			= null;
+	private PwsFileHeader		header;
 
 	/**
 	 * The Blowfish object being used to encrypt or decrypt data as it is written to or
 	 * read from the file. 
 	 */
-	private BlowfishPws			algorithm		= null;
+	private BlowfishPws			algorithm;
 
 	/**
 	 * The records that are part of the file.
 	 */
-	protected ArrayList			recordSet		= new ArrayList();
+	protected List             recordSet		= new ArrayList();
 
 	/**
 	 * Flag indicating whether (<code>true</code>) or not (<code>false</code>) the file
@@ -218,7 +147,7 @@ public abstract class PwsFile
 	/**
 	 * Construct the PasswordSafe file by reading it from the file.
 	 * 
-	 * @param filename   the name of the database to open.
+	 * @param aStorage  the storage of the database to open.
 	 * @param aPassphrase the passphrase for the database.
 	 * 
 	 * @throws EndOfFileException
@@ -249,7 +178,7 @@ public abstract class PwsFile
 		LOG.enterMethod( "PwsFile.add" );
 
 		if (isReadOnly())
-			LOG.error("Illegal add on read only file - safing won't be possible");
+			LOG.error("Illegal add on read only file - saving won't be possible");
 
 		// TODO validate the record before adding it
 		rec.setOwner( this );
@@ -333,6 +262,18 @@ public abstract class PwsFile
 		LOG.leaveMethod( "PwsFile.close" );
 	}
 
+    /**
+     * Wipes any sensitive data from memory.
+     */
+    public void dispose () {
+        char[] filler = new char[passphrase.length()];
+        Arrays.fill(filler,'x');
+        passphrase.setLength(0);
+        passphrase.append(filler);
+        passphrase.setLength(0);
+
+        // TODO: dispose records
+    }
 	/**
 	 * Returns the storage implementation for this file
 	 */
@@ -372,7 +313,7 @@ public abstract class PwsFile
 	 */
 	public String getPassphrase()
 	{
-		return passphrase;
+		return passphrase.toString();
 	}
 
 	/**
@@ -401,6 +342,16 @@ public abstract class PwsFile
 	{
 		return new FileIterator( this, recordSet.iterator() );
 	}
+
+    /**
+     * Returns a record.
+     *
+     * @return the PwsRecord at that index
+     */
+    public PwsRecord getRecord(int index)
+    {
+        return (PwsRecord) recordSet.get(index);
+    }
 
 	/**
 	 * Returns an flag as to whether this file or any of its records have been modified.
@@ -445,7 +396,6 @@ public abstract class PwsFile
 	/**
 	 * Opens the database.
 	 * 
-	 * @param file       the <code>File</code> to read from
 	 * @param aPassphrase the passphrase for the file.
 	 * 
 	 * @throws EndOfFileException
@@ -458,7 +408,7 @@ public abstract class PwsFile
 	{
 		LOG.enterMethod( "PwsFile.init" );
 
-		passphrase		= aPassphrase;
+		passphrase		= new StringBuilder(aPassphrase);
 		
 		if (storage!=null) {
 			inStream		= new ByteArrayInputStream(storage.load());
@@ -612,24 +562,34 @@ public abstract class PwsFile
 	 * Deletes the given record from the file.
 	 * 
 	 * @param rec the record to be deleted.
+     * @return true if a record was deleted
 	 */
-	void removeRecord( PwsRecord rec )
-	{
+	boolean removeRecord( PwsRecord rec ) {
+        boolean success = false;
 		LOG.enterMethod( "PwsFile.removeRecord" );
 
-		if ( recordSet.contains(rec) )
-		{
+		if ( recordSet.contains(rec) ) {
 			LOG.debug1( "Record removed" );
-			recordSet.remove( rec );
+			success = recordSet.remove( rec );
 			setModified();
-		}
-		else
-		{
+		} else {
 			LOG.debug1( "Record not removed - it is not part of this file" );
 		}
-
 		LOG.leaveMethod( "PwsFile.removeRecord" );
+        return success;
 	}
+
+    /**
+     *
+     * @param index
+     * @return true if a record was removed
+     */
+    boolean removeRecord (int index) {
+        boolean success = recordSet.remove(index) != null;
+        if (success)
+            setModified();
+        return success;
+    }
 
 	/**
 	 * Writes this file back to the filesystem.  If successful the modified flag is also 
@@ -662,8 +622,7 @@ public abstract class PwsFile
 			header.save( this );
 
 			// Can only be created once the V1 header's been written.
-
-			algorithm	= makeBlowfish( passphrase.getBytes() );
+			algorithm	= makeBlowfish(Charset.defaultCharset().encode(CharBuffer.wrap(passphrase)).array());
 
 			writeExtraHeader( this );
 
@@ -714,11 +673,27 @@ public abstract class PwsFile
 
 	/**
 	 * Sets the passphrase that will be used to encrypt the file when it is saved.
+	 * @deprecated 
+	 * @param pass
+	 */
+	@Deprecated
+	public void setPassphrase( String pass )
+	{
+        if (passphrase != null) {
+            passphrase.setLength(0);
+            passphrase.append(pass);
+        } else {
+            passphrase	= new StringBuilder(pass);
+        }
+
+	}
+
+	/**
+	 * Sets the passphrase that will be used to encrypt the file when it is saved.
 	 * 
 	 * @param pass
 	 */
-	public void setPassphrase( String pass )
-	{
+	public void setPassphrase( StringBuilder pass ) {
 		passphrase	= pass;
 	}
 
@@ -795,4 +770,82 @@ public abstract class PwsFile
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
+
+
+    /**
+     * This provides a wrapper around the <code>Iterator</code> that is returned by the
+     * <code>iterator()</code> method on the Collections class used to store the PasswordSafe
+     * records.  It allows us to mark the file as modified when records are deleted file
+     * using the iterator's <code>remove()</code> method.
+     */
+    private class FileIterator implements Iterator
+    {
+        private final Log LOG = Log.getInstance(FileIterator.class.getPackage().getName());
+
+        private final PwsFile file;
+        private final Iterator delegeate;
+
+        /**
+         * Construct the <code>Iterator</code> linking it to the given PasswordSafe
+         * file.
+         *
+         * @param file the file this iterator is linked to.
+         * @param iter the <code>Iterator</code> over the records.
+         */
+        public FileIterator( PwsFile file, Iterator iter )
+        {
+            LOG.enterMethod( "PwsFile$FileIterator" );
+
+            this.file = file;
+            delegeate = iter;
+
+            LOG.leaveMethod( "PwsFile$FileIterator" );
+        }
+
+        /**
+         * Returns <code>true</code> if the iteration has more elements. (In other words, returns
+         * <code>true</code> if next would return an element rather than throwing an exception.)
+         *
+         * @return <code>true</code> if the iterator has more elements.
+         *
+         * @see java.util.Iterator#hasNext()
+         */
+        public final boolean hasNext()
+        {
+            return delegeate.hasNext();
+        }
+
+        /**
+         * Returns the next PasswordSafe record in the iteration.  The object returned will
+         * be a subclass of {@link PwsRecord}
+         *
+         * @return the next element in the iteration.
+         *
+         * @see java.util.Iterator#next()
+         */
+        public final Object next()
+        {
+            return delegeate.next();
+        }
+
+        /**
+         * Removes the last record returned by {@link PwsFile.FileIterator#next()} from the PasswordSafe
+         * file and marks the file as modified.
+         *
+         * @see java.util.Iterator#remove()
+         */
+        public final void remove()
+        {
+            LOG.enterMethod( "PwsFile$FileIterator.remove" );
+
+            if (isReadOnly())
+                LOG.error("Illegal remove on read only file - saving won't be possible");
+
+            delegeate.remove();
+            file.setModified();
+
+            LOG.leaveMethod( "PwsFile$FileIterator.remove" );
+        }
+    }
+
 }

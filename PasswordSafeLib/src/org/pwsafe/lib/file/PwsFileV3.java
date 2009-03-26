@@ -45,7 +45,7 @@ public class PwsFileV3 extends PwsFile {
 	public static final int		VERSION		= 3;
 
 	/**
-	 * The string that identifies a database as V2 rather than V1
+	 * The string that identifies a database as V3 rather than V2 or V1
 	 */
 	public static final byte[]	ID_STRING	= "PWS3".getBytes();
 
@@ -85,7 +85,7 @@ public class PwsFileV3 extends PwsFile {
 	 * </p><p>
 	 * <b>N.B. </b>this constructor's visibility may be reduced in future releases.
 	 * </p>
-	 * @param filename   the name of the database to open.
+	 * @param storage   the underlying storage to use to open the database.
 	 * @param aPassphrase the passphrase for the database.
 	 * 
 	 * @throws EndOfFileException
@@ -105,7 +105,7 @@ public class PwsFileV3 extends PwsFile {
 	{
 		LOG.enterMethod( "PwsFileV3.init" );
 
-		passphrase		= aPassphrase;
+		passphrase		= new StringBuilder(aPassphrase);
 		
 		if (storage!=null) {
 			inStream		= new ByteArrayInputStream(storage.load());
@@ -115,7 +115,7 @@ public class PwsFileV3 extends PwsFile {
 		
 		int iter = Util.getIntFromByteArray(headerV3.getIter(), 0);
 		LOG.debug1("Using iterations: [" + iter + "]");
-		stretchedPassword = Util.stretchPassphrase(passphrase.getBytes(), headerV3.getSalt(), iter);
+		stretchedPassword = Util.stretchPassphrase(aPassphrase.getBytes(), headerV3.getSalt(), iter);
 		
 		if (!Util.bytesAreEqual(headerV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
 			throw new IOException("Invalid password");

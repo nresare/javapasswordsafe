@@ -37,10 +37,10 @@ public class PwsFileHeader
 {
 	private static final Log LOG = Log.getInstance(PwsFileHeader.class.getPackage().getName());
 
-	private byte []	RandStuff	= new byte[8];
+	private final byte []	RandStuff	= new byte[8];
 	private byte []	RandHash	= new byte[20];
-	private byte [] Salt		= new byte[20];
-	private byte [] IpThing		= new byte[8];
+	private final byte [] Salt		= new byte[20];
+	private final byte [] IpThing		= new byte[8];
 
 	/**
 	 * Creates an empty file header.

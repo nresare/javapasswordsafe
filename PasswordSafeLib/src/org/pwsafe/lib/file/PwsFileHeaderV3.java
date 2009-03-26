@@ -11,6 +11,9 @@ package org.pwsafe.lib.file;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.CharBuffer;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.Charset;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
@@ -239,11 +242,12 @@ public class PwsFileHeaderV3
 	 * 
 	 * @param passphrase the passphrase to be used to encrypt the database.
 	 */
-	private void update( String passphrase, PwsFileV3 file )
+	private void update( CharSequence passphrase, PwsFileV3 file )
 	{
 		LOG.enterMethod( "PwsFileHeaderV3.update" );
-		
-		byte[] stretchedPassword = Util.stretchPassphrase(passphrase.getBytes(), salt, Util.getIntFromByteArray(iter, 0));
+
+        CharBuffer buf = CharBuffer.wrap(passphrase);
+		byte[] stretchedPassword = Util.stretchPassphrase(Charset.defaultCharset().encode(buf).array(), salt, Util.getIntFromByteArray(iter, 0));
 		
 		password = SHA256Pws.digest(stretchedPassword);
 		
