@@ -724,7 +724,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * @param the
 	 *            new password for the safe
 	 */
-	public void setPassphrase(String newPassword) {
+	public void setPassphrase(StringBuilder newPassword) {
 		if (newPassword != null)
 			getPwsFile().setPassphrase(newPassword);
 	}
