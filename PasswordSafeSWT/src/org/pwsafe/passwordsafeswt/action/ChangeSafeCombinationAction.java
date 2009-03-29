@@ -27,6 +27,7 @@ public class ChangeSafeCombinationAction extends Action {
 	/**
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		PasswordSafeJFace app = PasswordSafeJFace.getApp();
 		PasswordDialog pd = new PasswordDialog(app.getShell());
@@ -39,6 +40,7 @@ public class ChangeSafeCombinationAction extends Action {
 			}
 			String newPassword = (String) pd.open();
 			if (newPassword != null) {
+				pf.setPassphrase(new StringBuilder (newPassword));
 				new SaveFileAction().run();
 			}
 		}
