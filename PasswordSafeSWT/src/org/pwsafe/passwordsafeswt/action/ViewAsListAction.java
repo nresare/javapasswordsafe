@@ -25,9 +25,14 @@ public class ViewAsListAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         final PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        app.showListView();
+        if (isChecked()) {
+        	app.showListView();
+        	app.updateViewers();
+        }
     }
 
+    
 }

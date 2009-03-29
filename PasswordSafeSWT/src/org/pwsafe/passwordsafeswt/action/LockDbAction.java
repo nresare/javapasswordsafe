@@ -60,7 +60,7 @@ public class LockDbAction extends Action {
 	    PasswordSafeJFace app = PasswordSafeJFace.getApp();
 	    if (app.getPwsFile() != null) {
 		    log.debug(Messages.getString("LockDbAction.Log.Locking")); //$NON-NLS-1$
-		    app.setPassphrase(null);
+		    app.getPwsFile().dispose();
 		    app.clearView();
 		    app.setPwsFile(null);
 		    app.setLocked(true);
