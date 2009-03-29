@@ -43,19 +43,21 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 
         public TreeGroup(String groupPath)
         {
-            final int lastDot = groupPath.lastIndexOf('.');
+            final int lastDot = groupPath.lastIndexOf('.') > -1 ? groupPath.lastIndexOf('.') : 0;
             this.parent = groupPath.substring(0, lastDot);
             this.name = groupPath.substring(lastDot + 1);
         }
 
-        public String toString() {
+        @Override
+		public String toString() {
             return name;
         }
 
         /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
-        public int hashCode() {
+        @Override
+		public int hashCode() {
             final int PRIME = 31;
             int result = 1;
             result = PRIME * result + ((parent == null) ? 0 : parent.hashCode());
@@ -66,7 +68,8 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
         /* (non-Javadoc)
          * @see java.lang.Object#equals(java.lang.Object)
          */
-        public boolean equals(Object obj) {
+        @Override
+		public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
