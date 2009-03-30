@@ -7,10 +7,13 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
+import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 
 /**
  * Exports the safe to a text file.
@@ -19,6 +22,8 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
  */
 public class ExportToTextAction extends Action {
 
+	private static final Log log = LogFactory.getLog(ExportToTextAction.class);
+
     public ExportToTextAction() {
         super(Messages.getString("ExportToTextAction.Label")); //$NON-NLS-1$
     }
@@ -26,12 +31,23 @@ public class ExportToTextAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         final PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        FileDialog fw = new FileDialog(app.getShell(), SWT.SAVE);
-        String newFilename = fw.open();
-        if (newFilename != null) {
-            app.exportToText(newFilename);
+        PasswordDialog pw = new PasswordDialog(app.getShell());
+        pw.setVerified(false);
+        String password = (String) pw.open();
+        if (password == null)
+        	return;
+        if (password.equals(app.getPwsFile().getPassphrase())) {
+	        FileDialog fw = new FileDialog(app.getShell(), SWT.SAVE);
+	        String newFilename = fw.open();
+	        if (newFilename != null) {
+	            app.exportToText(newFilename);
+	        }
+        } else {
+        	app.setStatus(Messages.getString("ExportToTextAction.AbortedStatus")); //$NON-NLS-1$
+        	log.warn("Aborted text export after wrong safe combination"); //$NON-NLS-1$
         }
     }
 

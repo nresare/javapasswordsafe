@@ -7,10 +7,13 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
+import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 
 /**
  * Exports the current file to XML.
@@ -19,6 +22,8 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
  */
 public class ExportToXMLAction extends Action {
 
+	private static final Log log = LogFactory.getLog(ExportToXMLAction.class);
+
 	public ExportToXMLAction() {
 		super(Messages.getString("ExportToXMLAction.Label")); //$NON-NLS-1$
 	}
@@ -26,17 +31,30 @@ public class ExportToXMLAction extends Action {
 	/**
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		final PasswordSafeJFace app = PasswordSafeJFace.getApp();
-		FileDialog fw = new FileDialog(app.getShell(), SWT.SAVE);
-		String newFilename = fw.open();
-		if (newFilename != null) {
-			try {
-				app.exportToXML(newFilename);
-			} catch (Exception e) {
-				app.displayErrorDialog(Messages.getString("ExportToXMLAction.ErrorDialog.Title"), Messages.getString("ExportToXMLAction.ErrorDialog.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
+        PasswordDialog pw = new PasswordDialog(app.getShell());
+        pw.setVerified(false);
+        String password = (String) pw.open();
+        if (password == null)
+        	return;
+        
+        if (password.equals(app.getPwsFile().getPassphrase())) {
+			FileDialog fw = new FileDialog(app.getShell(), SWT.SAVE);
+			String newFilename = fw.open();
+			if (newFilename != null) {
+				try {
+					app.exportToXML(newFilename);
+				} catch (Exception e) {
+					app.displayErrorDialog(Messages.getString("ExportToXMLAction.ErrorDialog.Title"), Messages.getString("ExportToXMLAction.ErrorDialog.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
-		}
+        } else {
+        	app.setStatus(Messages.getString("ExportToXMLAction.AbortedStatus")); //$NON-NLS-1$
+        	log.warn("Aborted xml export after wrong safe combination"); //$NON-NLS-1$
+        }
+
 	}
 
 }

@@ -112,6 +112,7 @@ public class PasswordDialog extends Dialog {
 		}
 		final Button btnCancel = new Button(shell, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shell.dispose();
 			}
@@ -128,6 +129,7 @@ public class PasswordDialog extends Dialog {
 
 		if (verified) {
 			btnOk.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (txtCombination.getText().equals(txtVerify.getText())) {
 						result = txtCombination.getText();
@@ -143,6 +145,7 @@ public class PasswordDialog extends Dialog {
 			});
 		} else {
 			btnOk.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					result = txtCombination.getText();
 					shell.dispose();

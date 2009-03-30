@@ -503,28 +503,18 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		return statusLineManager;
 	}
 
-	/**
-	 * Updates the status bar with the supplied text.
-	 * 
-	 * @param statusMsg
-	 *            the message to display in the status bar
-	 */
-	public void setStatusMessage(String statusMsg) {
-		getStatusLineManager().setMessage(statusMsg);
-	}
-
 	public void setupStatusMessage() {
 
 		final PwsFile pwsf = getPwsFile();
         if (pwsf != null && pwsf.getRecordCount() > 0) {
         	final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 			if (thePrefs.getBoolean(JpwPreferenceConstants.DOUBLE_CLICK_COPIES_TO_CLIPBOARD)) {
-				setStatusMessage(Messages.getString("PasswordSafeJFace.Status.DoubleClickToCopy")); //$NON-NLS-1$
+				setStatus(Messages.getString("PasswordSafeJFace.Status.DoubleClickToCopy")); //$NON-NLS-1$
 			} else {
-				setStatusMessage(Messages.getString("PasswordSafeJFace.Status.DoubleClickToEdit")); //$NON-NLS-1$
+				setStatus(Messages.getString("PasswordSafeJFace.Status.DoubleClickToEdit")); //$NON-NLS-1$
 			}
 		} else {
-			setStatusMessage("http://jpwsafe.sf.net"); //$NON-NLS-1$
+			setStatus("http://jpwsafe.sf.net"); //$NON-NLS-1$
 		}
 
 	}
@@ -1059,14 +1049,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				
 				if (nextRecord instanceof PwsRecordV1) {
 					nextEntry.add(V1_GROUP_PLACEHOLDER);
-					nextEntry.add(nextRecord.getField(PwsRecordV1.TITLE).getValue().toString());
-					nextEntry.add(nextRecord.getField(PwsRecordV1.USERNAME).getValue().toString());
-					nextEntry.add(nextRecord.getField(PwsRecordV1.PASSWORD).getValue().toString());
+					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV1.TITLE));
+					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV1.USERNAME));
+					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV1.PASSWORD));
 				} else {
-					nextEntry.add(nextRecord.getField(PwsRecordV2.GROUP).getValue().toString());
-					nextEntry.add(nextRecord.getField(PwsRecordV2.TITLE).getValue().toString());
-					nextEntry.add(nextRecord.getField(PwsRecordV2.USERNAME).getValue().toString());
-					nextEntry.add(nextRecord.getField(PwsRecordV2.PASSWORD).getValue().toString());
+					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.GROUP));
+					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.TITLE));
+					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.USERNAME));
+					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.PASSWORD));
 				}
 				String[] nextLine = nextEntry.toArray(new String[0]);
 				csvWriter.writeNext(nextLine);
