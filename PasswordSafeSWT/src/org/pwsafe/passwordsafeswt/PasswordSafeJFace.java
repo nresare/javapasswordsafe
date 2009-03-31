@@ -254,10 +254,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		final Tray tray = getShell().getDisplay().getSystemTray();
 		if (tray == null) {
 			if (log.isInfoEnabled())
-				log.info(Messages.getString("PasswordSafeJFace.Log.NoTrayAvailable")); //$NON-NLS-1$
+				log.info("The system tray is not available"); 
 		} else {
 			if (log.isDebugEnabled())
-				log.debug(Messages.getString("PasswordSafeJFace.Log.SettingUpTray")); //$NON-NLS-1$
+				log.debug("Setting up System Tray"); 
 
 			trayItem = new TrayItem(tray, SWT.NONE);
 			trayItem.setToolTipText(PasswordSafeJFace.APP_NAME);
@@ -292,6 +292,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					menu.setVisible(true);
 				}
 			});
+			
 			trayItem.setImage(image);
 			getShell().addShellListener(new ShellAdapter() {
 				@Override
@@ -300,7 +301,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					if (trayItem != null
 							&& thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
 						if (log.isDebugEnabled())
-							log.debug(Messages.getString("PasswordSafeJFace.Log.ShrinkingToTray")); //$NON-NLS-1$
+							log.debug("Shrinking to tray"); 
 						getShell().setVisible(false);
 					}
 				}
@@ -526,7 +527,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 *            commandline args that are passed in
 	 */
 	public static void main(String args[]) {
-		log.info(Messages.getString("PasswordSafeJFace.Log.Startup")); //$NON-NLS-1$
+		log.info("PasswordSafe starting..."); 
 		log.info("java.library.path is: [" + System.getProperty("java.library.path") + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		log.info("log: " + log.getClass().getName()); //$NON-NLS-1$
 		try {
@@ -536,9 +537,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			SWTResourceManager.dispose();
 			Display.getCurrent().dispose();
 		} catch (Exception e) {
-			log.error(Messages.getString("PasswordSafeJFace.Log.StartupError"), e); //$NON-NLS-1$
+			log.error("Error Starting PasswordSafe", e); 
 		}
-		log.info(Messages.getString("PasswordSafeJFace.Log.Terminating")); //$NON-NLS-1$
+		log.info("PasswordSafe terminating..."); 
 	}
 
 	/**
@@ -645,7 +646,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 			
 			if (valueToCopy != null) {
 				cb.setContents(new Object[]{valueToCopy}, new Transfer[]{TextTransfer.getInstance()});
-				log.debug(Messages.getString("PasswordSafeJFace.Log.CopiedToClipboard")); //$NON-NLS-1$
+				log.debug("Copied to clipboard"); 
 			}
 		}
 
@@ -684,7 +685,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	public void editRecord(PwsEntryDTO newEntry) {
 		PwsRecord selectedRecord = getSelectedRecord();
 		if (log.isDebugEnabled())
-			log.debug(Messages.getString("PasswordSafeJFace.Log.UpdatingEntry")); //$NON-NLS-1$
+			log.debug("Dialog has been edited, updating safe"); 
 		newEntry.toPwsRecord(selectedRecord);
 		updateViewers();
 	}
@@ -694,7 +695,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	public void addRecord(PwsEntryDTO newEntry) {
 		if (log.isDebugEnabled())
-			log.debug(Messages.getString("PasswordSafeJFace.Log.CreatingEntry")); //$NON-NLS-1$
+			log.debug("Dialog has created new record, updating safe"); 
 		PwsRecord newRecord = getPwsFile().newRecord();
 		newEntry.toPwsRecord(newRecord);
 		try {
@@ -716,7 +717,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();		
 		if (thePrefs.getBoolean(JpwPreferenceConstants.SAVE_IMMEDIATELY_ON_EDIT)) {
 			if (log.isDebugEnabled())
-				log.debug(Messages.getString("PasswordSafeJFace.Log.SavingAfterEdit")); //$NON-NLS-1$
+				log.debug("Save on Edit option active. Saving database."); 
 			saveFileAction.run();
 		}
 	}
@@ -1069,7 +1070,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				try {
 					fw.close();
 				} catch (IOException e) {
-					log.warn(Messages.getString("PasswordSafeJFace.Log.ExportFileCloseError"), e); //$NON-NLS-1$
+					log.warn("Could not close output text file", e); 
 				}
 			}
 
@@ -1116,7 +1117,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				try {
 					fileReader.close();
 				} catch (IOException e) {
-					log.warn(Messages.getString("PasswordSafeJFace.Log.ImportCSV.ImportFileCloseError"), e); //$NON-NLS-1$
+					log.warn("Could not close import text file", e); 
 				}
 			}
 		}
@@ -1361,7 +1362,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						lockTimer.schedule(lockTask, mins * 60 * 1000);
 						
 					} catch (NumberFormatException anEx) {
-						log.warn(Messages.getString("PasswordSafeJFace.Log.TimerNumberFormatError") + idleMins + Messages.getString("PasswordSafeJFace.Log.TimerNumberMinutes")); //$NON-NLS-1$ //$NON-NLS-2$
+						log.warn("Unable to set lock timer to an amount of" + idleMins + " minutes");  
 					}
 				}
 			}

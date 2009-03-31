@@ -49,20 +49,20 @@ public class DisplayPreferences extends PreferencePage {
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 	    
 		btnAlwaysOnTop = new Button(composite, SWT.CHECK);
-		btnAlwaysOnTop.setText("Always keep Password Safe on top");
+		btnAlwaysOnTop.setText(Messages.getString("DisplayPreferences.AlwaysOnTop")); //$NON-NLS-1$
 		btnAlwaysOnTop.setSelection(preferenceStore.getBoolean(ALWAYS_ON_TOP));
 		btnAlwaysOnTop.setEnabled(false);
 
 		btnShowPasswordInList = new Button(composite, SWT.CHECK);
-		btnShowPasswordInList.setText("Show password in display list");
+		btnShowPasswordInList.setText(Messages.getString("DisplayPreferences.ShowPasswordInList")); //$NON-NLS-1$
 		btnShowPasswordInList.setSelection(preferenceStore.getBoolean(SHOW_PASSWORD_IN_LIST));
 
 		btnShowPasswordInEdit = new Button(composite, SWT.CHECK);
-		btnShowPasswordInEdit.setText("Show password by default in edit mode");
+		btnShowPasswordInEdit.setText(Messages.getString("DisplayPreferences.ShowPasswordInEdit")); //$NON-NLS-1$
 		btnShowPasswordInEdit.setSelection(preferenceStore.getBoolean(SHOW_PASSWORD_IN_EDIT_MODE));
 
 		btnSystemTray = new Button(composite, SWT.CHECK);
-		btnSystemTray.setText("Put icon in System Tray");
+		btnSystemTray.setText(Messages.getString("DisplayPreferences.SystemTrayOn")); //$NON-NLS-1$
 		btnSystemTray.setSelection(preferenceStore.getBoolean(SHOW_ICON_IN_SYSTEM_TRAY));
 
 		// Create three text fields.

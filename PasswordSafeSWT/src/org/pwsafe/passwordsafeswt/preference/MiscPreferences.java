@@ -53,16 +53,16 @@ public class MiscPreferences extends PreferencePage {
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 
 	    btnConfirmDeletion = new Button(composite, SWT.CHECK);
-	    btnConfirmDeletion.setText("Confirm deletion of items");
+	    btnConfirmDeletion.setText(Messages.getString("MiscPreferences.ConfirmDelete")); //$NON-NLS-1$
 	    btnConfirmDeletion.setSelection(preferenceStore.getBoolean(CONFIRM_ITEM_DELETION));
 	    btnConfirmDeletion.setEnabled(false);
 
 	    btnSaveImmediately = new Button(composite, SWT.CHECK);
-	    btnSaveImmediately.setText("Save database immediately after Edit or Add");
+	    btnSaveImmediately.setText(Messages.getString("MiscPreferences.SaveOnChange")); //$NON-NLS-1$
 	    btnSaveImmediately.setSelection(preferenceStore.getBoolean(SAVE_IMMEDIATELY_ON_EDIT));
 
 	    btnEscapeExitsApp = new Button(composite, SWT.CHECK);
-	    btnEscapeExitsApp.setText("Escape key exits application");
+	    btnEscapeExitsApp.setText(Messages.getString("MiscPreferences.QuitOnEsc")); //$NON-NLS-1$
 	    btnEscapeExitsApp.setSelection(preferenceStore.getBoolean(ESCAPE_KEY_EXITS_APP));
 	    btnEscapeExitsApp.setEnabled(false);
 
@@ -74,7 +74,7 @@ public class MiscPreferences extends PreferencePage {
 	    compositeHotKey.setLayout(gridLayout);
 
 	    btnHotKey = new Button(compositeHotKey, SWT.CHECK);
-	    btnHotKey.setText("Hot key");
+	    btnHotKey.setText(Messages.getString("MiscPreferences.HotKey")); //$NON-NLS-1$
 	    btnHotKey.setSelection(preferenceStore.getBoolean(HOT_KEY_ACTIVE));
 	    btnHotKey.setEnabled(false);
 
@@ -89,7 +89,7 @@ public class MiscPreferences extends PreferencePage {
 
 	    final Label lblDoubleClick = new Label(compositeDoubleClick, SWT.NONE);
 	    lblDoubleClick.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-	    lblDoubleClick.setText("Double-click on entry:");
+	    lblDoubleClick.setText(Messages.getString("MiscPreferences.DoubleClickActionLabel")); //$NON-NLS-1$
 
 	    final Composite compositeRadios = new Composite(compositeDoubleClick, SWT.NONE);
 	    final GridLayout gridLayout_2 = new GridLayout();
@@ -98,10 +98,10 @@ public class MiscPreferences extends PreferencePage {
 	    compositeRadios.setLayout(gridLayout_2);
 
 	    btnCopiesPasswordToClipboard = new Button(compositeRadios, SWT.RADIO);
-	    btnCopiesPasswordToClipboard.setText("Copies password to clipboard");
+	    btnCopiesPasswordToClipboard.setText(Messages.getString("MiscPreferences.CopyPasswordOnDoubleClick")); //$NON-NLS-1$
 
 	    btnViewsEntry = new Button(compositeRadios, SWT.RADIO);
-	    btnViewsEntry.setText("View/Edit entry");
+	    btnViewsEntry.setText(Messages.getString("MiscPreferences.ViewEntryOnDoubleClick")); //$NON-NLS-1$
 	    
 	    if (preferenceStore.getBoolean(DOUBLE_CLICK_COPIES_TO_CLIPBOARD)) {
 	    	btnCopiesPasswordToClipboard.setSelection(true);

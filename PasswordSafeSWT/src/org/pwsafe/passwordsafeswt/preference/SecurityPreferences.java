@@ -55,26 +55,26 @@ public class SecurityPreferences extends PreferencePage {
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 
 	    btnClearClipboard = new Button(composite, SWT.CHECK);
-	    btnClearClipboard.setText("Clear clipboard upon minimize or exit");
+	    btnClearClipboard.setText(Messages.getString("SecurityPreferences.ClearClipOnMinimize")); //$NON-NLS-1$
 	    btnClearClipboard.setSelection(preferenceStore.getBoolean(CLEAR_CLIPBOARD_ON_MIN));
 	    
 	    btnLockDatabaseOnMin = new Button(composite, SWT.CHECK);
-	    btnLockDatabaseOnMin.setText("Lock password database on minimize");
+	    btnLockDatabaseOnMin.setText(Messages.getString("SecurityPreferences.LockOnMinimize")); //$NON-NLS-1$
 	    btnLockDatabaseOnMin.setSelection(preferenceStore.getBoolean(LOCK_DB_ON_MIN));
 
 	    btnConfirmSaveOnMinimize = new Button(composite, SWT.CHECK);
 	    btnConfirmSaveOnMinimize.setEnabled(false);
-	    btnConfirmSaveOnMinimize.setText("Confirm password database save on minimize");
+	    btnConfirmSaveOnMinimize.setText(Messages.getString("SecurityPreferences.ConfirmSaveOnMinimize")); //$NON-NLS-1$
 	    btnConfirmSaveOnMinimize.setSelection(preferenceStore.getBoolean(CONFIRM_SAVE_ON_MIN));
 	    btnConfirmSaveOnMinimize.setEnabled(false);
 
 	    btnConfirmCopy = new Button(composite, SWT.CHECK);
-	    btnConfirmCopy.setText("Confirm item copy to clipboard");
+	    btnConfirmCopy.setText(Messages.getString("SecurityPreferences.ConfirmClipCopy")); //$NON-NLS-1$
 	    btnConfirmCopy.setSelection(preferenceStore.getBoolean(CONFIRM_COPY_TO_CLIPBOARD));
 	    btnConfirmCopy.setEnabled(false);
 
 	    btnLockDatabaseOnWorkstationLock = new Button(composite, SWT.CHECK);
-	    btnLockDatabaseOnWorkstationLock.setText("Lock password database on workstation lock");
+	    btnLockDatabaseOnWorkstationLock.setText(Messages.getString("SecurityPreferences.LockOnCompLock")); //$NON-NLS-1$
 	    btnLockDatabaseOnWorkstationLock.setSelection(preferenceStore.getBoolean(LOCK_DB_ON_WS_LOCK));
 	    btnLockDatabaseOnWorkstationLock.setEnabled(false);
 
@@ -86,14 +86,14 @@ public class SecurityPreferences extends PreferencePage {
 	    composite_1.setLayout(gridLayout);
 
 	    btnLockOnIdle = new Button(composite_1, SWT.CHECK);
-	    btnLockOnIdle.setText("Lock password database after");
+	    btnLockOnIdle.setText(Messages.getString("SecurityPreferences.LockTimeLabel")); //$NON-NLS-1$
 	    btnLockOnIdle.setSelection(preferenceStore.getBoolean(LOCK_ON_IDLE));
 
 	    spiMinutesIdle = new Spinner(composite_1, SWT.BORDER);
 	    spiMinutesIdle.setSelection(preferenceStore.getInt(LOCK_ON_IDLE_MINS));
 
 	    final Label lblMinsIdle = new Label(composite_1, SWT.NONE);
-	    lblMinsIdle.setText("minutes idle");
+	    lblMinsIdle.setText(Messages.getString("SecurityPreferences.IdleMinutes")); //$NON-NLS-1$
 
 	    return composite;
 	  }

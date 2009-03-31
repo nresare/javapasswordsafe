@@ -45,7 +45,7 @@ public class UsernamePreferences extends PreferencePage {
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 
 	    btnUseDefaultUsername = new Button(composite, SWT.CHECK);
-	    btnUseDefaultUsername.setText("Use a default username");
+	    btnUseDefaultUsername.setText(Messages.getString("UsernamePreferences.UseDefaultUsername")); //$NON-NLS-1$
 	    btnUseDefaultUsername.setSelection(preferenceStore.getBoolean(USE_DEFAULT_USERNAME));
 
 
@@ -59,14 +59,14 @@ public class UsernamePreferences extends PreferencePage {
 	    group.setLayout(gridLayout);
 
 	    final Label lblUsername = new Label(group, SWT.NONE);
-	    lblUsername.setText("Username:");
+	    lblUsername.setText(Messages.getString("UsernamePreferences.Username")); //$NON-NLS-1$
 
 	    txtUsername = new Text(group, SWT.BORDER);
 	    txtUsername.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    txtUsername.setText(preferenceStore.getString(DEFAULT_USERNAME));
 
 	    btnQuerySetUsername = new Button(composite, SWT.CHECK);
-	    btnQuerySetUsername.setText("Query user to set default username");
+	    btnQuerySetUsername.setText(Messages.getString("UsernamePreferences.AskForUserName")); //$NON-NLS-1$
 	    btnQuerySetUsername.setSelection(preferenceStore.getBoolean(QUERY_FOR_DEFAULT_USERNAME));
 	    btnQuerySetUsername.setEnabled(false);
 

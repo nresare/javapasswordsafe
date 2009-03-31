@@ -54,7 +54,7 @@ public class PasswordPolicyPreferences extends PreferencePage {
 
 
 	    final Label lblRandomRules = new Label(composite, SWT.NONE);
-	    lblRandomRules.setText("Random password generation rules:");
+	    lblRandomRules.setText(Messages.getString("PasswordPolicyPreferences.RulesLabel")); //$NON-NLS-1$
 
 	    final Composite composite_1 = new Composite(composite, SWT.NONE);
 	    final GridLayout gridLayout = new GridLayout();
@@ -64,34 +64,34 @@ public class PasswordPolicyPreferences extends PreferencePage {
 	    composite_1.setLayout(gridLayout);
 
 	    final Label lblDefaultLength = new Label(composite_1, SWT.NONE);
-	    lblDefaultLength.setText("Default password length:");
+	    lblDefaultLength.setText(Messages.getString("PasswordPolicyPreferences.PasswordLength")); //$NON-NLS-1$
 
 	    spiLength = new Spinner(composite_1, SWT.BORDER);
 	    spiLength.setSelection(preferenceStore.getInt(DEFAULT_PASSWORD_LENGTH));
 
 	    btnUseLowercase = new Button(composite, SWT.CHECK);
-	    btnUseLowercase.setText("Use lowercase letters");
+	    btnUseLowercase.setText(Messages.getString("PasswordPolicyPreferences.Lowercase")); //$NON-NLS-1$
 	    btnUseLowercase.setSelection(preferenceStore.getBoolean(USE_LOWERCASE_LETTERS));
 
 	    btnUserUppercase = new Button(composite, SWT.CHECK);
-	    btnUserUppercase.setText("Use UPPERCASE letters");
+	    btnUserUppercase.setText(Messages.getString("PasswordPolicyPreferences.Uppercase")); //$NON-NLS-1$
 	    btnUserUppercase.setSelection(preferenceStore.getBoolean(USE_UPPERCASE_LETTERS));
 
 	    btnUseDigits = new Button(composite, SWT.CHECK);
-	    btnUseDigits.setText("Use digits");
+	    btnUseDigits.setText(Messages.getString("PasswordPolicyPreferences.Digits")); //$NON-NLS-1$
 	    btnUseDigits.setSelection(preferenceStore.getBoolean(USE_DIGITS));
 
 	    btnUseSymbols = new Button(composite, SWT.CHECK);
-	    btnUseSymbols.setText("Use symbols (i.e., , %, $, etc.)");
+	    btnUseSymbols.setText(Messages.getString("PasswordPolicyPreferences.Symbols")); //$NON-NLS-1$
 	    btnUseSymbols.setSelection(preferenceStore.getBoolean(USE_SYMBOLS));
 
 	    btnUseEaseToRead = new Button(composite, SWT.CHECK);
-	    btnUseEaseToRead.setText("Use only easy-to-read characters (i.e., without \"0\" and \"O\")");
+	    btnUseEaseToRead.setText(Messages.getString("PasswordPolicyPreferences.EasyToRead")); //$NON-NLS-1$
 	    btnUseEaseToRead.setSelection(preferenceStore.getBoolean(USE_EASY_TO_READ));
 	    
 	    btnUseHexOnly = new Button(composite, SWT.CHECK);
 	    btnUseHexOnly.setEnabled(false);
-	    btnUseHexOnly.setText("Use hexadecimal digits only (0-9,a-f)");
+	    btnUseHexOnly.setText(Messages.getString("PasswordPolicyPreferences.HexOnly")); //$NON-NLS-1$
 	    btnUseHexOnly.setSelection(preferenceStore.getBoolean(USE_HEX_ONLY));
 
 	    return composite;
