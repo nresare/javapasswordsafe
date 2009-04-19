@@ -21,7 +21,7 @@ import java.util.TimeZone;
  */
 public class UUID implements Comparable
 {
-	private byte []		TheUUID	= new byte[ 16 ];
+	private final byte []		TheUUID	= new byte[ 16 ];
 
 	/**
 	 * Construct the object, generating a new UUID.
@@ -78,6 +78,7 @@ public class UUID implements Comparable
 	 * 
 	 * @return <code>true</code> if the <code>UUID</code>s are equal or <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals( Object ob )
 	{
 		if ( ob instanceof UUID )
@@ -97,6 +98,11 @@ public class UUID implements Comparable
 	 */
 	public boolean equals( UUID that )
 	{
+		if (that == this)
+			return true;
+		if (that == null)
+			return false;
+		
 		byte	b1[];
 		byte	b2[];
 
@@ -175,6 +181,7 @@ public class UUID implements Comparable
 	 * 
 	 * @return A <code>String</code> representation of this <code>UUID</code>.
 	 */
+	@Override
 	public String toString()
 	{
 		return toString( TheUUID );
