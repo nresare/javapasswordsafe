@@ -53,7 +53,7 @@ public class PasswordTableLabelProvider implements ITableLabelProvider {
 			    	columnString = entry.getNotes();
 			    	break;
 			    case 3:
-			    	columnString = entry.getPassword().toString();
+			    	columnString = entry.getPassword() != null ? entry.getPassword().toString() : null;
 			}			
 		}
 		else if (element instanceof PwsRecordV3) {

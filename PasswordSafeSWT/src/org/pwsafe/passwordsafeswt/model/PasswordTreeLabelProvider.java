@@ -145,7 +145,7 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
         case 3:
         	if (element instanceof PwsEntryBean) {
             	PwsEntryBean theEntry = (PwsEntryBean) element;
-                result = theEntry.getPassword().toString();
+                result = theEntry.getPassword() != null ? theEntry.getPassword().toString() : null;
         	} else if (element instanceof PwsRecord) {// deprecated
             	if (element instanceof PwsRecordV3) {
             		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV3.PASSWORD);
