@@ -45,6 +45,20 @@ public abstract class PwsField implements Comparable
 	}
 
 	/**
+	 * Creates the field object.
+	 * 
+	 * @param type  the field type.
+	 * @param value the field value.
+	 */
+	protected PwsField( PwsFieldType type, Object value )
+	{
+		super();
+
+		Type	= type.getId();
+		Value	= value;
+	}
+
+	/**
 	 * Converts this field into an array of bytes suitable for writing to a PasswordSafe file.
 	 * 
 	 * @return The field as a byte array.
@@ -77,6 +91,7 @@ public abstract class PwsField implements Comparable
 	 * 
 	 * @return the hash code for the object.
 	 */
+	@Override
 	public int hashCode()
 	{
 		return Value.hashCode();
@@ -87,6 +102,7 @@ public abstract class PwsField implements Comparable
 	 * 
 	 * @return The string value of the field.
 	 */
+	@Override
 	public String toString()
 	{
 		return Value.toString();

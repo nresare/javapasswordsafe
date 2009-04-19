@@ -71,6 +71,8 @@ import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pwsafe.lib.datastore.PwsEntryStore;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.file.PwsFile;
 import org.pwsafe.lib.file.PwsFileFactory;
@@ -173,6 +175,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private static PasswordSafeJFace app;
 
 	private PwsFile pwsFile;
+	private PwsEntryStore dataStore;
 		
 	private static final String V1_GROUP_PLACEHOLDER = Messages.getString("PasswordSafeJFace.V1GroupPlaceholder"); //$NON-NLS-1$
 
@@ -657,22 +660,22 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 * @return the selected record
 	 */
-	public PwsRecord getSelectedRecord() {
+	public PwsEntryBean getSelectedRecord() {
 
-		PwsRecord recordToCopy = null;
+		PwsEntryBean recordToCopy = null;
 
 		if (isTreeViewShowing()) {
 			if (tree.getSelectionCount() == 1) {
 				TreeItem ti = tree.getSelection()[0];
 				Object treeData = ti.getData();
-				if (treeData != null && treeData instanceof PwsRecord) { // must be a left, not a group entry
-					recordToCopy = (PwsRecord) treeData;
+				if (treeData != null && treeData instanceof PwsEntryBean) { // must be a left, not a group entry
+					recordToCopy = (PwsEntryBean) treeData;
 				}					
 			}
 		} else {
 			if (table.getSelectionCount() == 1) {
 				TableItem ti = table.getSelection()[0];
-				recordToCopy = (PwsRecord) ti.getData();
+				recordToCopy = (PwsEntryBean) ti.getData();
 			}
 		}
 
@@ -682,24 +685,21 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	/**
 	 * Edits the selected record in a new dialog.
 	 */
-	public void editRecord(PwsEntryDTO newEntry) {
-		PwsRecord selectedRecord = getSelectedRecord();
+	public void editRecord(PwsEntryBean newEntry) {
 		if (log.isDebugEnabled())
-			log.debug("Dialog has been edited, updating safe"); 
-		newEntry.toPwsRecord(selectedRecord);
+			log.debug("Dialog has been edited, updating safe"); 		
+		getPwsDataStore().updateEntry(newEntry);
 		updateViewers();
 	}
 
 	/**
 	 * Adds a new record to the safe in a new dialog.
 	 */
-	public void addRecord(PwsEntryDTO newEntry) {
+	public void addRecord(PwsEntryBean newEntry) {
 		if (log.isDebugEnabled())
 			log.debug("Dialog has created new record, updating safe"); 
-		PwsRecord newRecord = getPwsFile().newRecord();
-		newEntry.toPwsRecord(newRecord);
 		try {
-			getPwsFile().add(newRecord);
+			getPwsDataStore().addEntry(newEntry);
 			saveOnUpdateOrEditCheck();
 		} catch (PasswordSafeException e) {
 			displayErrorDialog(Messages.getString("PasswordSafeJFace.AddEntryError.Title"), Messages.getString("PasswordSafeJFace.AddEntryError.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -758,8 +758,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 */
 	public void deleteRecord() {
-		PwsRecord selectedRec = getSelectedRecord();
-		selectedRec.delete();
+		PwsEntryBean selectedRec = getSelectedRecord();
+		getPwsDataStore().removeEntry(selectedRec);
 		saveOnUpdateOrEditCheck();
 		updateViewers();
 	}
@@ -803,6 +803,16 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	public PwsFile getPwsFile() {
 		return pwsFile;
 	}
+	
+	/**
+	 * Returns the currently loaded pwsafe file.
+	 * 
+	 * @return Returns the pwsFile.
+	 */
+	public PwsEntryStore getPwsDataStore() {
+		return dataStore;
+	}
+
 	/**
 	 * Sets the currently load pwsafe file.
 	 * 
@@ -811,7 +821,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	public void setPwsFile(PwsFile pwsFile) {
 		this.pwsFile = pwsFile;
-
+		this.dataStore = PwsFileFactory.getStore(pwsFile);
 		updateViewers();
 		setEditMenusEnabled(true);
 	}
@@ -985,6 +995,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	public String getSelectedTreeGroup() {
 		
 		if (isTreeViewShowing()) {
+			//TODO: return Tree PATH (node.subnode1.subnode2), not only node name (subnode2) 
 			if (tree.getSelectionCount() == 1) {
 				TreeItem ti = tree.getSelection()[0];
 				if (ti.getItemCount() > 0) {
@@ -1008,10 +1019,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	public void updateViewers() {
 		if (isTreeViewShowing()) {
-			treeViewer.setInput(getPwsFile());
+			treeViewer.setInput(getPwsDataStore());
 			treeViewer.refresh();
 		} else {
-			tableViewer.setInput(getPwsFile());
+			tableViewer.setInput(getPwsDataStore());
 			// tableViewer.refresh();
 		}
 	}

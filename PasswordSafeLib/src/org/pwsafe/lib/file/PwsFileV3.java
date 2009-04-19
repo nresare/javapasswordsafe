@@ -66,7 +66,7 @@ public class PwsFileV3 extends PwsFile {
 	TwofishPws twofishCbc;
 	HmacPws hasher;
 	PwsRecordV3 headerRecord;
-	
+
 	/**
 	 * Constructs and initialises a new, empty version 3 PasswordSafe database in memory.
 	 */
@@ -335,6 +335,5 @@ public class PwsFileV3 extends PwsFile {
 	protected int getBlockSize() {
 		return 16;
 	}
-	
 	
 }

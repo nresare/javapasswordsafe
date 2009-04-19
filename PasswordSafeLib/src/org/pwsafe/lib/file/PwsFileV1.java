@@ -11,6 +11,7 @@ package org.pwsafe.lib.file;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
@@ -20,7 +21,7 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * 
  * @author Kevin Preece
  */
-public class PwsFileV1 extends PwsFile {
+public class PwsFileV1 extends PwsFileV1V2 {
 	
 	/**
 	 * File extension of the V1 password safe files.
@@ -68,6 +69,7 @@ public class PwsFileV1 extends PwsFile {
 	 * 
 	 * @return The file's major version number.
 	 */
+	@Override
 	public int getFileVersionMajor()
 	{
 		return VERSION;
@@ -81,6 +83,7 @@ public class PwsFileV1 extends PwsFile {
 	 * 
 	 * @see org.pwsafe.lib.file.PwsFile#newRecord()
 	 */
+	@Override
 	public PwsRecord newRecord()
 	{
 		return new PwsRecordV1();
@@ -89,6 +92,7 @@ public class PwsFileV1 extends PwsFile {
 	/*
 	 * @see org.pwsafe.lib.file.PwsFile#getBlockSize()
 	 */
+	@Override
 	protected int getBlockSize() {
 		return 8;
 	}

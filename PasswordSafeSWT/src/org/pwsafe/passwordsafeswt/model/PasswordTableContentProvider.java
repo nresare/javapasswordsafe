@@ -7,16 +7,12 @@
  */
 package org.pwsafe.passwordsafeswt.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.pwsafe.lib.file.PwsFile;
-import org.pwsafe.lib.file.PwsRecord;
+import org.pwsafe.lib.datastore.PwsEntryStore;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 
 /**
  * Content Provider for the Table.
@@ -27,7 +23,7 @@ public class PasswordTableContentProvider implements IStructuredContentProvider 
 
 	private static final Log log = LogFactory.getLog(PasswordTableContentProvider.class);
 	
-	PwsFile file;
+	PwsEntryStore dataStore;
 
 	/**
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
@@ -42,9 +38,10 @@ public class PasswordTableContentProvider implements IStructuredContentProvider 
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer vwr, Object oldInput, Object newInput) {
-		if (newInput instanceof PwsFile) {
-			file = (PwsFile) newInput;
+		if (newInput instanceof PwsEntryStore) {
+			dataStore = (PwsEntryStore) newInput;
 		}
+		
 		if (log.isDebugEnabled()) 
 			log.debug("Input changed fired");
 	}
@@ -54,14 +51,11 @@ public class PasswordTableContentProvider implements IStructuredContentProvider 
 	 */
 	public Object[] getElements(Object inputElement) {
 
-		List allRecords = new ArrayList();
-		if (inputElement instanceof PwsFile) {
-			file = (PwsFile) inputElement;
-			for (Iterator iter = file.getRecords(); iter.hasNext();) {
-				allRecords.add(iter.next());
-			}
+		if (inputElement instanceof PwsEntryStore) {
+			dataStore = (PwsEntryStore) inputElement;
+			return dataStore.getSparseEntries().toArray();
 		}
-		return allRecords.toArray(new PwsRecord[0]);
+		return new PwsEntryBean[0];
 	}
 
 }

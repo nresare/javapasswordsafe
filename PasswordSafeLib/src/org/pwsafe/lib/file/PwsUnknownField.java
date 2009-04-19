@@ -28,6 +28,17 @@ public class PwsUnknownField extends PwsField
 		super( type, value );
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param type  the field's type.
+	 * @param value the field's value.
+	 */
+	public PwsUnknownField( PwsFieldType type, byte [] value )
+	{
+		super( type, value );
+	}
+
 	
 
 	/**
@@ -37,6 +48,7 @@ public class PwsUnknownField extends PwsField
 	 * 
 	 * @see org.pwsafe.lib.file.PwsField#getBytes()
 	 */
+	@Override
 	public byte[] getBytes()
 	{
 		return ((byte[]) super.getValue());
@@ -68,6 +80,7 @@ public class PwsUnknownField extends PwsField
 	 * 
 	 * @return <code>true</code> if they're equal or <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals( Object arg0 )
 	{
 		if ( arg0 instanceof PwsUnknownField )
@@ -90,6 +103,7 @@ public class PwsUnknownField extends PwsField
 		return Util.bytesAreEqual((byte[])getValue(), (byte[])other.getValue());
 	}
 	
+	@Override
 	public String toString() {
 		return new String(((byte[]) super.getValue()));
 	}

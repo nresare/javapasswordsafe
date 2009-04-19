@@ -39,12 +39,35 @@ public class PwsUUIDField extends PwsField
 	}
 
 	/**
+	 * Constructor
+	 * 
+	 * @param type  the field's type.
+	 * @param value the field's value.
+	 */
+	public PwsUUIDField( PwsFieldType type, byte [] value )
+	{
+		super( type, new UUID(value) );
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param type  the field's type.
+	 * @param value the field's value.
+	 */
+	public PwsUUIDField( PwsFieldType type, UUID value )
+	{
+		super( type, value );
+	}
+
+	/**
 	 * Returns the field's value as a byte array.
 	 * 
 	 * @return A byte array containing the field's data.
 	 * 
 	 * @see org.pwsafe.lib.file.PwsField#getBytes()
 	 */
+	@Override
 	public byte[] getBytes()
 	{
 		return ((UUID) super.getValue()).getBytes();
@@ -74,6 +97,7 @@ public class PwsUUIDField extends PwsField
 	 * 
 	 * @return <code>true</code> if they're equal or <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals( Object arg0 )
 	{
 		if ( arg0 instanceof PwsUUIDField )

@@ -10,10 +10,9 @@ package org.pwsafe.passwordsafeswt.action;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.pwsafe.lib.file.PwsRecord;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.EditDialog;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
 
 /**
  * Displays the Edit dialog.
@@ -32,15 +31,16 @@ public class EditRecordAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        PwsRecord selectedRecord = app.getSelectedRecord();
+        PwsEntryBean selectedRecord = app.getSelectedRecord();
         if (selectedRecord != null) {
-            PwsEntryDTO newEntry = PwsEntryDTO.fromPwsRecord(selectedRecord);
-            EditDialog ed = new EditDialog(app.getShell(), newEntry);
-            newEntry = (PwsEntryDTO) ed.open();
-            if (newEntry != null) {
-                app.editRecord(newEntry);
+        	PwsEntryBean filledEntry = app.getPwsDataStore().getEntry(selectedRecord.getStoreIndex());
+            EditDialog ed = new EditDialog(app.getShell(), filledEntry);
+            filledEntry = (PwsEntryBean) ed.open();
+            if (filledEntry != null) {
+                app.editRecord(filledEntry);
             }
         }
 

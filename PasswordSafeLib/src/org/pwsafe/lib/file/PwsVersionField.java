@@ -33,6 +33,19 @@ public class PwsVersionField extends PwsIntegerField
 	}
 
 	/**
+	 * Constructs the object 
+	 * 
+	 * @param type  the field type.  Values depend on the version of the file being read.
+	 * @param value the byte array holding the integer value.
+	 * 
+	 * @throws IndexOutOfBoundsException If <code>value.length</code> &lt; 4.
+	 */
+	public PwsVersionField( PwsFieldType type, byte [] value )
+	{
+		super( type, new byte[] { 0, 0, value.length > 0 ? value[0] : 0, value.length > 1 ? value[1] : 0} );
+	}
+
+	/**
 	 * Returns this integer as an array of bytes.  The returned array will have
 	 * a length of PwsFile.BLOCK_LENGTH and is thus suitable to be written to the
 	 * database.
@@ -41,6 +54,7 @@ public class PwsVersionField extends PwsIntegerField
 	 * 
 	 * @see org.pwsafe.lib.file.PwsField#getBytes()
 	 */
+	@Override
 	public byte[] getBytes()
 	{
 		byte[] intRetval	= super.getBytes();

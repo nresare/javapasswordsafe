@@ -36,7 +36,7 @@ public class PwsFileV3Test extends TestCase {
 		password = "Pa$$word";
 		
 		try {
-			pwsFile = createPwsFile(filename, password);
+			pwsFile = TestUtils.createPwsFileV3(filename, password);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -45,16 +45,6 @@ public class PwsFileV3Test extends TestCase {
 	@Override
 	public void tearDown() {
 		deletePwsFile(filename);
-	}
-	
-	private static PwsFileV3 createPwsFile(String filename, String password) throws IOException {
-		PwsFileV3 pwsFileV3 = new PwsFileV3();
-		PwsFileStorage storage = new PwsFileStorage(filename);
-		pwsFileV3.setStorage(storage);
-		pwsFileV3.setPassphrase(password);
-		pwsFileV3.save();
-		
-		return pwsFileV3;
 	}
 	
 	private static void deletePwsFile(String filename) {
@@ -108,17 +98,8 @@ public class PwsFileV3Test extends TestCase {
 	public void testLargeFile() throws EndOfFileException, IOException, UnsupportedFileVersionException, Exception {
 		PwsFileV3 file = (PwsFileV3) PwsFileFactory.newFile();
 		file.setPassphrase(password);
-		for (int i = 0; i < 1000; i++) {
-			if (i%1 == 0) { System.out.print("."); }
-			PwsRecordV3 v3 = (PwsRecordV3) file.newRecord();
-			
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.GROUP , "group" + i%10));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.TITLE , "title" + i));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.USERNAME , "user"+i));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.PASSWORD , "pw" + i));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.NOTES , "notes"+i));
-			file.add(v3);
-		}
+		int amount = 1000;
+		TestUtils.addDummyRecords(file, amount);
 		
 		PwsFileStorage storage = new PwsFileStorage(filename);
 		file.setStorage(storage);
@@ -133,6 +114,7 @@ public class PwsFileV3Test extends TestCase {
 		file2.readAll();
 		System.out.println("Read records: " + file2.getRecordCount());
 	}
+
 	
 	/**
 	 * Checks if a record with a new password policy field (#16) can be loaded.

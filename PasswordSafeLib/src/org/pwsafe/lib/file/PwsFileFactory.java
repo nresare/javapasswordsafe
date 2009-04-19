@@ -13,12 +13,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
 import org.pwsafe.lib.crypto.BlowfishPwsECB;
 import org.pwsafe.lib.crypto.SHA1;
+import org.pwsafe.lib.datastore.PwsEntryStore;
+import org.pwsafe.lib.datastore.PwsEntryStoreImpl;
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.InvalidPassphraseException;
 import org.pwsafe.lib.exception.PasswordSafeException;
@@ -227,7 +230,6 @@ public class PwsFileFactory {
 			return file;
 		}
 
-
 		PwsRecordV1	rec;
 
 		checkPassword( filename, passphrase );
@@ -241,13 +243,10 @@ public class PwsFileFactory {
 		// it will probably be fooled if someone is daft enough to create a V1 file with the
 		// title of the first record set to the value of PwsFileV2.ID_STRING!
 
-		if ( rec.getField(PwsRecordV1.TITLE).equals(PwsFileV2.ID_STRING) )
-		{
+		if ( rec.getField(PwsRecordV1.TITLE).equals(PwsFileV2.ID_STRING) ) {
 			LOG.debug1( "This is a V2 format file." );
 			file = new PwsFileV2( new PwsFileStorage(filename), passphrase );
-		}
-		else
-		{
+		} else {
 			LOG.debug1( "This is a V1 format file." );
 			file = new PwsFileV1( new PwsFileStorage(filename), passphrase );
 		}
@@ -268,6 +267,15 @@ public class PwsFileFactory {
 	public static final PwsFile newFile()
 	{
 		return new PwsFileV3();
+	}
+
+	public static PwsEntryStore getStore (PwsFile aFile) {
+		return new PwsEntryStoreImpl(aFile);
+	}
+
+	public static PwsEntryStore getStore (PwsFile aFile, Set<PwsFieldType> sparseFields) {
+		return new PwsEntryStoreImpl(aFile, sparseFields); 
+		
 	}
 
 	/**
@@ -331,4 +339,5 @@ public class PwsFileFactory {
 
 		return file;
 	}
+	
 }

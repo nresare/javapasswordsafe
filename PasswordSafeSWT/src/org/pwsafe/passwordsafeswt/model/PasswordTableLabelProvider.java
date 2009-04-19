@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsRecordV2;
 import org.pwsafe.lib.file.PwsRecordV3;
@@ -39,7 +40,23 @@ public class PasswordTableLabelProvider implements ITableLabelProvider {
 	public String getColumnText(Object element, int columnIndex) {
 		String columnString = null;
 		
-		if (element instanceof PwsRecordV3) {
+		if (element instanceof PwsEntryBean) {
+			PwsEntryBean entry = (PwsEntryBean) element;
+			switch(columnIndex) {
+				case 0:
+					columnString =  entry.getTitle();
+					break;
+			    case 1:
+			    	columnString =  entry.getUsername();
+			    	break;
+			    case 2:
+			    	columnString = entry.getNotes();
+			    	break;
+			    case 3:
+			    	columnString = entry.getPassword().toString();
+			}			
+		}
+		else if (element instanceof PwsRecordV3) {
 			PwsRecordV3 v3 = (PwsRecordV3) element;
 			switch(columnIndex) {
 				case 0:

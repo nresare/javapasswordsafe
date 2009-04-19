@@ -12,9 +12,9 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.EditDialog;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
@@ -34,9 +34,11 @@ public class AddRecordAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        PwsEntryDTO newEntry = PwsEntryDTO.fromPwsRecord(app.getPwsFile().newRecord());  
+        //TODO: Probably it will be simpler to call new PwsEntryBean();
+        PwsEntryBean newEntry = PwsEntryBean.fromPwsRecord(app.getPwsFile().newRecord());  
         IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 		if (thePrefs.getBoolean(JpwPreferenceConstants.USE_DEFAULT_USERNAME)) {
 			newEntry.setUsername(thePrefs.getString(JpwPreferenceConstants.DEFAULT_USERNAME));
@@ -49,7 +51,8 @@ public class AddRecordAction extends Action {
 			}
 		}
         EditDialog ed = new EditDialog(app.getShell(), newEntry);
-        newEntry = (PwsEntryDTO) ed.open();
+        newEntry = (PwsEntryBean) ed.open();
+        newEntry.setSparse(false);
         if (newEntry != null) {
             app.addRecord(newEntry);
         }

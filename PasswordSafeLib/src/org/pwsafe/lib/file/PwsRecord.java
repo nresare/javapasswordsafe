@@ -50,10 +50,10 @@ public abstract class PwsRecord implements Comparable
 	 */
 	public static final String	DEFAULT_CHARSET	= "ISO-8859-1";
 
-	private boolean		Modified		= false;
-	private PwsFile		OwningFile		= null;
-	private boolean		IsLoaded		= false;
-	protected Map		Attributes		= new TreeMap();
+	private boolean		modified		= false;
+	private PwsFile		owningFile		= null;
+	private boolean		isLoaded		= false;
+	protected Map		attributes		= new TreeMap();
 	private final Object ValidTypes[];
 
 	protected boolean ignoreFieldTypes = false;
@@ -189,12 +189,12 @@ public abstract class PwsRecord implements Comparable
 	{
 		super();
 
-		OwningFile	= owner;
+		owningFile	= owner;
 		ValidTypes	= validTypes;
 
 		loadRecord( owner );
 
-		IsLoaded	= true;
+		isLoaded	= true;
 	}
 	
 	/**
@@ -210,13 +210,13 @@ public abstract class PwsRecord implements Comparable
 	public PwsRecord(PwsFile owner, Object[] validTypes, boolean ignoreFieldTypes) throws EndOfFileException, IOException {
 		super();
 		
-		OwningFile	= owner;
+		owningFile	= owner;
 		ValidTypes	= validTypes;
 		this.ignoreFieldTypes = ignoreFieldTypes;
 
 		loadRecord( owner );
 
-		IsLoaded	= true;
+		isLoaded	= true;
 		
 		
 	}
@@ -228,13 +228,13 @@ public abstract class PwsRecord implements Comparable
 	 */
 	PwsRecord( PwsRecord base )
 	{
-		IsLoaded	= true;
+		isLoaded	= true;
 		ValidTypes	= base.ValidTypes;
 		
 		for ( Iterator iter = getFields(); iter.hasNext(); )
 		{
 			Integer	key = (Integer) iter.next();
-			Attributes.put( key, getField(key) );
+			attributes.put( key, getField(key) );
 		}
 	}
 
@@ -314,12 +314,25 @@ public abstract class PwsRecord implements Comparable
 	/**
 	 * Removes this record from the owning file.
 	 */
-	public void delete()
+	public boolean delete()
 	{
-		if ( OwningFile != null )
-		{
-			OwningFile.removeRecord( this );
+		if ( owningFile != null ) {
+			return owningFile.removeRecord( this );
 		}
+		return false;
+	}
+
+	/**
+	 * Gets the value of a field.  See the subclass documentation for valid values for
+	 * <code>type</code>.
+	 * 
+	 * @param type the field to get.
+	 * 
+	 * @return The value of the field.
+	 */
+	public PwsField getField(PwsFieldType type)
+	{
+		return getField( new Integer(type.getId()) );
 	}
 
 	/**
@@ -345,7 +358,7 @@ public abstract class PwsRecord implements Comparable
 	 */
 	public PwsField getField( Integer type )
 	{
-		return (PwsField) Attributes.get( type );
+		return (PwsField) attributes.get( type );
 	}
 
 	/**
@@ -357,7 +370,7 @@ public abstract class PwsRecord implements Comparable
 	 */
 	public Iterator getFields()
 	{
-		return Attributes.keySet().iterator();
+		return attributes.keySet().iterator();
 	}
 
 	/**
@@ -367,7 +380,7 @@ public abstract class PwsRecord implements Comparable
 	 */
 	public boolean isModified()
 	{
-		return Modified;
+		return modified;
 	}
 
 	/**
@@ -403,7 +416,7 @@ public abstract class PwsRecord implements Comparable
 	 */
 	void resetModified()
 	{
-		Modified = false;
+		modified = false;
 	}
 
 	/**
@@ -441,7 +454,7 @@ public abstract class PwsRecord implements Comparable
 
 				if ( cl == (((Object[]) ValidTypes[ii])[2]) )
 				{	
-					Attributes.put( new Integer(type), value );
+					attributes.put( new Integer(type), value );
 					setModified();
 					return;
 				}
@@ -455,10 +468,10 @@ public abstract class PwsRecord implements Comparable
 	 */
 	public void setModified()
 	{
-		if ( IsLoaded )
+		if ( isLoaded )
 		{	
-			Modified = true;
-			OwningFile.setModified();
+			modified = true;
+			owningFile.setModified();
 		}
 	}
 
@@ -473,11 +486,11 @@ public abstract class PwsRecord implements Comparable
 	void setOwner( PwsFile owner )
 	throws PasswordSafeException
 	{
-		if ( OwningFile != null )
+		if ( owningFile != null )
 		{
 			throw new PasswordSafeException( I18nHelper.getInstance().formatMessage("E00005") );
 		}
-		OwningFile = owner;
+		owningFile = owner;
 	}
 
 	/**

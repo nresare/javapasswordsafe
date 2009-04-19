@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.file.PwsRecord;
 import org.pwsafe.lib.file.PwsRecordV2;
 import org.pwsafe.lib.file.PwsRecordV3;
@@ -38,16 +39,19 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
         String result = "<unknown node type>";
 		if (node instanceof String) {
 			result = node.toString();
-		} else if (node instanceof PwsRecord) {
+		} else if (node instanceof PwsEntryBean) {
+			PwsEntryBean theEntry = (PwsEntryBean) node;
+			result = theEntry.getTitle();
+		} else if (node instanceof PasswordTreeContentProvider.TreeGroup) {
+		    result = node.toString();
+		} else if (node instanceof PwsRecord) { // deprecated
 		    PwsRecord record = (PwsRecord) node;
         	if (record instanceof PwsRecordV3) {
         		result = PwsEntryDTO.getSafeValue(record, PwsRecordV3.TITLE);
         	} else {
         		result = PwsEntryDTO.getSafeValue(record, PwsRecordV2.TITLE);	
         	}
-		} else if (node instanceof PasswordTreeContentProvider.TreeGroup) {
-		    result = node.toString();
-		}
+		} 
         return result;
 	}
 
@@ -100,7 +104,10 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
             result = "<unknown node type>";
             if (element instanceof String) {
                 result = element.toString();
-            } else if (element instanceof PwsRecord) {
+            } else if (element instanceof PwsEntryBean) {
+            	PwsEntryBean theEntry = (PwsEntryBean) element;
+                result = theEntry.getTitle();
+              } else if (element instanceof PwsRecord) { // deprecated
                 PwsRecord record = (PwsRecord) element;
                 if (record instanceof PwsRecordV3) {
                 	result = PwsEntryDTO.getSafeValue(record, PwsRecordV3.TITLE);
@@ -112,7 +119,10 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
             }
             break;
         case 1:
-            if (element instanceof PwsRecord) {
+        	if (element instanceof PwsEntryBean) {
+            	PwsEntryBean theEntry = (PwsEntryBean) element;
+                result = theEntry.getUsername();
+        	} else if (element instanceof PwsRecord) {// deprecated
             	if (element instanceof PwsRecordV3) {
             		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV3.USERNAME);
             	} else {
@@ -121,7 +131,10 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
             }
             break;
         case 2:
-            if (element instanceof PwsRecord) {
+        	if (element instanceof PwsEntryBean) {
+            	PwsEntryBean theEntry = (PwsEntryBean) element;
+                result = theEntry.getNotes();
+        	} else if (element instanceof PwsRecord) {// deprecated
             	if (element instanceof PwsRecordV3) {
             		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV3.NOTES);
             	} else {
@@ -130,7 +143,10 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
             }
             break;
         case 3:
-            if (element instanceof PwsRecord) {
+        	if (element instanceof PwsEntryBean) {
+            	PwsEntryBean theEntry = (PwsEntryBean) element;
+                result = theEntry.getPassword().toString();
+        	} else if (element instanceof PwsRecord) {// deprecated
             	if (element instanceof PwsRecordV3) {
             		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV3.PASSWORD);
             	} else {

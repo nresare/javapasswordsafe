@@ -41,18 +41,41 @@ public class PwsTimeField extends PwsField
 	}
 
 	/**
+	 * Constructor
+	 * 
+	 * @param type  the field's type.
+	 * @param value the field's value.
+	 */
+	public PwsTimeField( PwsFieldType type, byte [] value )
+	{
+		super( type, new Date( Util.getMillisFromByteArray(value, 0)) );
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param type  the field's type.
+	 * @param value the field's value.
+	 */
+	public PwsTimeField( PwsFieldType type, Date aDate)
+	{
+		super( type, aDate);
+	}
+
+	/**
 	 * Returns the field's value as a byte array.
 	 * 
 	 * @return A byte array containing the field's data.
 	 * 
 	 * @see org.pwsafe.lib.file.PwsField#getBytes()
 	 */
+	@Override
 	public byte[] getBytes()
 	{
 		long	value;
 		byte	retval[];
 
-		value	= (long) ((Date) getValue()).getTime();
+		value	= ((Date) getValue()).getTime();
 		
 		// Force a size of 4, otherwise ot would be set to a size of blocklength 
 //		retval	= PwsFile.allocateBuffer( 4 );
@@ -87,6 +110,7 @@ public class PwsTimeField extends PwsField
 	 * 
 	 * @return <code>true</code> if they're equal or <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals( Object arg0 )
 	{
 		if ( arg0 instanceof PwsTimeField )

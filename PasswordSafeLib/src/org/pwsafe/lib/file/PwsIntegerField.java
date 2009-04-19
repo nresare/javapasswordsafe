@@ -34,6 +34,19 @@ public class PwsIntegerField extends PwsField
 	}
 
 	/**
+	 * Constructs the object 
+	 * 
+	 * @param type  the field type.  Values depend on the version of the file being read.
+	 * @param value the byte array holding the integer value.
+	 * 
+	 * @throws IndexOutOfBoundsException If <code>value.length</code> &lt; 4.
+	 */
+	public PwsIntegerField( PwsFieldType type, byte [] value )
+	{
+		super( type, new Integer( Util.getIntFromByteArray(value, 0) ) );
+	}
+
+	/**
 	 * Returns this integer as an array of bytes.  The returned array will have
 	 * a length of PwsFile.BLOCK_LENGTH and is thus suitable to be written to the
 	 * database.
@@ -42,6 +55,7 @@ public class PwsIntegerField extends PwsField
 	 * 
 	 * @see org.pwsafe.lib.file.PwsField#getBytes()
 	 */
+	@Override
 	public byte[] getBytes()
 	{
 		int		value;
@@ -88,6 +102,7 @@ public class PwsIntegerField extends PwsField
 	 * @throws ClassCastException if <code>other</code> is neither a <code>PwsIntegerField</code>
 	 *         nor an <code>Integer</code>.  
 	 */
+	@Override
 	public boolean equals( Object arg0 )
 	{
 		if ( arg0 instanceof PwsIntegerField )

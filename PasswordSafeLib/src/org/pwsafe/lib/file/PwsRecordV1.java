@@ -96,10 +96,10 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 		super( VALID_TYPES );
 
 		// Set default values
-		setField( new PwsStringField(TITLE,    "") );
-		setField( new PwsStringField(USERNAME, "") );
-		setField( new PwsStringField(PASSWORD, "") );
-		setField( new PwsStringField(NOTES,    "") );
+		setField( new PwsStringField(PwsFieldTypeV1.TITLE,    "") );
+		setField( new PwsStringField(PwsFieldTypeV1.USERNAME, "") );
+		setField( new PwsStringField(PwsFieldTypeV1.PASSWORD, "") );
+		setField( new PwsStringField(PwsFieldTypeV1.NOTES,    "") );
 	}
 
 	/**
@@ -131,6 +131,7 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 * 
 	 * @return the new record.
 	 */
+	@Override
 	public Object clone()
 //	throws CloneNotSupportedException
 	{
@@ -152,6 +153,7 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo( Object other )
 	{
 		return compareTo( (PwsRecordV1) other );
@@ -195,6 +197,7 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 * 
 	 * @throws ClassCastException if <code>rec</code> is not a <code>PwsRecordV1</code>.
 	 */
+	@Override
 	public boolean equals( Object rec )
 	{
 		if (rec instanceof PwsRecordV1) {
@@ -228,6 +231,7 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 * 
 	 * @return <code>true</code> if it's valid or <code>false</code> if unequal.
 	 */
+	@Override
 	protected boolean isValid()
 	{
 		// All records should be added to the file.
@@ -242,6 +246,7 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 */
+	@Override
 	protected void loadRecord( PwsFile file )
 	throws EndOfFileException, IOException
 	{
@@ -284,6 +289,7 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 * 
 	 * @see org.pwsafe.lib.file.PwsRecord#saveRecord(org.pwsafe.lib.file.PwsFile)
 	 */
+	@Override
 	protected void saveRecord(PwsFile file) throws IOException
 	{
 		PwsField	title;
@@ -307,6 +313,7 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 * 
 	 * @return A string representation of this object.
 	 */
+	@Override
 	public String toString()
 	{
 		StringBuffer	sb;

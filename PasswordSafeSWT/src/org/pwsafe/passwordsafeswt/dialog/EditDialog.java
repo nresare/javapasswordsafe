@@ -7,11 +7,11 @@
  */
 package org.pwsafe.passwordsafeswt.dialog;
 
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.security.SecureRandom;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 import org.pwsafe.passwordsafeswt.util.ShellHelpers;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
@@ -68,13 +68,13 @@ public class EditDialog extends Dialog {
     private boolean dirty;
 	protected Object result;
 	protected Shell shell;
-    private PwsEntryDTO entryToEdit;
+    private final PwsEntryBean entryToEdit;
     
-	public EditDialog(Shell parent, int style, PwsEntryDTO entryToEdit) {
+	public EditDialog(Shell parent, int style, PwsEntryBean entryToEdit) {
 		super(parent, style);
         this.entryToEdit = entryToEdit;
 	}
-	public EditDialog(Shell parent, PwsEntryDTO entryToEdit) {
+	public EditDialog(Shell parent, PwsEntryBean entryToEdit) {
 		this(parent, SWT.NONE, entryToEdit);
 	}
     
@@ -122,6 +122,7 @@ public class EditDialog extends Dialog {
 		
 		// Setup adapter to catch any keypress and mark dialog dirty
 		KeyAdapter dirtyKeypress = new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				setDirty(true);
 			}
@@ -224,11 +225,12 @@ public class EditDialog extends Dialog {
         txtPassword.setEchoChar('*');
 		}
         if (entryToEdit.getPassword() != null)
-            txtPassword.setText(entryToEdit.getPassword());
+            txtPassword.setText(entryToEdit.getPassword().toString());
 		txtPassword.addModifyListener(entryEdited);// important: add after setting content
 
 		final Button btnShowPassword = new Button(compositeFields, SWT.NONE);
 		btnShowPassword.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
                 if (txtPassword.getEchoChar() != '\0') {
                 	txtPassword.setEchoChar('\0');
@@ -337,6 +339,7 @@ public class EditDialog extends Dialog {
 		open.setLayoutData(fd_dtPasswordExpire);
 		open.setText (Messages.getString("EditDialog.Calendar")); //$NON-NLS-1$
 		open.addSelectionListener (new SelectionAdapter () {
+			@Override
 			public void widgetSelected (SelectionEvent e) {
 				DateDialog dialog = new DateDialog(shell);
 				dialog.setDate(entryToEdit.getExpires());
@@ -358,6 +361,7 @@ public class EditDialog extends Dialog {
 	private Button createButtons(final Composite compositeFields, final Button btnShowPassword) {
 		final Button btnOk = new Button(compositeFields, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
                 if (isDirty()) {
                 	final Date now = new Date();
@@ -420,6 +424,7 @@ public class EditDialog extends Dialog {
 
 		final Button btnCancel = new Button(compositeFields, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
                 result = null;
                 shell.dispose();
@@ -452,6 +457,7 @@ public class EditDialog extends Dialog {
 
 		final Button btnGenerate = new Button(group, SWT.NONE);
 		btnGenerate.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String generatedPassword = generatePassword();
 				txtPassword.setText(generatedPassword);

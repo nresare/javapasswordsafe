@@ -7,21 +7,16 @@
  */
 package org.pwsafe.passwordsafeswt.model;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.pwsafe.lib.file.PwsField;
-import org.pwsafe.lib.file.PwsFile;
-import org.pwsafe.lib.file.PwsRecord;
-import org.pwsafe.lib.file.PwsRecordV1;
-import org.pwsafe.lib.file.PwsRecordV2;
-import org.pwsafe.lib.file.PwsRecordV3;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
+import org.pwsafe.lib.datastore.PwsEntryStore;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 
 /**
  * Content provider for the tree.
@@ -32,13 +27,14 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 
 	private static final Log log = LogFactory.getLog(PasswordTreeContentProvider.class);
 
-	PwsFile file;
+	PwsEntryStore dataStore;
 
     /**
      * This class represents a group displayed in the tree.
      */
     static final class TreeGroup {
-        String parent;
+
+		String parent;
         String name;
 
         public TreeGroup(String groupPath)
@@ -46,6 +42,13 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
             final int lastDot = groupPath.lastIndexOf('.') > -1 ? groupPath.lastIndexOf('.') : 0;
             this.parent = groupPath.substring(0, lastDot);
             this.name = groupPath.substring(lastDot + 1);
+        }
+
+        /**
+         * @return the parent
+         */
+        public String getParent() {
+        	return parent;
         }
 
         @Override
@@ -113,23 +116,17 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 
         if (stringParent != null) {
 			// return all record matching this group...
-			for (Iterator iter = file.getRecords(); iter.hasNext(); ) {
-				String recGroup = null;
-				Object nextRecord = iter.next();
-				
-				if (nextRecord instanceof PwsRecordV3) {
-					PwsRecordV3 nextRecordv3 = (PwsRecordV3) nextRecord;
-					recGroup = PwsEntryDTO.getSafeValue(nextRecordv3, PwsRecordV3.GROUP);					
-				} else if (nextRecord instanceof PwsRecordV2) {
-					PwsRecordV2 nextRecordv2 = (PwsRecordV2) nextRecord;
-					recGroup = PwsEntryDTO.getSafeValue(nextRecordv2, PwsRecordV2.GROUP);					
-				}
-				
-                if (stringParent.equalsIgnoreCase(recGroup)) {
+			for (PwsEntryBean theEntry : dataStore.getSparseEntries()) {
+				String recGroup = "";
+				if (! "1".equals(theEntry.getVersion()))
+					recGroup = theEntry.getGroup();
+
+				//TODO: This looks as if it breaks for V1 files
+				if (stringParent.equalsIgnoreCase(recGroup)) {
                     log.debug("Adding record");
-                    matchingRecs.add(nextRecord);
+                    matchingRecs.add(theEntry);
                 }
-                else if (recGroup.length() > stringParent.length()
+                else if (recGroup.length() > stringParent.length() && recGroup.contains(".")
                         && stringParent.regionMatches(true, 0, recGroup, 0, stringParent.length())) {
                     log.debug("Adding group");
                     int nextDot = recGroup.indexOf('.', stringParent.length() + 1);
@@ -146,10 +143,12 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if (element instanceof PwsRecordV2) {
-			return PwsEntryDTO.getSafeValue(((PwsRecordV2) element),PwsRecordV2.GROUP);
+		if (element instanceof PwsEntryBean) {
+			return ((PwsEntryBean) element).getGroup();
+		} else if (element instanceof TreeGroup) {
+			TreeGroup theGroup = (TreeGroup) element;
+			return theGroup.getParent();
 		}
-        // TODO handle TreeGroup instances here?
 		return null;
 	}
 
@@ -165,27 +164,18 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	 */
 	public Object[] getElements(Object inputElement) {
 		Set rootElements = new LinkedHashSet();
-		if (inputElement instanceof PwsFile) {
-			file = (PwsFile) inputElement;
-			for (Iterator iter = file.getRecords(); iter.hasNext(); ) {
-				PwsRecord thisRecord = (PwsRecord) iter.next();
-				if (thisRecord instanceof PwsRecordV1) {
-					PwsRecordV1 nextRecord = (PwsRecordV1) thisRecord;	
-					rootElements.add(nextRecord);
+		if (inputElement instanceof PwsEntryStore) {
+			dataStore = (PwsEntryStore) inputElement;
+			for (PwsEntryBean entry : dataStore.getSparseEntries()) {
+				if ("1".equals(entry.getVersion())) {
+					rootElements.add(entry);
 				} else {
 					String recGroup = "";
-					if (thisRecord instanceof PwsRecordV3) {
-						PwsRecordV3 nextRecord = (PwsRecordV3) thisRecord;	
-						PwsField field = nextRecord.getField(PwsRecordV3.GROUP);
-						if (field != null) {
-							recGroup = (String)field.getValue();
-						}
-					} else if (thisRecord instanceof PwsRecordV2 ) {
-						PwsRecordV2 nextRecord = (PwsRecordV2) thisRecord;	
-						recGroup = (String)nextRecord.getField(PwsRecordV2.GROUP).getValue();
+					if (entry.getGroup() != null) {
+						recGroup = entry.getGroup();
 					}
 					if (recGroup.trim().length() == 0) { // empty group name
-						rootElements.add(thisRecord);
+						rootElements.add(entry);
 					} else { // add node for group name
                         if (recGroup.indexOf('.') > 0) {
                             recGroup = recGroup.substring(0, recGroup.indexOf('.'));
@@ -212,11 +202,14 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer tv, Object oldInput, Object newInput) {
-		if (newInput instanceof PwsFile) {
-			file = (PwsFile) newInput;
+		ISelection selection = tv.getSelection();
+		if (newInput instanceof PwsEntryStore) {
+			dataStore = (PwsEntryStore) newInput;
+			tv.setSelection(selection);
 		}
 		if (log.isDebugEnabled()) 
 			log.debug("Input changed fired");
+		
 	}
 
 }

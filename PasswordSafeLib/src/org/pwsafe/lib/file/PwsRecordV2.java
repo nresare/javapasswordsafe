@@ -10,7 +10,9 @@
 package org.pwsafe.lib.file;
 
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.UUID;
@@ -89,6 +91,22 @@ public class PwsRecordV2 extends PwsRecord
 	 */
 	public static final int		END_OF_RECORD		= 255;
 
+	private static Map<PwsFieldTypeV2, Class<? extends PwsField>> field_map = new EnumMap<PwsFieldTypeV2, Class<? extends PwsField>>(PwsFieldTypeV2.class); 
+	static {
+		field_map.put(PwsFieldTypeV2.V2_ID_STRING,			PwsStringField.class );
+		field_map.put(PwsFieldTypeV2.UUID,					PwsUUIDField.class);
+		field_map.put(PwsFieldTypeV2.GROUP,					PwsStringField.class);
+		field_map.put(PwsFieldTypeV2.TITLE,					PwsStringField.class);
+		field_map.put(PwsFieldTypeV2.USERNAME,				PwsStringField.class);
+		field_map.put(PwsFieldTypeV2.NOTES,					PwsStringField.class);
+		field_map.put(PwsFieldTypeV2.PASSWORD,				PwsStringField.class);
+		field_map.put(PwsFieldTypeV2.CREATION_TIME,			PwsTimeField.class);
+		field_map.put(PwsFieldTypeV2.PASSWORD_MOD_TIME,		PwsTimeField.class);
+		field_map.put(PwsFieldTypeV2.LAST_ACCESS_TIME,		PwsTimeField.class);
+		field_map.put(PwsFieldTypeV2.PASSWORD_LIFETIME,		PwsIntegerField.class);
+		field_map.put(PwsFieldTypeV2.PASSWORD_POLICY,		PwsStringField.class);
+
+	}
 	/**
 	 * All the valid type codes.
 	 */
@@ -115,9 +133,9 @@ public class PwsRecordV2 extends PwsRecord
 	{
 		super( VALID_TYPES );
 
-		setField( new PwsUUIDField(UUID, new UUID()) );
-		setField( new PwsStringField(TITLE,    "") );
-		setField( new PwsStringField(PASSWORD, "") );
+		setField( new PwsUUIDField(PwsFieldTypeV2.UUID, new UUID()) );
+		setField( new PwsStringField(PwsFieldTypeV2.TITLE,    "") );
+		setField( new PwsStringField(PwsFieldTypeV2.PASSWORD, "") );
 	}
 	
 	/**
@@ -149,6 +167,7 @@ public class PwsRecordV2 extends PwsRecord
 	 * 
 	 * @return the new record.
 	 */
+	@Override
 	public Object clone()
 //	throws CloneNotSupportedException
 	{
@@ -170,6 +189,7 @@ public class PwsRecordV2 extends PwsRecord
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo( Object other )
 	{
 		// TODO Implement me
@@ -187,6 +207,7 @@ public class PwsRecordV2 extends PwsRecord
 	 * 
 	 * @throws ClassCastException if <code>that</code> is not a <code>PwsRecordV1</code>.
 	 */
+	@Override
 	public boolean equals( Object that )
 	{
 		UUID	thisUUID;
@@ -208,6 +229,7 @@ public class PwsRecordV2 extends PwsRecord
 	 * 
 	 * @return <code>true</code> if it's valid or <code>false</code> if unequal.
 	 */
+	@Override
 	protected boolean isValid()
 	{
 		if ( ((PwsStringField) getField( TITLE )).equals(PwsFileV2.ID_STRING) )
@@ -226,6 +248,7 @@ public class PwsRecordV2 extends PwsRecord
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 */
+	@Override
 	protected void loadRecord( PwsFile file )
 	throws EndOfFileException, IOException
 	{
@@ -286,6 +309,7 @@ public class PwsRecordV2 extends PwsRecord
 	 * 
 	 * @see org.pwsafe.lib.file.PwsRecord#saveRecord(org.pwsafe.lib.file.PwsFile)
 	 */
+	@Override
 	protected void saveRecord(PwsFile file)
 	throws IOException
 	{
@@ -311,6 +335,7 @@ public class PwsRecordV2 extends PwsRecord
 	 * 
 	 * @return A string representation of this object.
 	 */
+	@Override
 	public String toString()
 	{
 		StringBuffer	sb;

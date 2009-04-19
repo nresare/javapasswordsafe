@@ -9,8 +9,7 @@ package org.pwsafe.passwordsafeswt.model;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.pwsafe.lib.file.PwsRecord;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 
 /**
  * Implements the sorting logic for the table. Most of this was lifted straight
@@ -37,12 +36,12 @@ public class PasswordTableSorter extends ViewerSorter {
 		
 	}
 	
+	@Override
 	public int compare(Viewer arg0, Object a, Object b) {
 		int rc = 0;
-		
-		//FIXME avoid recreating new EntryDTOs all the time, for example by an adapter
-		PwsEntryDTO entry1 = PwsEntryDTO.fromPwsRecord((PwsRecord) a);
-		PwsEntryDTO entry2 = PwsEntryDTO.fromPwsRecord((PwsRecord) b);
+
+		final PwsEntryBean entry1 = (PwsEntryBean) a;
+		final PwsEntryBean entry2 = (PwsEntryBean) b;
 		
 		switch(column) {
 		
@@ -55,11 +54,8 @@ public class PasswordTableSorter extends ViewerSorter {
 		
 		case 3:
 			rc = collator.compare(entry1.getNotes(), entry2.getNotes());
-			break;
-			
+			break;	
 		}
-		
-		
 		
 		if (direction == DESCENDING)
 			rc = -rc;

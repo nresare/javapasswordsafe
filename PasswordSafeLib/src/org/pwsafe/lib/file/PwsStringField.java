@@ -28,12 +28,25 @@ public class PwsStringField extends PwsField
 	}
 
 	/**
+	 * Constructor
+	 * 
+	 * @param type  the field's type.
+	 * @param value the field's value.
+	 */
+	public PwsStringField( PwsFieldType type, String value )
+	{
+		super( type, value );
+	}
+
+
+	/**
 	 * Returns the field's value as a byte array.
 	 * 
 	 * @return A byte array containing the field's data.
 	 * 
 	 * @see org.pwsafe.lib.file.PwsField#getBytes()
 	 */
+	@Override
 	public byte[] getBytes()
 	{
 		byte[] bytes = null;
@@ -69,6 +82,7 @@ public class PwsStringField extends PwsField
 	 * 
 	 * @return <code>true</code> if they're equal or <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals( Object arg0 )
 	{
 		if ( arg0 instanceof PwsStringField )

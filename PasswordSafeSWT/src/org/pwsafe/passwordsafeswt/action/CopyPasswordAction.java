@@ -11,6 +11,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.file.PwsRecord;
 import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsRecordV2;
@@ -34,10 +35,16 @@ public class CopyPasswordAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
-        PwsRecord recordToCopy = app.getSelectedRecord();
+        PwsEntryBean selected = app.getSelectedRecord();
+        if (selected == null)
+        	return;
+        
+        //TODO: Change to use PwsEntryBean as well
+        PwsRecord recordToCopy = app.getPwsFile().getRecord(selected.getStoreIndex());
 
         Clipboard cb = new Clipboard(app.getShell().getDisplay());
 

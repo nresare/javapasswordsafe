@@ -158,10 +158,10 @@ public class PwsRecordV3 extends PwsRecord
 	{
 		super( VALID_TYPES );
 
-		setField( new PwsUUIDField(UUID, new UUID()) );
-		setField( new PwsStringUnicodeField(TITLE,    "") );
-		setField( new PwsStringUnicodeField(PASSWORD, "") );
-		setField( new PwsTimeField(CREATION_TIME, new Date()) );
+		setField( new PwsUUIDField(PwsFieldTypeV3.UUID, new UUID()) );
+		setField( new PwsStringUnicodeField(PwsFieldTypeV3.TITLE,    "") );
+		setField( new PwsStringUnicodeField(PwsFieldTypeV3.PASSWORD, "") );
+		setField( new PwsTimeField(PwsFieldTypeV3.CREATION_TIME, new Date()) );
 	       
 	}
 	
@@ -208,6 +208,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * 
 	 * @return the new record.
 	 */
+	@Override
 	public Object clone()
 //	throws CloneNotSupportedException
 	{
@@ -229,6 +230,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo( Object other )
 	{
 		// TODO Implement me
@@ -246,6 +248,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * 
 	 * @throws ClassCastException if <code>that</code> is not a <code>PwsRecordV1</code>.
 	 */
+	@Override
 	public boolean equals( Object that )
 	{
 		UUID	thisUUID;
@@ -269,6 +272,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * 
 	 * @return <code>true</code> if it's valid or <code>false</code> if unequal.
 	 */
+	@Override
 	protected boolean isValid()
 	{
 		//TODO Ignore those records we read from the header....
@@ -353,6 +357,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 */
+	@Override
 	protected void loadRecord( PwsFile file )
 	throws EndOfFileException, IOException
 	{
@@ -372,7 +377,7 @@ public class PwsRecordV3 extends PwsRecord
 			if (ignoreFieldTypes) {
 				// header record has no valid types...
 				itemVal = new PwsUnknownField(item.getType(), item.getByteData());
-				Attributes.put( new Integer(item.getType()), itemVal );
+				attributes.put( new Integer(item.getType()), itemVal );
 			} else {
 				
 				switch ( item.getType() )
@@ -433,6 +438,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * 
 	 * @see org.pwsafe.lib.file.PwsRecord#saveRecord(org.pwsafe.lib.file.PwsFile)
 	 */
+	@Override
 	protected void saveRecord(PwsFile file)
 	throws IOException
 	{
@@ -465,6 +471,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * 
 	 * @throws IOException
 	 */
+	@Override
 	protected void writeField( PwsFile file, PwsField field, int type )
 	throws IOException
 	{
@@ -503,6 +510,7 @@ public class PwsRecordV3 extends PwsRecord
 	 * 
 	 * @return A string representation of this object.
 	 */
+	@Override
 	public String toString()
 	{
 		StringBuffer	sb;

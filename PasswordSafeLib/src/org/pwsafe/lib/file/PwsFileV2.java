@@ -20,7 +20,7 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * 
  * @author Kevin Preece
  */
-public class PwsFileV2 extends PwsFile {
+public class PwsFileV2 extends PwsFileV1V2 {
 	
 	/**
 	 * File extension of the V2 password safe files.
@@ -71,6 +71,7 @@ public class PwsFileV2 extends PwsFile {
 	 * 
 	 * @return The major version number for the file.
 	 */
+	@Override
 	public int getFileVersionMajor()
 	{
 		return VERSION;
@@ -84,6 +85,7 @@ public class PwsFileV2 extends PwsFile {
 	 * 
 	 * @see org.pwsafe.lib.file.PwsFile#newRecord()
 	 */
+	@Override
 	public PwsRecord newRecord()
 	{
 		return new PwsRecordV2();
@@ -98,6 +100,7 @@ public class PwsFileV2 extends PwsFile {
 	 * @throws IOException If an error occurs whilst reading. 
 	 * @throws UnsupportedFileVersionException If the header is not a valid V2 header.
 	 */
+	@Override
 	protected void readExtraHeader( PwsFile file )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException
 	{
@@ -119,6 +122,7 @@ public class PwsFileV2 extends PwsFile {
 	 * 
 	 * @throws IOException if an error occurs whilst writing the header. 
 	 */
+	@Override
 	protected void writeExtraHeader( PwsFile file )
 	throws IOException
 	{
@@ -135,6 +139,7 @@ public class PwsFileV2 extends PwsFile {
 	/**
 	 * @see org.pwsafe.lib.file.PwsFile#getBlockSize()
 	 */
+	@Override
 	protected int getBlockSize() {
 		return 8;
 	}
