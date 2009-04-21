@@ -37,6 +37,7 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -71,8 +72,8 @@ import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.pwsafe.lib.datastore.PwsEntryStore;
 import org.pwsafe.lib.datastore.PwsEntryBean;
+import org.pwsafe.lib.datastore.PwsEntryStore;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.file.PwsFile;
 import org.pwsafe.lib.file.PwsFileFactory;
@@ -941,9 +942,25 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		treeViewer.setContentProvider(new PasswordTreeContentProvider());
 		treeViewer.setSorter(new ViewerSorter());		
 		treeViewer.addDoubleClickListener(new ViewerDoubleClickListener());
+		treeViewer.setComparer(new IElementComparer() {
+			public boolean equals(Object a, Object b) {
+				if (a instanceof PwsEntryBean && b instanceof PwsEntryBean)
+					return ((PwsEntryBean) a).getStoreIndex() == (((PwsEntryBean) b).getStoreIndex());
+				else 
+					return a.equals(b);
+			}
+
+			public int hashCode(Object element) {
+				if (element instanceof PwsEntryBean)
+					return ((PwsEntryBean) element).getStoreIndex();
+				else
+					return element.hashCode();
+			}
+		});
 		tree = treeViewer.getTree();
 		tree.setHeaderVisible(true);
 		tree.setMenu(createPopupMenu(tree));
+
 		treeViewer.setInput(new Object());
 
         final TreeColumn treeColumn = new TreeColumn(tree, SWT.CENTER);
