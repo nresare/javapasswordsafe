@@ -9,6 +9,7 @@
  */
 package org.pwsafe.lib;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
@@ -19,7 +20,7 @@ import java.util.TimeZone;
  * 
  * @author Kevin Preece
  */
-public class UUID implements Comparable
+public class UUID implements Comparable, Serializable
 {
 	private final byte []		TheUUID	= new byte[ 16 ];
 
@@ -96,8 +97,7 @@ public class UUID implements Comparable
 	 * 
 	 * @return <code>true</code> if the <code>UUID</code>s are equal or <code>false</code> otherwise.
 	 */
-	public boolean equals( UUID that )
-	{
+	public boolean equals( UUID that ) {
 		if (that == this)
 			return true;
 		if (that == null)

@@ -10,6 +10,7 @@
 package org.pwsafe.lib.file;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
@@ -18,7 +19,6 @@ import java.util.TreeMap;
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Util;
 import org.pwsafe.lib.exception.EndOfFileException;
-import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
 
 /**
@@ -43,7 +43,7 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * 
  * @author Kevin Preece
  */
-public abstract class PwsRecord implements Comparable
+public abstract class PwsRecord implements Comparable, Serializable
 {
 	/**
 	 * The default character set used for <code>byte[]</code> to <code>String</code> conversions.
@@ -51,7 +51,6 @@ public abstract class PwsRecord implements Comparable
 	public static final String	DEFAULT_CHARSET	= "ISO-8859-1";
 
 	private boolean		modified		= false;
-	private PwsFile		owningFile		= null;
 	private boolean		isLoaded		= false;
 	protected Map		attributes		= new TreeMap();
 	private final Object ValidTypes[];
@@ -189,7 +188,6 @@ public abstract class PwsRecord implements Comparable
 	{
 		super();
 
-		owningFile	= owner;
 		ValidTypes	= validTypes;
 
 		loadRecord( owner );
@@ -210,7 +208,6 @@ public abstract class PwsRecord implements Comparable
 	public PwsRecord(PwsFile owner, Object[] validTypes, boolean ignoreFieldTypes) throws EndOfFileException, IOException {
 		super();
 		
-		owningFile	= owner;
 		ValidTypes	= validTypes;
 		this.ignoreFieldTypes = ignoreFieldTypes;
 
@@ -311,16 +308,6 @@ public abstract class PwsRecord implements Comparable
 	//* Class methods
 	//*************************************************************************
 
-	/**
-	 * Removes this record from the owning file.
-	 */
-	public boolean delete()
-	{
-		if ( owningFile != null ) {
-			return owningFile.removeRecord( this );
-		}
-		return false;
-	}
 
 	/**
 	 * Gets the value of a field.  See the subclass documentation for valid values for
@@ -471,26 +458,7 @@ public abstract class PwsRecord implements Comparable
 		if ( isLoaded )
 		{	
 			modified = true;
-			owningFile.setModified();
 		}
-	}
-
-	/**
-	 * Sets <code>file</code> as the owner of this record, i.e., the file it was read from 
-	 * or will be written to.
-	 * 
-	 * @param owner the <code>PwsFile</code> that owns this record.
-	 * 
-	 * @throws PasswordSafeException if this record is already owned by a file.
-	 */
-	void setOwner( PwsFile owner )
-	throws PasswordSafeException
-	{
-		if ( owningFile != null )
-		{
-			throw new PasswordSafeException( I18nHelper.getInstance().formatMessage("E00005") );
-		}
-		owningFile = owner;
 	}
 
 	/**

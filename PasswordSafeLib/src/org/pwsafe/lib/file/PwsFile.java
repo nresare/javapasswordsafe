@@ -20,6 +20,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NullCipher;
+import javax.crypto.SealedObject;
+
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.exception.EndOfFileException;
@@ -83,13 +89,13 @@ public abstract class PwsFile
 	protected StringBuilder passphrase;
 
 	/**
-	 * The stream used to read data from the file.  It is non-null only whilst data
+	 * The stream used to read data from the storage.  It is non-null only whilst data
 	 * are being read from the file.
 	 */
 	protected InputStream		inStream;
 
 	/**
-	 * The stream used to write data to the file.  It is non-null only whilst data are
+	 * The stream used to write data to the storage.  It is non-null only whilst data are
 	 * being written to the file. 
 	 */
 	protected OutputStream		outStream;
@@ -97,17 +103,20 @@ public abstract class PwsFile
 	/**
 	 * The records that are part of the file.
 	 */
-	protected List<PwsRecord>             recordSet = new ArrayList<PwsRecord>();
+	protected List<PwsRecord>   	recordSet 	  = new ArrayList<PwsRecord>();
 
+	
+	protected List<SealedObject>	sealedRecords = new ArrayList<SealedObject>();
+	
 	/**
-	 * Flag indicating whether (<code>true</code>) or not (<code>false</code>) the file
+	 * Flag indicating whether (<code>true</code>) or not (<code>false</code>) the storage
 	 * has been modified in memory and not yet written back to the filesystem.
 	 */
 	protected boolean			modified		= false;
 
 	
 	/**
-	 * Flag indicating whether the file may be changed or saved. 
+	 * Flag indicating whether the storage may be changed or saved. 
 	 * 
 	 */
 	protected boolean 			readOnly 		= false;
@@ -154,17 +163,25 @@ public abstract class PwsFile
 	 * 
 	 * @throws PasswordSafeException if the record has already been added to another file. 
 	 */
-	public void add( PwsRecord rec )
-	throws PasswordSafeException
-	{
+	public void add( PwsRecord rec ) throws PasswordSafeException {
 		LOG.enterMethod( "PwsFile.add" );
 
 		if (isReadOnly())
 			LOG.error("Illegal add on read only file - saving won't be possible");
 
 		// TODO validate the record before adding it
-		rec.setOwner( this );
-		recordSet.add( rec );
+		Cipher cipher = getCipher(true);
+		try {
+			SealedObject sealedRecord = new SealedObject(rec, cipher);
+	        sealedRecords.add(sealedRecord);
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//recordSet.add( rec );
 		setModified();
 
 		LOG.leaveMethod( "PwsFile.add" );
@@ -255,6 +272,12 @@ public abstract class PwsFile
 
         // TODO: dispose records
     }
+    
+    protected Cipher getCipher (boolean forWriting) {
+    	//TODO: make a real one
+    	return new NullCipher();
+    }
+    
 	/**
 	 * Returns the storage implementation for this file
 	 */
@@ -297,7 +320,7 @@ public abstract class PwsFile
 	{
 		LOG.enterMethod( "PwsFile.getRecordCount" );
 		
-		int size = recordSet.size();
+		int size = sealedRecords.size();
 
 		LOG.leaveMethod( "PwsFile.getRecordCount" );
 
@@ -312,7 +335,7 @@ public abstract class PwsFile
 	 */
 	public Iterator<? extends PwsRecord> getRecords()
 	{
-		return new FileIterator( this, recordSet.iterator() );
+		return new FileIterator( this, sealedRecords.iterator() );
 	}
 
     /**
@@ -322,7 +345,27 @@ public abstract class PwsFile
      */
     public PwsRecord getRecord(int index)
     {
-        return recordSet.get(index);
+    	// TODO validate here as well
+        Cipher cipher = getCipher(true);
+        SealedObject sealedRecord ;
+		try {
+			sealedRecord = sealedRecords.get(index);
+			return (PwsRecord) sealedRecord.getObject(getCipher(false));
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+        return null;//recordSet.get(index);
     }
 
 	/**
@@ -354,7 +397,20 @@ public abstract class PwsFile
     public void set(int index, PwsRecord aRecord)
     {
     	// TODO validate here as well
-        recordSet.set(index, aRecord);
+//        recordSet.set(index, aRecord);
+        Cipher cipher = getCipher(true);
+        SealedObject sealedRecord ;
+		try {
+			sealedRecord = new SealedObject(aRecord, cipher);
+	        sealedRecords.set(index, sealedRecord);
+		} catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
     }
 
 	/**
@@ -389,6 +445,9 @@ public abstract class PwsFile
 		catch ( EndOfFileException e )
 		{
 			// OK
+		} catch (PasswordSafeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -480,15 +539,14 @@ public abstract class PwsFile
 	 * @throws UnsupportedFileVersionException If this version of the file cannot be handled.
 	 */
 	protected PwsRecord readRecord()
-	throws EndOfFileException, IOException, UnsupportedFileVersionException
+	throws EndOfFileException, IOException, UnsupportedFileVersionException, PasswordSafeException
 	{
 		PwsRecord	rec;
 
 		rec = PwsRecord.read( this );
 
-		if ( rec.isValid() )
-		{	
-			recordSet.add( rec );
+		if ( rec.isValid() ){	
+			this.add( rec );
 		}
 
 		return rec;
@@ -504,6 +562,7 @@ public abstract class PwsFile
         boolean success = false;
 		LOG.enterMethod( "PwsFile.removeRecord" );
 
+		//FIXME: this won't work anymore
 		if ( recordSet.contains(rec) ) {
 			LOG.debug1( "Record removed" );
 			success = recordSet.remove( rec );
@@ -520,8 +579,9 @@ public abstract class PwsFile
      * @param index
      * @return true if a record was removed
      */
-    boolean removeRecord (int index) {
-        boolean success = recordSet.remove(index) != null;
+    public boolean removeRecord (int index) {
+//        boolean success = recordSet.remove(index) != null;
+        boolean success = sealedRecords.remove(index) != null;
         if (success)
             setModified();
         return success;
@@ -648,7 +708,7 @@ public abstract class PwsFile
         private final Log LOG = Log.getInstance(FileIterator.class.getPackage().getName());
 
         private final PwsFile file;
-        private final Iterator delegeate;
+        private final Iterator<SealedObject> delegate;
 
         /**
          * Construct the <code>Iterator</code> linking it to the given PasswordSafe
@@ -657,12 +717,12 @@ public abstract class PwsFile
          * @param file the file this iterator is linked to.
          * @param iter the <code>Iterator</code> over the records.
          */
-        public FileIterator( PwsFile file, Iterator iter )
+        public FileIterator( PwsFile file, Iterator<SealedObject> iter )
         {
             LOG.enterMethod( "PwsFile$FileIterator" );
 
             this.file = file;
-            delegeate = iter;
+            delegate = iter;
 
             LOG.leaveMethod( "PwsFile$FileIterator" );
         }
@@ -677,7 +737,7 @@ public abstract class PwsFile
          */
         public final boolean hasNext()
         {
-            return delegeate.hasNext();
+            return delegate.hasNext();
         }
 
         /**
@@ -690,7 +750,27 @@ public abstract class PwsFile
          */
         public final Object next()
         {
-            return delegeate.next();
+        	// TODO validate here as well
+            Cipher cipher = getCipher(false);
+            SealedObject sealedRecord ;
+    		try {
+    			sealedRecord = delegate.next();
+    			return sealedRecord.getObject(cipher);
+    		} catch (IllegalBlockSizeException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (BadPaddingException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		} catch (ClassNotFoundException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+
+            return null;
         }
 
         /**
@@ -706,7 +786,7 @@ public abstract class PwsFile
             if (isReadOnly())
                 LOG.error("Illegal remove on read only file - saving won't be possible");
 
-            delegeate.remove();
+            delegate.remove();
             file.setModified();
 
             LOG.leaveMethod( "PwsFile$FileIterator.remove" );

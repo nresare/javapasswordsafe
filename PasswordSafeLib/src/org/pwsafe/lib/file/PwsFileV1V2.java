@@ -1,5 +1,11 @@
-/**
+/*
+ * $Id$
  * 
+ * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * All rights reserved. Use of the code is allowed under the
+ * Artistic License 2.0 terms, as specified in the LICENSE file
+ * distributed with this code, or available from
+ * http://www.opensource.org/licenses/artistic-license-2.0.php
  */
 package org.pwsafe.lib.file;
 
@@ -210,9 +216,9 @@ public abstract class PwsFileV1V2 extends PwsFile {
 			writeExtraHeader( this );
 
 			PwsRecord	rec;
-			for ( Iterator<?> iter = getRecords(); iter.hasNext(); )
+			for ( Iterator<? extends PwsRecord> iter = getRecords(); iter.hasNext(); )
 			{
-				rec = (PwsRecord) iter.next();
+				rec = iter.next();
 	
 				rec.saveRecord( this );
 			}

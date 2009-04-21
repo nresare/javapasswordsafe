@@ -1,4 +1,13 @@
-package org.pwsafe.lib.datastore;
+/*
+ * $Id$
+ * 
+ * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * All rights reserved. Use of the code is allowed under the
+ * Artistic License 2.0 terms, as specified in the LICENSE file
+ * distributed with this code, or available from
+ * http://www.opensource.org/licenses/artistic-license-2.0.php
+ */
+ package org.pwsafe.lib.datastore;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -174,7 +183,9 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 		PwsRecord theRecord = pwsFile.getRecord(index);
 		anEntry.toPwsRecord(theRecord);
 		pwsFile.set(index, theRecord);
-		sparseEntries.set(index, sparsify (anEntry));
+		PwsEntryBean newEntry = PwsEntryBean.fromPwsRecord(theRecord,sparseFields);
+		newEntry.setStoreIndex(index);
+		sparseEntries.set(index, sparsify (newEntry));
 		
 		return true;
 	}
@@ -192,7 +203,8 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 			throw new IndexOutOfBoundsException("record index too big - no record with index " + index);
 		}
 		PwsRecord theRecord = pwsFile.getRecord(index);
-		boolean result = theRecord.delete();
+		//TODO: Check if this Record is the same
+		boolean result = pwsFile.removeRecord(index);
 		
 		refresh();
 		return result;

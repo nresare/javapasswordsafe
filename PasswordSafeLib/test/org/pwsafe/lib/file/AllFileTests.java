@@ -20,6 +20,7 @@ public class AllFileTests {
 		suite.addTestSuite(FileTest.class);
 		suite.addTestSuite(PwsFileFactoryTest.class);
 		suite.addTestSuite(StreamTests.class);
+		suite.addTestSuite(TestSparseRecords.class);
 		//$JUnit-END$
 		return suite;
 	}

@@ -235,7 +235,11 @@ public class PwsFileFactory {
 		checkPassword( filename, passphrase );
 
 		file	= new PwsFileV1( new PwsFileStorage(filename), passphrase );
-		rec		= (PwsRecordV1) file.readRecord();
+		try {
+			rec		= (PwsRecordV1) file.readRecord();
+		} catch (PasswordSafeException e) {
+			throw new IllegalStateException(e);	
+		}
 
 		file.close();
 

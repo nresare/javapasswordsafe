@@ -9,6 +9,8 @@
  */
 package org.pwsafe.lib.file;
 
+import java.io.Serializable;
+
 
 /**
  * A record in PasswordSafe consists of a number of fields.  In V1.7 files all fields are
@@ -23,7 +25,7 @@ package org.pwsafe.lib.file;
  * 
  * @author Kevin Preece
  */
-public abstract class PwsField implements Comparable
+public abstract class PwsField implements Comparable, Serializable
 {
 //	private static final Log LOG = Log.getInstance(PwsField.class.getPackage().getName());
 
