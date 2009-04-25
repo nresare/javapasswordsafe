@@ -9,6 +9,9 @@
  */
 package org.pwsafe.lib;
 
+import java.security.SecureRandom;
+import java.util.Arrays;
+
 import org.pwsafe.lib.crypto.SHA256Pws;
 
 /**
@@ -22,6 +25,11 @@ public class Util
 
 	private static final char	HEX_CHARS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
+	private static final SecureRandom randGen = new SecureRandom();
+	static {
+		randGen.setSeed(System.currentTimeMillis());
+	}
+	
 	/**
 	 * Private to prevent instatiation.
 	 */
@@ -30,6 +38,14 @@ public class Util
 	}
 
 	/**
+	 * Adds more seed values to the internal {@link SecureRandom} generator.
+	 * @param seeds
+	 */
+	public static void addSeedBytes (byte[] seeds) {
+		randGen.setSeed(seeds);
+	}
+	
+	/**
 	 * Allocates a byte array with a length of <code>length</code> and fills it with
 	 * random data.
 	 * 
@@ -37,16 +53,8 @@ public class Util
 	 * 
 	 * @return A byte array initialised with random data.
 	 */
-	public static byte [] allocateByteArray( int length )
-	{
-		byte	array [];
-
-		array = new byte [ length ];
-
-//		for ( int ii = 0; ii < length; ++ii )
-//		{
-//			array[ii] = newRand();
-//		}
+	public static byte [] allocateByteArray( int length ) {
+		byte	array [] = new byte [ length ];
 		newRandBytes(array);
 		return array;
 	}
@@ -56,24 +64,12 @@ public class Util
 	 * content <code>false</code> if they're not.
 	 * 
 	 * @param b1 the first byte array.
-	 * @param b2 the seconf byte array.
+	 * @param b2 the second byte array.
 	 * 
 	 * @return <code>true</code> if the arrays are equal, <code>false</code> if they are not.
 	 */
-	public static boolean bytesAreEqual( byte [] b1, byte [] b2 )
-	{
-		if ( b1.length == b2.length )
-		{
-			for ( int ii = 0; ii < b1.length; ++ii )
-			{
-				if ( b1[ii] != b2[ii] )
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
+	public static boolean bytesAreEqual( byte [] b1, byte [] b2 ) {
+		return Arrays.equals(b1, b2);
 	}
 	
 	/**
@@ -357,23 +353,17 @@ public class Util
 	 * 
 	 * @return A random byte.
 	 */
-	public static byte newRand()
-	{
-		int rand;
-		
-		while ( (rand = (int)(Math.random() * Integer.MAX_VALUE) % 257) == 256);
-		return (byte) rand;
+	public static byte newRand() {
+		final byte[] rand = new byte[1];
+		randGen.nextBytes(rand);
+		return rand[0];
 	}
 	
 	/**
      * fills <code>bytes[]</code> with random bytes using newRand()
      */
-	public static void newRandBytes(byte[] bytes)
-    {
-        for (int i = 0; i < bytes.length; i++)
-        {
-            bytes[i] = newRand();
-        }
+	public static void newRandBytes(byte[] bytes) {
+       randGen.nextBytes(bytes);
     }
 
 	/**
@@ -381,17 +371,8 @@ public class Util
 	 *  
 	 * @return A random integer in the range 0 to <code>Integer.MAX_VALUE</code>.
 	 */
-	public static int positiveRand()
-	{
-		int	rand;
-
-		do
-		{
-			rand = Math.abs( (int) (Math.random() * Integer.MAX_VALUE) );
-		}
-		while ( rand < 0 );
-
-		return rand;
+	public static int positiveRand() {
+		return Math.abs(randGen.nextInt());
 	}
 
 	/**
