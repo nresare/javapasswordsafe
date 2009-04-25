@@ -12,6 +12,8 @@ package org.pwsafe.lib.file;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,12 +25,16 @@ import java.util.List;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NullCipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SealedObject;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
+import org.pwsafe.lib.Util;
 import org.pwsafe.lib.exception.EndOfFileException;
+import org.pwsafe.lib.exception.MemoryKeyException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
 
@@ -85,6 +91,7 @@ public abstract class PwsFile
 	
 	/**
 	 * The passphrase for the file.
+	 * TODO: seal passphrase
 	 */
 	protected StringBuilder passphrase;
 
@@ -99,13 +106,10 @@ public abstract class PwsFile
 	 * being written to the file. 
 	 */
 	protected OutputStream		outStream;
-
+	
 	/**
 	 * The records that are part of the file.
 	 */
-	protected List<PwsRecord>   	recordSet 	  = new ArrayList<PwsRecord>();
-
-	
 	protected List<SealedObject>	sealedRecords = new ArrayList<SealedObject>();
 	
 	/**
@@ -126,6 +130,8 @@ public abstract class PwsFile
 	 */
 	protected Date 				lastStorageChange;
 
+	private byte[] 				memoryKey;
+	private byte[] 				memoryIv;
 	
 	/**
 	 * Constructs and initialises a new, empty PasswordSafe database in memory.
@@ -163,28 +169,30 @@ public abstract class PwsFile
 	 * 
 	 * @throws PasswordSafeException if the record has already been added to another file. 
 	 */
-	public void add( PwsRecord rec ) throws PasswordSafeException {
+	public void add(final PwsRecord rec ) throws PasswordSafeException {
 		LOG.enterMethod( "PwsFile.add" );
 
 		if (isReadOnly())
 			LOG.error("Illegal add on read only file - saving won't be possible");
 
-		// TODO validate the record before adding it
-		Cipher cipher = getCipher(true);
-		try {
-			SealedObject sealedRecord = new SealedObject(rec, cipher);
-	        sealedRecords.add(sealedRecord);
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.add(rec, getCipher(true));
 		//recordSet.add( rec );
 		setModified();
 
 		LOG.leaveMethod( "PwsFile.add" );
+	}
+	
+	protected void add ( final PwsRecord rec, final Cipher aCipher ) {
+
+		// TODO validate the record before adding it
+		try {
+			SealedObject sealedRecord = new SealedObject(rec, aCipher);
+	        sealedRecords.add(sealedRecord);
+		} catch (IllegalBlockSizeException e) {
+			throw new MemoryKeyException(e);
+		} catch (IOException e) {
+			throw new MemoryKeyException(e);
+		}
 	}
 
 	/**
@@ -269,13 +277,62 @@ public abstract class PwsFile
         passphrase.setLength(0);
         passphrase.append(filler);
         passphrase.setLength(0);
-
-        // TODO: dispose records
+        if (memoryKey != null) {
+        	Arrays.fill(memoryKey, (byte) 0);
+        	memoryKey = null;
+        }
+        if (memoryIv != null) {
+        	Arrays.fill(memoryIv, (byte) 0);
+        	memoryIv = null;
+        }
     }
     
     protected Cipher getCipher (boolean forWriting) {
-    	//TODO: make a real one
-    	return new NullCipher();
+    	if (memoryIv == null) {
+    		memoryIv = new byte[8];
+    		Util.newRandBytes(memoryIv);
+    	}
+    	//TODO: use BouncyCastle Provider!        
+        SecretKeySpec   key = new SecretKeySpec(getKeyBytes(), "Blowfish");
+        IvParameterSpec ivSpec = new IvParameterSpec(memoryIv);
+        Cipher cipher = null;
+		try {
+			cipher = Cipher.getInstance("Blowfish/CBC/PKCS5Padding");
+		} catch (NoSuchAlgorithmException e1) {
+			throw new MemoryKeyException("memory key generation failed",e1);
+//		} catch (NoSuchProviderException e1) {
+//			throw new MemoryKeyException("memory Key generation failed", e1);
+		} catch (NoSuchPaddingException e1) {
+			throw new MemoryKeyException("memory key generation failed",e1);
+		}
+
+        try {
+        	if (forWriting)
+        		cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+        	else
+        		cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+		} catch (InvalidKeyException e) {
+			throw new MemoryKeyException("memory key generation failed",e);
+		} catch (InvalidAlgorithmParameterException e) {
+			throw new MemoryKeyException("memory key generation failed",e);
+		}
+
+    	return cipher;
+    }
+    
+    private byte[] getKeyBytes () {
+    	//TODO: use a safer crypto way to create key
+    	//TODO: scramble and hide key 
+    	if (memoryIv == null) {
+    		byte[] pass = getPassphrase().getBytes();
+	    	byte[] memoryIv = new byte[8];
+	    	if (pass.length > 8)
+	    		System.arraycopy(pass, 0, memoryIv, 0, 8);
+	    	else {
+	    		System.arraycopy(pass, 0, memoryIv, 0, pass.length);
+	    	}	
+	    }
+    	return memoryIv;
     }
     
 	/**
@@ -352,20 +409,14 @@ public abstract class PwsFile
 			sealedRecord = sealedRecords.get(index);
 			return (PwsRecord) sealedRecord.getObject(getCipher(false));
 		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MemoryKeyException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MemoryKeyException(e);
 		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MemoryKeyException(e);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MemoryKeyException(e);
 		}
-
-        return null;//recordSet.get(index);
     }
 
 	/**
@@ -397,18 +448,15 @@ public abstract class PwsFile
     public void set(int index, PwsRecord aRecord)
     {
     	// TODO validate here as well
-//        recordSet.set(index, aRecord);
         Cipher cipher = getCipher(true);
         SealedObject sealedRecord ;
 		try {
 			sealedRecord = new SealedObject(aRecord, cipher);
 	        sealedRecords.set(index, sealedRecord);
 		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MemoryKeyException(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new MemoryKeyException(e);
 		}
 
     }
@@ -432,22 +480,18 @@ public abstract class PwsFile
 	 * @throws IOException  If an error occurs reading from the file.
 	 * @throws UnsupportedFileVersionException  If the file is an unsupported version
 	 */
-	void readAll()
-	throws IOException, UnsupportedFileVersionException
-	{
-		try
-		{
-			for ( ;; )
-			{
-				readRecord();
+	void readAll() throws IOException, UnsupportedFileVersionException {
+		try {
+			final Cipher c = getCipher(true);
+			for ( ;; ) {
+				final PwsRecord	rec = PwsRecord.read( this );
+
+				if ( rec.isValid() ){	
+					this.add( rec, c );
+				}
 			}
-		}
-		catch ( EndOfFileException e )
-		{
+		} catch ( EndOfFileException e ) {
 			// OK
-		} catch (PasswordSafeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -541,9 +585,7 @@ public abstract class PwsFile
 	protected PwsRecord readRecord()
 	throws EndOfFileException, IOException, UnsupportedFileVersionException, PasswordSafeException
 	{
-		PwsRecord	rec;
-
-		rec = PwsRecord.read( this );
+		final PwsRecord	rec = PwsRecord.read( this );
 
 		if ( rec.isValid() ){	
 			this.add( rec );
@@ -552,35 +594,12 @@ public abstract class PwsFile
 		return rec;
 	}
 
-	/**
-	 * Deletes the given record from the file.
-	 * 
-	 * @param rec the record to be deleted.
-     * @return true if a record was deleted
-	 */
-	boolean removeRecord( PwsRecord rec ) {
-        boolean success = false;
-		LOG.enterMethod( "PwsFile.removeRecord" );
-
-		//FIXME: this won't work anymore
-		if ( recordSet.contains(rec) ) {
-			LOG.debug1( "Record removed" );
-			success = recordSet.remove( rec );
-			setModified();
-		} else {
-			LOG.debug1( "Record not removed - it is not part of this file" );
-		}
-		LOG.leaveMethod( "PwsFile.removeRecord" );
-        return success;
-	}
-
     /**
      *
      * @param index
      * @return true if a record was removed
      */
     public boolean removeRecord (int index) {
-//        boolean success = recordSet.remove(index) != null;
         boolean success = sealedRecords.remove(index) != null;
         if (success)
             setModified();
@@ -709,6 +728,7 @@ public abstract class PwsFile
 
         private final PwsFile file;
         private final Iterator<SealedObject> delegate;
+        private Cipher cipher;
 
         /**
          * Construct the <code>Iterator</code> linking it to the given PasswordSafe
@@ -723,7 +743,8 @@ public abstract class PwsFile
 
             this.file = file;
             delegate = iter;
-
+            cipher = getCipher(false);
+            
             LOG.leaveMethod( "PwsFile$FileIterator" );
         }
 
@@ -748,29 +769,24 @@ public abstract class PwsFile
          *
          * @see java.util.Iterator#next()
          */
-        public final Object next()
-        {
-        	// TODO validate here as well
-            Cipher cipher = getCipher(false);
+        public final Object next() {
             SealedObject sealedRecord ;
     		try {
     			sealedRecord = delegate.next();
-    			return sealedRecord.getObject(cipher);
+    			PwsRecord theRecord = (PwsRecord) sealedRecord.getObject(cipher);
+    			if (! hasNext()) {// clean up
+    				cipher = null;
+    			}
+    			return theRecord;
     		} catch (IllegalBlockSizeException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
+    			throw new MemoryKeyException(e);
     		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
+    			throw new MemoryKeyException(e);
     		} catch (BadPaddingException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
+    			throw new MemoryKeyException(e);
     		} catch (ClassNotFoundException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
+    			throw new MemoryKeyException(e);
     		}
-
-            return null;
         }
 
         /**

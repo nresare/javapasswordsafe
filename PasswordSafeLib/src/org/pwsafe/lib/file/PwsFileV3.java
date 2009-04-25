@@ -13,8 +13,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SealedObject;
 
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
@@ -23,6 +28,7 @@ import org.pwsafe.lib.crypto.HmacPws;
 import org.pwsafe.lib.crypto.SHA256Pws;
 import org.pwsafe.lib.crypto.TwofishPws;
 import org.pwsafe.lib.exception.EndOfFileException;
+import org.pwsafe.lib.exception.MemoryKeyException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
 
 /**
@@ -30,7 +36,7 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * 
  * @author Glen Smith (based on Kevin Preece's v2 implementation).
  */
-public class PwsFileV3 extends PwsFile {
+public final class PwsFileV3 extends PwsFile {
 	
 	/**
 	 * File extension of the V3 password safe files.
@@ -54,6 +60,8 @@ public class PwsFileV3 extends PwsFile {
 	 */
 	protected PwsFileHeaderV3	headerV3;
 	
+	private SealedObject sealedHeaderV3;
+
 	/**
 	 * End of File marker. HMAC follows this tag.
 	 */
@@ -73,7 +81,7 @@ public class PwsFileV3 extends PwsFile {
 	public PwsFileV3()
 	{
 		super();
-		headerV3 = new PwsFileHeaderV3();
+		setHeaderV3(new PwsFileHeaderV3());
 		headerRecord = new PwsRecordV3();
 		headerRecord.setField(new PwsVersionField(0, new byte[] { 1, 3 }));
 	}
@@ -99,6 +107,18 @@ public class PwsFileV3 extends PwsFile {
 		super( storage, aPassphrase );
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.pwsafe.lib.file.PwsFile#dispose()
+	 */
+	@Override
+	public void dispose() {
+		super.dispose();
+		Arrays.fill(stretchedPassword,(byte)0);
+		Arrays.fill(decryptedHmacKey,(byte)0);
+		Arrays.fill(decryptedRecordKey,(byte)0);
+	}
+
 	@Override
 	protected void open( String aPassphrase )
 	throws EndOfFileException, IOException, UnsupportedFileVersionException
@@ -111,24 +131,26 @@ public class PwsFileV3 extends PwsFile {
 			inStream		= new ByteArrayInputStream(storage.load());
 			lastStorageChange = storage.getModifiedDate();
 		}
-		headerV3		= new PwsFileHeaderV3( this );
+		PwsFileHeaderV3 theHeaderV3		= new PwsFileHeaderV3( this );
 		
-		int iter = Util.getIntFromByteArray(headerV3.getIter(), 0);
+		setHeaderV3(theHeaderV3);
+		
+		int iter = theHeaderV3.getIter();
 		LOG.debug1("Using iterations: [" + iter + "]");
-		stretchedPassword = Util.stretchPassphrase(aPassphrase.getBytes(), headerV3.getSalt(), iter);
+		stretchedPassword = Util.stretchPassphrase(aPassphrase.getBytes(), theHeaderV3.getSalt(), iter);
 		
-		if (!Util.bytesAreEqual(headerV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
+		if (!Util.bytesAreEqual(theHeaderV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
 			throw new IOException("Invalid password");
 		}
 		
 		try {
 			
-			byte[] rka = TwofishPws.processECB(stretchedPassword, false, headerV3.getB1());
-			byte[] rkb = TwofishPws.processECB(stretchedPassword, false, headerV3.getB2());
+			byte[] rka = TwofishPws.processECB(stretchedPassword, false, theHeaderV3.getB1());
+			byte[] rkb = TwofishPws.processECB(stretchedPassword, false, theHeaderV3.getB2());
 			decryptedRecordKey = Util.mergeBytes(rka, rkb);
 			
-			byte[] hka = TwofishPws.processECB(stretchedPassword, false, headerV3.getB3());
-			byte[] hkb = TwofishPws.processECB(stretchedPassword, false, headerV3.getB4());
+			byte[] hka = TwofishPws.processECB(stretchedPassword, false, theHeaderV3.getB3());
+			byte[] hkb = TwofishPws.processECB(stretchedPassword, false, theHeaderV3.getB4());
 			decryptedHmacKey = Util.mergeBytes(hka, hkb);
 			hasher = new HmacPws(decryptedHmacKey);
 			
@@ -136,7 +158,7 @@ public class PwsFileV3 extends PwsFile {
 			e.printStackTrace();
 			throw new IOException("Error reading encrypted fields");
 		}
-		twofishCbc = new TwofishPws(decryptedRecordKey, false, headerV3.getIV());
+		twofishCbc = new TwofishPws(decryptedRecordKey, false, theHeaderV3.getIV());
 		
 		readExtraHeader( this );
 
@@ -164,13 +186,13 @@ public class PwsFileV3 extends PwsFile {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		outStream	= baos;
 
-		try
-		{
-			headerV3.save( this );
+		try	{
+			PwsFileHeaderV3 theHeaderV3 = getHeaderV3();
+			theHeaderV3.save( this );
 
 			// Can only be created once the V3 header resets key info
 
-			twofishCbc = new TwofishPws(decryptedRecordKey, true, headerV3.getIV());
+			twofishCbc = new TwofishPws(decryptedRecordKey, true, theHeaderV3.getIV());
 
 			writeExtraHeader( this );
 			
@@ -336,4 +358,36 @@ public class PwsFileV3 extends PwsFile {
 		return 16;
 	}
 	
+	/**
+	 * @return the headerV3
+	 */
+	private PwsFileHeaderV3 getHeaderV3() {
+		
+		try {
+			return (PwsFileHeaderV3) sealedHeaderV3.getObject(getCipher(false));
+		} catch (IllegalBlockSizeException e) {
+			throw new MemoryKeyException(e);
+		} catch (IOException e) {
+			throw new MemoryKeyException(e);
+		} catch (BadPaddingException e) {
+			throw new MemoryKeyException(e);
+		} catch (ClassNotFoundException e) {
+			throw new MemoryKeyException(e);
+		}
+	}
+
+	/**
+	 * @param headerV3 the headerV3 to set
+	 */
+	private void setHeaderV3(PwsFileHeaderV3 headerV3) {
+		try {
+			sealedHeaderV3 = new SealedObject(headerV3, getCipher(true));
+		} catch (IllegalBlockSizeException e) {
+			throw new MemoryKeyException(e);
+		} catch (IOException e) {
+			throw new MemoryKeyException(e);
+		}
+		
+	}
+
 }

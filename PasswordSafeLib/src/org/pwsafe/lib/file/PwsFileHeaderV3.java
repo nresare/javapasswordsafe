@@ -11,8 +11,8 @@ package org.pwsafe.lib.file;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.CharBuffer;
-import java.nio.charset.CharsetEncoder;
 import java.nio.charset.Charset;
 
 import org.pwsafe.lib.Log;
@@ -44,19 +44,19 @@ import org.pwsafe.lib.exception.EndOfFileException;
  * 
  * @author Glen Smith (based on the work of Kevin Preece)
  */
-public class PwsFileHeaderV3 
+public class PwsFileHeaderV3 implements Serializable
 {
 	private static final Log LOG = Log.getInstance(PwsFileHeaderV3.class.getPackage().getName());
 
-	private byte [] tag 		= new byte[4];
+	private byte [] tag 			= new byte[4];
 	private final byte [] salt		= new byte[32];
-	private final byte [] iter		= new byte[4];
-	private byte [] password	= new byte[32];
-	private byte [] b1 			= new byte[16];
-	private byte [] b2 			= new byte[16];
-	private byte [] b3 			= new byte[16];
-	private byte [] b4 			= new byte[16];
-	private final byte [] IV 			= new byte[16];
+	private final int iter;
+	private byte [] password		= new byte[32];
+	private byte [] b1 				= new byte[16];
+	private byte [] b2 				= new byte[16];
+	private byte [] b3 				= new byte[16];
+	private byte [] b4 				= new byte[16];
+	private final byte [] IV 		= new byte[16];
 	
 
 	/**
@@ -65,14 +65,8 @@ public class PwsFileHeaderV3
 	PwsFileHeaderV3()
 	{
 		tag = PwsFileV3.ID_STRING;
-//		for (int i=0; i<salt.length; i++) {
-//			salt[i] = Util.newRand();
-//		}
+		iter = 2048;
 		Util.newRandBytes(salt);
-		Util.putIntToByteArray(iter, 2048, 0);
-//		for (int i=0; i<IV.length; i++) {
-//			IV[i] = Util.newRand();
-//		}
 		Util.newRandBytes(IV);
 	}
 
@@ -89,7 +83,9 @@ public class PwsFileHeaderV3
 	{
 		file.readBytes( tag );
 		file.readBytes( salt );
-		file.readBytes( iter );
+		byte[] iterBytes = new byte[4];
+		file.readBytes( iterBytes );
+		iter = Util.getIntFromByteArray(iterBytes, 0);
 		file.readBytes( password );
 		file.readBytes( b1 );
 		file.readBytes( b2 );
@@ -112,7 +108,9 @@ public class PwsFileHeaderV3
 	{
 		stream.read( tag );
 		stream.read( salt );
-		stream.read( iter );
+		byte[] iterBytes = new byte[4];
+		stream.read( iterBytes );
+		iter = Util.getIntFromByteArray(iterBytes, 0);
 		stream.read( password );
 		stream.read( b1 );
 		stream.read( b2 );
@@ -142,19 +140,19 @@ public class PwsFileHeaderV3
 	}
 
 	/**
-	 * Gets a copy of Iterations.
+	 * Gets the number of Iterations.
 	 * 
-	 * @return A copy of Iterations
+	 * @return number of iterations
 	 */
-	public byte [] getIter()
+	public int getIter()
 	{
-		return Util.cloneByteArray( iter );
+		return iter;
 	}
 	
 	/**
 	 * Gets a copy of the stretched password.
 	 * 
-	 * @return A copy of the streched password
+	 * @return A copy of the stretched password
 	 */
 	public byte [] getPassword() {
 		return Util.cloneByteArray(password);
@@ -226,7 +224,9 @@ public class PwsFileHeaderV3
 		
 		file.writeBytes( tag );
 		file.writeBytes( salt );
-		file.writeBytes( iter );
+		final byte[] iterBytes = new byte[4];
+		Util.putIntToByteArray(iterBytes, iter, 0);
+		file.writeBytes( iterBytes );
 		file.writeBytes( password );
 		file.writeBytes( b1 );
 		file.writeBytes( b2 );
@@ -247,20 +247,14 @@ public class PwsFileHeaderV3
 		LOG.enterMethod( "PwsFileHeaderV3.update" );
 
         CharBuffer buf = CharBuffer.wrap(passphrase);
-		byte[] stretchedPassword = Util.stretchPassphrase(Charset.defaultCharset().encode(buf).array(), salt, Util.getIntFromByteArray(iter, 0));
+		byte[] stretchedPassword = Util.stretchPassphrase(Charset.defaultCharset().encode(buf).array(), salt, iter);
 		
 		password = SHA256Pws.digest(stretchedPassword);
 		
 		byte[] b1pt = new byte[16];
-//		for (int i=0; i<b1pt.length; i++) {
-//			b1pt[i] = Util.newRand();
-//		}
 		Util.newRandBytes(b1pt);
 		
 		byte[] b2pt = new byte[16];
-//		for (int i=0; i<b2pt.length; i++) {
-//			b2pt[i] = Util.newRand();
-//		}
 		Util.newRandBytes(b2pt);
 			
 		b1 = TwofishPws.processECB(stretchedPassword, true, b1pt);
@@ -269,15 +263,9 @@ public class PwsFileHeaderV3
 		file.decryptedRecordKey = Util.mergeBytes(b1pt, b2pt);
 		
 		byte[] b3pt = new byte[16];
-//		for (int i=0; i<b3pt.length; i++) {
-//			b3pt[i] = Util.newRand();
-//		}
 		Util.newRandBytes(b3pt);
 		
 		byte[] b4pt = new byte[16];
-//		for (int i=0; i<b4pt.length; i++) {
-//			b4pt[i] = Util.newRand();
-//		}
 		Util.newRandBytes(b4pt);
 	
 		b3 = TwofishPws.processECB(stretchedPassword, true, b3pt);
