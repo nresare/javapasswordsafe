@@ -82,6 +82,7 @@
             <fileset dir="${src.dir}">
                 <include name="**/*.gif" />
                 <include name="**/*.ico" />
+                <include name="**/*.properties" />
             </fileset>
         </copy>
     	
