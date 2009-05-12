@@ -45,7 +45,8 @@ public class MiscPreferences extends PreferencePage {
 	  /**
 	   * Creates the controls for this page
 	   */
-	  protected Control createContents(Composite parent) {
+	  @Override
+	protected Control createContents(Composite parent) {
 	    Composite composite = new Composite(parent, SWT.NONE);
 	    composite.setLayout(new GridLayout());
 	    
@@ -55,7 +56,7 @@ public class MiscPreferences extends PreferencePage {
 	    btnConfirmDeletion = new Button(composite, SWT.CHECK);
 	    btnConfirmDeletion.setText(Messages.getString("MiscPreferences.ConfirmDelete")); //$NON-NLS-1$
 	    btnConfirmDeletion.setSelection(preferenceStore.getBoolean(CONFIRM_ITEM_DELETION));
-	    btnConfirmDeletion.setEnabled(false);
+	    btnConfirmDeletion.setEnabled(true);
 
 	    btnSaveImmediately = new Button(composite, SWT.CHECK);
 	    btnSaveImmediately.setText(Messages.getString("MiscPreferences.SaveOnChange")); //$NON-NLS-1$
@@ -116,7 +117,8 @@ public class MiscPreferences extends PreferencePage {
 	  /**
 	   * Called when user clicks Restore Defaults
 	   */
-	  protected void performDefaults() {
+	  @Override
+	protected void performDefaults() {
 	    // Get the preference store
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 
@@ -139,7 +141,8 @@ public class MiscPreferences extends PreferencePage {
 	   * 
 	   * @return boolean
 	   */
-	  public boolean performOk() {
+	  @Override
+	public boolean performOk() {
 	    // Get the preference store
 	    IPreferenceStore preferenceStore = getPreferenceStore();
 

@@ -14,6 +14,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
+import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
 /**
  * Deletes the selected record after prompting.
@@ -36,13 +38,17 @@ public class DeleteRecordAction extends Action {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         PwsEntryBean selectedRec = app.getSelectedRecord();
         if (selectedRec != null) {
-            MessageBox mb = new MessageBox(app.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-            mb.setText(Messages.getString("DeleteRecordAction.Dialog.Title")); //$NON-NLS-1$
-            mb.setMessage(NLS.bind(Messages.getString("DeleteRecordAction.Dialog.Message"), selectedRec.getTitle()));  //$NON-NLS-1$
-            int result = mb.open();
-            if (result == SWT.YES) {
-                app.deleteRecord();
-            }
+        	if (UserPreferences.getInstance().getBoolean(JpwPreferenceConstants.CONFIRM_ITEM_DELETION)) {
+        		MessageBox mb = new MessageBox(app.getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+        		mb.setText(Messages.getString("DeleteRecordAction.Dialog.Title")); //$NON-NLS-1$
+        		mb.setMessage(NLS.bind(Messages.getString("DeleteRecordAction.Dialog.Message"), selectedRec.getTitle()));  //$NON-NLS-1$
+        		int result = mb.open();
+        		if (result == SWT.YES) {
+        			app.deleteRecord();
+        		}
+        	} else {
+        		app.deleteRecord();
+        	}
         }
 
     }

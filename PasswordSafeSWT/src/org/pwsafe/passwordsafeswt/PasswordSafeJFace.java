@@ -1036,8 +1036,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	public void updateViewers() {
 		if (isTreeViewShowing()) {
+			Object[] currentExpansions = treeViewer.getExpandedElements();
 			treeViewer.setInput(getPwsDataStore());
 			treeViewer.refresh();
+			treeViewer.setExpandedElements(currentExpansions);
 		} else {
 			tableViewer.setInput(getPwsDataStore());
 			// tableViewer.refresh();
