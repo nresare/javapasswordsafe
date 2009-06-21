@@ -282,7 +282,7 @@
             </fileset>
         </chmod>
 
-        <replace file="${dist.mac.dir}/${zip.dir.name}/${app.name}.app/Contents/Info.plist" token="&lt;key&gt;ClassPath" value="&lt;key&gt;StartOnMainThread&lt;/key&gt;&lt;true/&gt; &lt;key&gt;ClassPath" />
+        <replace file="${dist.mac.dir}/${zip.dir.name}/${app.name}.app/Contents/Info.plist" token="&lt;key&gt;ClassPath" value="&lt;key&gt;JVMArchs&lt;/key&gt;&lt;array&gt;&lt;string&gt;i386&lt;/string&gt;&lt;/array&gt; &lt;key&gt;StartOnMainThread&lt;/key&gt;&lt;true/&gt; &lt;key&gt;ClassPath" />
 
     	<!-- Finally, create a DMG file for the distro -->
     	<property name="dist.dmg.file" value="${zip.dir.name}.dmg"/>
