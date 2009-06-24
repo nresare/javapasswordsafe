@@ -8,6 +8,7 @@
 package org.pwsafe.passwordsafeswt.preference;
 
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_ITEM_DELETION;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DEFAULT_OPEN_READ_ONLY;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DOUBLE_CLICK_COPIES_TO_CLIPBOARD;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ESCAPE_KEY_EXITS_APP;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.HOT_KEY;
@@ -32,20 +33,21 @@ import org.eclipse.swt.widgets.Text;
  */
 public class MiscPreferences extends PreferencePage {
 	  
-	  // Text fields for user to enter preferences
-	  private Button btnConfirmDeletion;
-	  private Button btnSaveImmediately;
-	  private Button btnEscapeExitsApp;
-	  private Button btnHotKey;
-	  private Text txtHotKey;
-	  private Button btnCopiesPasswordToClipboard;
-	  private Button btnViewsEntry;
+	// Text fields for user to enter preferences
+	private Button btnConfirmDeletion;
+	private Button btnSaveImmediately;
+	private Button btnOpenReadOnly;
+	private Button btnEscapeExitsApp;
+	private Button btnHotKey;
+	private Text txtHotKey;
+	private Button btnCopiesPasswordToClipboard;
+	private Button btnViewsEntry;
 
 
-	  /**
-	   * Creates the controls for this page
-	   */
-	  @Override
+	/**
+	 * Creates the controls for this page
+	 */
+	@Override
 	protected Control createContents(Composite parent) {
 	    Composite composite = new Composite(parent, SWT.NONE);
 	    composite.setLayout(new GridLayout());
@@ -56,11 +58,14 @@ public class MiscPreferences extends PreferencePage {
 	    btnConfirmDeletion = new Button(composite, SWT.CHECK);
 	    btnConfirmDeletion.setText(Messages.getString("MiscPreferences.ConfirmDelete")); //$NON-NLS-1$
 	    btnConfirmDeletion.setSelection(preferenceStore.getBoolean(CONFIRM_ITEM_DELETION));
-	    btnConfirmDeletion.setEnabled(true);
 
 	    btnSaveImmediately = new Button(composite, SWT.CHECK);
 	    btnSaveImmediately.setText(Messages.getString("MiscPreferences.SaveOnChange")); //$NON-NLS-1$
 	    btnSaveImmediately.setSelection(preferenceStore.getBoolean(SAVE_IMMEDIATELY_ON_EDIT));
+
+	    btnOpenReadOnly = new Button(composite, SWT.CHECK);
+	    btnOpenReadOnly.setText(Messages.getString("MiscPreferences.DefaultOpenReadOnly")); //$NON-NLS-1$
+	    btnOpenReadOnly.setSelection(preferenceStore.getBoolean(DEFAULT_OPEN_READ_ONLY));
 
 	    btnEscapeExitsApp = new Button(composite, SWT.CHECK);
 	    btnEscapeExitsApp.setText(Messages.getString("MiscPreferences.QuitOnEsc")); //$NON-NLS-1$
@@ -110,14 +115,13 @@ public class MiscPreferences extends PreferencePage {
 	    	btnViewsEntry.setSelection(true);
 	    }
 	    
-
 	    return composite;
 	  }
 
-	  /**
-	   * Called when user clicks Restore Defaults
-	   */
-	  @Override
+	/**
+	 * Called when user clicks Restore Defaults
+	 */
+	@Override
 	protected void performDefaults() {
 	    // Get the preference store
 	    IPreferenceStore preferenceStore = getPreferenceStore();
@@ -125,6 +129,7 @@ public class MiscPreferences extends PreferencePage {
 	    // Reset the fields to the defaults
 	    btnConfirmDeletion.setSelection(preferenceStore.getDefaultBoolean(CONFIRM_ITEM_DELETION));
 	    btnSaveImmediately.setSelection(preferenceStore.getDefaultBoolean(SAVE_IMMEDIATELY_ON_EDIT));
+	    btnOpenReadOnly.setSelection(preferenceStore.getDefaultBoolean(DEFAULT_OPEN_READ_ONLY));
 	    btnEscapeExitsApp.setSelection(preferenceStore.getDefaultBoolean(ESCAPE_KEY_EXITS_APP));
 	    btnHotKey.setSelection(preferenceStore.getDefaultBoolean(HOT_KEY_ACTIVE));
 	    txtHotKey.setText(preferenceStore.getDefaultString(HOT_KEY));
@@ -133,15 +138,14 @@ public class MiscPreferences extends PreferencePage {
 	    } else {
 	    	btnViewsEntry.setSelection(true);
 	    }
+	}
 
-	  }
-
-	  /**
-	   * Called when user clicks Apply or OK
-	   * 
-	   * @return boolean
-	   */
-	  @Override
+	/**
+	 * Called when user clicks Apply or OK
+	 * 
+	 * @return boolean
+	 */
+	@Override
 	public boolean performOk() {
 	    // Get the preference store
 	    IPreferenceStore preferenceStore = getPreferenceStore();
@@ -149,12 +153,13 @@ public class MiscPreferences extends PreferencePage {
 	    // Set the values from the fields
 	    preferenceStore.setValue(CONFIRM_ITEM_DELETION, btnConfirmDeletion.getSelection());
    		preferenceStore.setValue(SAVE_IMMEDIATELY_ON_EDIT,btnSaveImmediately.getSelection());
-		preferenceStore.setValue(ESCAPE_KEY_EXITS_APP,btnEscapeExitsApp.getSelection());
+   		preferenceStore.setValue(DEFAULT_OPEN_READ_ONLY,btnOpenReadOnly.getSelection());
+   		preferenceStore.setValue(ESCAPE_KEY_EXITS_APP,btnEscapeExitsApp.getSelection());
 		preferenceStore.setValue(HOT_KEY_ACTIVE,btnHotKey.getSelection());
 		preferenceStore.setValue(HOT_KEY,txtHotKey.getText());
 		preferenceStore.setValue(DOUBLE_CLICK_COPIES_TO_CLIPBOARD, btnCopiesPasswordToClipboard.getSelection());
 	    
 	    // Return true to allow dialog to close
 	    return true;
-	  }
+	}
 }
