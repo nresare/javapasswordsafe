@@ -12,6 +12,8 @@ package org.pwsafe.lib.file;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -140,7 +142,14 @@ public final class PwsFileV3 extends PwsFile {
 		stretchedPassword = Util.stretchPassphrase(aPassphrase.getBytes(), theHeaderV3.getSalt(), iter);
 		
 		if (!Util.bytesAreEqual(theHeaderV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
-			throw new IOException("Invalid password");
+			//try another method to avoid asymmetric encoding bug in V0.8 Beta1
+	        CharBuffer buf = CharBuffer.wrap(aPassphrase);
+			stretchedPassword = Util.stretchPassphrase(Charset.defaultCharset().encode(buf).array(), theHeaderV3.getSalt(), iter);
+			if (Util.bytesAreEqual(theHeaderV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
+				LOG.warn("Succeeded workaround for asymmetric password encoding bug");
+			} else {
+				throw new IOException("Invalid password");
+			}
 		}
 		
 		try {

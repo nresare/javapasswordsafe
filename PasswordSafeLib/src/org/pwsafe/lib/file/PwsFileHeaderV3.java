@@ -12,8 +12,6 @@ package org.pwsafe.lib.file;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
@@ -240,21 +238,20 @@ public class PwsFileHeaderV3 implements Serializable
 	/**
 	 * Updates the header ready for saving.
 	 * 
-	 * @param passphrase the passphrase to be used to encrypt the database.
+	 * @param aPassphrase the passphrase to be used to encrypt the database.
 	 */
-	private void update( CharSequence passphrase, PwsFileV3 file )
+	private void update( String aPassphrase, PwsFileV3 file )
 	{
 		LOG.enterMethod( "PwsFileHeaderV3.update" );
 
-        CharBuffer buf = CharBuffer.wrap(passphrase);
-		byte[] stretchedPassword = Util.stretchPassphrase(Charset.defaultCharset().encode(buf).array(), salt, iter);
+		final byte[] stretchedPassword = Util.stretchPassphrase(aPassphrase.getBytes(), salt, iter);
 		
 		password = SHA256Pws.digest(stretchedPassword);
 		
-		byte[] b1pt = new byte[16];
+		final byte[] b1pt = new byte[16];
 		Util.newRandBytes(b1pt);
 		
-		byte[] b2pt = new byte[16];
+		final byte[] b2pt = new byte[16];
 		Util.newRandBytes(b2pt);
 			
 		b1 = TwofishPws.processECB(stretchedPassword, true, b1pt);
@@ -262,10 +259,10 @@ public class PwsFileHeaderV3 implements Serializable
 
 		file.decryptedRecordKey = Util.mergeBytes(b1pt, b2pt);
 		
-		byte[] b3pt = new byte[16];
+		final byte[] b3pt = new byte[16];
 		Util.newRandBytes(b3pt);
 		
-		byte[] b4pt = new byte[16];
+		final byte[] b4pt = new byte[16];
 		Util.newRandBytes(b4pt);
 	
 		b3 = TwofishPws.processECB(stretchedPassword, true, b3pt);

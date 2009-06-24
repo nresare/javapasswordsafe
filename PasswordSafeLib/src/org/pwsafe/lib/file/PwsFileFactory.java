@@ -191,6 +191,7 @@ public class PwsFileFactory {
 	/**
 	 * Loads a Password Safe file.  It returns the appropriate subclass of {@link PwsFile}.
 	 * 
+	 * @deprecated use the StringBuilder version instead
 	 * @param filename   the name of the file to open
 	 * @param passphrase the passphrase for the file
 	 * 
@@ -203,13 +204,37 @@ public class PwsFileFactory {
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException        If no SHA-1 implementation is found.
 	 */
-	public static final PwsFile loadFile( String filename, String passphrase )
+	@Deprecated
+	public static final PwsFile loadFile( String filename, String passphrase ) 
+	throws EndOfFileException, FileNotFoundException, InvalidPassphraseException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
+	{
+		return loadFile(filename, new StringBuilder(passphrase));
+	}
+
+	/**
+	 * Loads a Password Safe file.  It returns the appropriate subclass of {@link PwsFile}.
+	 * 
+	 * @param filename   the name of the file to open
+	 * @param passphrase the passphrase for the file
+	 * 
+	 * @return The correct subclass of {@link PwsFile} for the file.
+	 * 
+	 * @throws EndOfFileException
+	 * @throws FileNotFoundException
+	 * @throws InvalidPassphraseException
+	 * @throws IOException
+	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException        If no SHA-1 implementation is found.
+	 */
+	public static final PwsFile loadFile( String filename, StringBuilder aPassphrase )
 	throws EndOfFileException, FileNotFoundException, InvalidPassphraseException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
 	{
 		LOG.enterMethod( "PwsFileFactory.loadFile" );
 		
 		PwsFile		file;
 		
+		//TODO change to StringBuilder Constructors
+		String passphrase = aPassphrase.toString();
 		if (filename.endsWith(PwsS3Storage.FILE_EXTENSION)) {
 			file = new PwsFileV3(new PwsS3Storage(filename, null, passphrase), passphrase);
 			file.readAll();
