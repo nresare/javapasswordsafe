@@ -75,10 +75,10 @@ public class LockDbAction extends Action {
         pd.setVerified(false);
         String fileName = UserPreferences.getInstance().getMRUFile();
         pd.setFileName(fileName);
-        String password = (String) pd.open();
+        StringBuilder password = pd.open();
         if (password != null) {
             try {
-                app.openFile(fileName, password);
+                app.openFile(fileName, password); // readonly state stays unchanged
             } catch (Exception anEx) {
                 app.displayErrorDialog(Messages.getString("LockDbAction.ReOpenError.Title"), Messages.getString("LockDbAction.ReOpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
             }

@@ -36,10 +36,11 @@ public class ExportToTextAction extends Action {
         final PasswordSafeJFace app = PasswordSafeJFace.getApp();
         PasswordDialog pw = new PasswordDialog(app.getShell());
         pw.setVerified(false);
-        String password = (String) pw.open();
+        StringBuilder password = pw.open();
         if (password == null)
         	return;
-        if (password.equals(app.getPwsFile().getPassphrase())) {
+        //TODO: change pwsFile passphrase access to StringBuilder & use a correct equals
+        if (password.toString().equals(app.getPwsFile().getPassphrase())) {
 	        FileDialog fw = new FileDialog(app.getShell(), SWT.SAVE);
 	        String newFilename = fw.open();
 	        if (newFilename != null) {

@@ -41,7 +41,7 @@ public class PasswordDialog extends Dialog {
 	protected String fileName = "";
 	private Text txtVerify;
 	private Text txtCombination;
-	protected Object result;
+	protected StringBuilder result;
 	protected Shell shell;
 	protected boolean verified = true;
 
@@ -53,7 +53,7 @@ public class PasswordDialog extends Dialog {
 		this(parent, SWT.NONE);
 	}
 
-	public Object open() {
+	public StringBuilder open() {
 		createContents();
 		ShellHelpers.centreShell(getParent(), shell);
 		// shell.pack();
@@ -132,7 +132,7 @@ public class PasswordDialog extends Dialog {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (txtCombination.getText().equals(txtVerify.getText())) {
-						result = txtCombination.getText();
+						result = new StringBuilder(txtCombination.getText());
 						shell.dispose();
 					} else {
 						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR
@@ -147,7 +147,7 @@ public class PasswordDialog extends Dialog {
 			btnOk.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					result = txtCombination.getText();
+					result = new StringBuilder(txtCombination.getText());
 					shell.dispose();
 				}
 			});

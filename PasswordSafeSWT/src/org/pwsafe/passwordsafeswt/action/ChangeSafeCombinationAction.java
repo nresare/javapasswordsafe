@@ -38,9 +38,9 @@ public class ChangeSafeCombinationAction extends Action {
 			else {
 				pd.setFileName(pfs.getIdentifier());
 			}
-			String newPassword = (String) pd.open();
+			StringBuilder newPassword = pd.open();
 			if (newPassword != null) {
-				pf.setPassphrase(new StringBuilder (newPassword));
+				pf.setPassphrase(newPassword);
 				new SaveFileAction().run();
 			}
 		}

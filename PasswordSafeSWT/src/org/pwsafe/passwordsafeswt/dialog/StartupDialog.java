@@ -35,12 +35,13 @@ public class StartupDialog extends Dialog {
 
 	private Combo cboFilename;
 	private Text txtPassword;
-	protected Object result;
+	protected String result;
 	protected Shell shell;
 	private String[] mruList;
 	
+	private boolean readOnly;
 	private String selectedFile;
-	private String selectedPassword;
+	private final StringBuilder selectedPassword = new StringBuilder();
 	
 	public static final String OPEN_FILE = "open-selected";  // open the selected file //$NON-NLS-1$
 	public static final String OPEN_OTHER = "open-other"; // open file dialog for other file //$NON-NLS-1$
@@ -51,12 +52,13 @@ public class StartupDialog extends Dialog {
 		super(parent, style);
 	}
 	
-	public StartupDialog(Shell parent, String[] mru) {
+	public StartupDialog(final Shell parent, final String[] mru, final boolean forReadOnly) {
 		this(parent, SWT.NONE);
 		this.mruList = mru;
+		this.readOnly = forReadOnly;
 	}
 	
-	public Object open() {
+	public String open() {
 	    result = StartupDialog.CANCEL;
 		createContents();
 		ShellHelpers.centreShell(getParent(), shell);
@@ -132,10 +134,18 @@ public class StartupDialog extends Dialog {
 		txtPassword.setLayoutData(formData_3);
 
 		final Button btnReadOnly = new Button(shell, SWT.CHECK);
+		
+		btnReadOnly.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				readOnly = btnReadOnly.getSelection();
+			}
+		});
 		final FormData formData_4 = new FormData();
 		formData_4.top = new FormAttachment(txtPassword, 15);
 		formData_4.left = new FormAttachment(txtPassword, 0, SWT.LEFT);
 		btnReadOnly.setLayoutData(formData_4);
+		btnReadOnly.setSelection(readOnly);
 		btnReadOnly.setText(Messages.getString("StartupDialog.ReadOnlyButton")); //$NON-NLS-1$
 
 		final Button btnCreate = new Button(shell, SWT.NONE);
@@ -143,6 +153,7 @@ public class StartupDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				result = StartupDialog.NEW_FILE;
+				readOnly = false;
 				shell.dispose();
 			}
 		});
@@ -158,7 +169,8 @@ public class StartupDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				result = StartupDialog.OPEN_OTHER;
 				selectedFile = cboFilename.getText();
-				selectedPassword = txtPassword.getText();
+				selectedPassword.setLength(0);
+				selectedPassword.append(txtPassword.getText());
 				shell.dispose();
 			}
 		});
@@ -175,7 +187,8 @@ public class StartupDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectedFile = cboFilename.getText();
-				selectedPassword = txtPassword.getText();
+				selectedPassword.setLength(0);
+				selectedPassword.append(txtPassword.getText());
 				result = StartupDialog.OPEN_FILE;
 				shell.dispose();
 			}
@@ -230,10 +243,19 @@ public class StartupDialog extends Dialog {
 	
 	/**
 	 * Returns the password entered in the dialog.
-	 * 
 	 * @return the password entered in the dialog
 	 */
-	public String getPassword() {
+	public StringBuilder getPassword() {
 		return selectedPassword;
 	}
+	
+	/**
+	 * Returns the read only state entered in the dialog.
+	 * 
+	 * @return whether a safe should be opened read
+	 */
+	public boolean getReadonly() {
+		return readOnly;
+	}
+
 }

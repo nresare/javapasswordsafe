@@ -39,7 +39,7 @@ public class EditRecordAction extends Action {
         	PwsEntryBean filledEntry = app.getPwsDataStore().getEntry(selectedRecord.getStoreIndex());
             EditDialog ed = new EditDialog(app.getShell(), filledEntry);
             filledEntry = (PwsEntryBean) ed.open();
-            if (filledEntry != null) {
+            if (! app.isReadOnly() && filledEntry != null) {
                 app.editRecord(filledEntry);
             }
         }

@@ -1,6 +1,35 @@
 package org.pwsafe.passwordsafeswt.preference;
 
-import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.*;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ALWAYS_ON_TOP;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_COPY_TO_CLIPBOARD;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_ITEM_DELETION;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_SAVE_ON_MIN;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DEFAULT_OPEN_READ_ONLY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DEFAULT_PASSWORD_LENGTH;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DEFAULT_USERNAME;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DOUBLE_CLICK_COPIES_TO_CLIPBOARD;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ESCAPE_KEY_EXITS_APP;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.HOT_KEY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.HOT_KEY_ACTIVE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_DB_ON_MIN;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_DB_ON_WS_LOCK;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_ON_IDLE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_ON_IDLE_MINS;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.QUERY_FOR_DEFAULT_USERNAME;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SAVE_IMMEDIATELY_ON_EDIT;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_PASSWORD_IN_LIST;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.TABLE_COLUMN_SIZE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.TREE_COLUMN_SIZE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_DEFAULT_USERNAME;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_DIGITS;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_EASY_TO_READ;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_HEX_ONLY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_LOWERCASE_LETTERS;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_SYMBOLS;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_UPPERCASE_LETTERS;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -61,6 +90,7 @@ public class JpwPreferenceInitializer extends AbstractPreferenceInitializer {
 		theStore.setDefault(HOT_KEY_ACTIVE, false);
 		theStore.setDefault(HOT_KEY, false);
 		theStore.setDefault(DOUBLE_CLICK_COPIES_TO_CLIPBOARD, true);
+		theStore.setDefault(DEFAULT_OPEN_READ_ONLY, false);
 
 	}
 

@@ -30,12 +30,13 @@ public class NewFileAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         boolean cancelled = app.saveAppIfDirty();
         if (!cancelled) {
             NewSafeDialog nsf = new NewSafeDialog(app.getShell());
-            String passphrase = (String) nsf.open();
+            StringBuilder passphrase = nsf.open();
             if (passphrase != null) {
                 app.newFile(passphrase);
             }

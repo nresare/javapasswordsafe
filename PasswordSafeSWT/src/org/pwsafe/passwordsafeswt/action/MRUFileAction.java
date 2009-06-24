@@ -33,7 +33,8 @@ public class MRUFileAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
         if (app.isDirty()) {
             int style = SWT.APPLICATION_MODAL | SWT.YES | SWT.NO | SWT.CANCEL;
@@ -58,10 +59,11 @@ public class MRUFileAction extends Action {
         PasswordDialog pd = new PasswordDialog(app.getShell());
         pd.setVerified(false);
         pd.setFileName(fileName);
-        String password = (String) pd.open();
+        StringBuilder password = pd.open();
         if (password != null) {
             try {
-                app.openFile(fileName, password);
+            	//TODO: change Passworddialog to include a readonly flag; then set readonly here
+                app.openFile(fileName, password, true);
             } catch (Exception e) {
                 app.displayErrorDialog(Messages.getString("MRUFileAction.OpenError.Title"), Messages.getString("MRUFileAction.OpenError.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }

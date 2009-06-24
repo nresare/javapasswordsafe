@@ -40,6 +40,7 @@ public interface JpwPreferenceConstants {
 	public static final String HOT_KEY_ACTIVE = "hot.key.active";
 	public static final String HOT_KEY = "hot.key.value";
 	public static final String DOUBLE_CLICK_COPIES_TO_CLIPBOARD = "double.click.copies.to.clipboard";
+	public static final String DEFAULT_OPEN_READ_ONLY = "default.open.readonly";
 
 
 	// GUI Internal
