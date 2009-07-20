@@ -6,8 +6,6 @@
  * http://www.opensource.org/licenses/artistic-license-2.0.php
  */
 package com.swtdesigner;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -18,8 +16,21 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Utility class for managing OS resources associated with SWT controls such as
@@ -259,7 +270,8 @@ public class SWTResourceManager {
 			final Rectangle did = decorator.getBounds();
             final Point baseImageSize = new Point(bid.width, bid.height); 
             CompositeImageDescriptor compositImageDesc = new CompositeImageDescriptor() { 
-                protected void drawCompositeImage(int width, int height) { 
+                @Override
+				protected void drawCompositeImage(int width, int height) { 
                     drawImage(baseImage.getImageData(), 0, 0); 
                     if (corner == TOP_LEFT) { 
                         drawImage(decorator.getImageData(), 0, 0); 
@@ -271,7 +283,8 @@ public class SWTResourceManager {
                         drawImage(decorator.getImageData(), bid.width - did.width - 1, bid.height - did.height - 1); 
                     } 
                 } 
-                protected Point getSize() { 
+                @Override
+				protected Point getSize() { 
                     return baseImageSize; 
                 } 
             }; 
@@ -292,7 +305,7 @@ public class SWTResourceManager {
         for (Iterator<HashMap<Image, Image>> I = m_ImageToDecoratorMap.values().iterator(); I.hasNext();) {
 			HashMap<Image, Image> decoratedMap = I.next();
 			for (Iterator<Image> J = decoratedMap.values().iterator(); J.hasNext();) {
-				Image image = (Image) J.next();
+				Image image = J.next();
 				image.dispose();
 			}
 		}
@@ -409,7 +422,7 @@ public class SWTResourceManager {
 
     /**
      * Fix the layout of the specified CoolBar
-     * @param bar CoolBar The CoolBar that shgoud be fixed
+     * @param bar CoolBar The CoolBar that should be fixed
      */
     public static void fixCoolBarSize(CoolBar bar) {
         CoolItem[] items = bar.getItems();

@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.pwsafe.lib.datastore.PwsEntryStore;
 import org.pwsafe.lib.datastore.PwsEntryBean;
+import org.pwsafe.lib.file.PwsFileV3;
+import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 
 /**
  * Content provider for the tree.
@@ -198,6 +200,7 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	}
 
 	/**
+	 * This is called when the view is changed from TreeView to TableView
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
@@ -206,6 +209,12 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 		if (newInput instanceof PwsEntryStore) {
 			dataStore = (PwsEntryStore) newInput;
 			tv.setSelection(selection);
+            PasswordSafeJFace app = PasswordSafeJFace.getApp();
+//            app.setUrlCopyEnabled( app.getPwsFile() instanceof PwsFileV3  && app.getSelectedRecord().getUrl() != null );
+//            log.debug( "setUrlCopyEnabled=" + (app.getSelectedRecord() != null) );
+            if( app.getSelectedRecord() != null ) {
+                app.setUrlCopyEnabled( app.getSelectedRecord().getUrl() != null );
+            }
 		}
 		if (log.isDebugEnabled()) 
 			log.debug("Input changed fired");

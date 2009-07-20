@@ -12,9 +12,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.pwsafe.lib.datastore.PwsEntryBean;
-import org.pwsafe.lib.file.PwsRecord;
-import org.pwsafe.lib.file.PwsRecordV1;
-import org.pwsafe.lib.file.PwsRecordV2;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 
 /**
@@ -39,18 +36,17 @@ public class CopyUsernameAction extends Action {
 	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
-        PwsEntryBean recordToCopy = app.getSelectedRecord();
-        if (recordToCopy == null)
+        PwsEntryBean selected = app.getSelectedRecord();
+        if (selected == null)
         	return;
  
-        //TODO: Change to use PwsEntryBean as well
-        PwsRecord record = app.getPwsFile().getRecord(recordToCopy.getStoreIndex());
+        // retrieve filled Entry for sparse
+        PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+
         Clipboard cb = new Clipboard(app.getShell().getDisplay());
 
-        app.copyToClipboard(cb, record, record instanceof PwsRecordV1 ? PwsRecordV1.USERNAME : PwsRecordV2.USERNAME);
+        app.copyToClipboard(cb, theEntry, theEntry.getUsername());
 
         cb.dispose();
-
     }
-
 }

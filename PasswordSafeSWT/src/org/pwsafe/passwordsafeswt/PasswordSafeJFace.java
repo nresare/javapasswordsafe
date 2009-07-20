@@ -80,13 +80,12 @@ import org.pwsafe.lib.file.PwsFileStorage;
 import org.pwsafe.lib.file.PwsRecord;
 import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsRecordV2;
-import org.pwsafe.lib.file.PwsRecordV3;
-import org.pwsafe.lib.file.PwsTimeField;
 import org.pwsafe.passwordsafeswt.action.AboutAction;
 import org.pwsafe.passwordsafeswt.action.AddRecordAction;
 import org.pwsafe.passwordsafeswt.action.ChangeSafeCombinationAction;
 import org.pwsafe.passwordsafeswt.action.ClearClipboardAction;
 import org.pwsafe.passwordsafeswt.action.CopyPasswordAction;
+import org.pwsafe.passwordsafeswt.action.CopyURLAction;
 import org.pwsafe.passwordsafeswt.action.CopyUsernameAction;
 import org.pwsafe.passwordsafeswt.action.DeleteRecordAction;
 import org.pwsafe.passwordsafeswt.action.EditRecordAction;
@@ -152,6 +151,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private ClearClipboardAction clearClipboardAction;
 	private CopyPasswordAction copyPasswordAction;
 	private CopyUsernameAction copyUsernameAction;
+	private CopyURLAction copyURLAction;
 	private SaveFileAsAction saveFileAsAction;
 	private SaveFileAction saveFileAction;
 	private OpenFileAction openFileAction;
@@ -369,6 +369,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		exitAppAction = new ExitAppAction();
 		copyUsernameAction = new CopyUsernameAction();
 		copyPasswordAction = new CopyPasswordAction();
+		copyURLAction = new CopyURLAction();
 		clearClipboardAction = new ClearClipboardAction();
 		addRecordAction = new AddRecordAction();
 		editRecordAction = new EditRecordAction();
@@ -383,7 +384,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		exportToXMLAction = new ExportToXMLAction();
 		importFromXMLAction = new ImportFromXMLAction();
 		lockDbAction = new LockDbAction();
-
 	}
 
 	/**
@@ -439,6 +439,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		menuManagerEdit.add(new Separator());
 		menuManagerEdit.add(copyPasswordAction);
 		menuManagerEdit.add(copyUsernameAction);
+		menuManagerEdit.add(copyURLAction);
 		menuManagerEdit.add(clearClipboardAction);
 
 		final MenuManager menuManagerView = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.View")); //$NON-NLS-1$
@@ -481,6 +482,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		menuListPopup.add(copyPasswordAction);
 		menuListPopup.add(copyUsernameAction);
+		menuListPopup.add(copyURLAction);
 		menuListPopup.add(new Separator());
 		menuListPopup.add(addRecordAction);
 		menuListPopup.add(editRecordAction);
@@ -502,6 +504,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		toolBarManager.add(new Separator());
 		toolBarManager.add(copyUsernameAction);
 		toolBarManager.add(copyPasswordAction);
+		toolBarManager.add(copyURLAction);
 		toolBarManager.add(clearClipboardAction);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(addRecordAction);
@@ -653,7 +656,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	/**
 	 * Saves the current safe under a new filename.
 	 * 
-	 * @throws IOException
+	 * @param newFilename the new name to save the file as
+	 * @throws IOException if something went wrong while trying to save the file
 	 * @throws NoSuchAlgorithmException
 	 *             if SHA-1 implementation not found
 	 */
@@ -670,22 +674,25 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 * @param cb
 	 *            handle to the clipboard
-	 * @param recordToCopy
-	 *            the pwsafe record to copy
-	 * @param fieldToCopy
-	 *            the field in that record to copy
+	 * @param anEntry
+	 *            the pwsafe (non-sparse!) entry to copy from
+	 * @param valueToCopy
+	 *            the value in that entry to copy
 	 */
-	public void copyToClipboard(Clipboard cb, PwsRecord recordToCopy, int fieldToCopy) {
+	public void copyToClipboard(Clipboard cb, PwsEntryBean anEntry, String valueToCopy) {
 
-		if (recordToCopy != null) {
-
-			String valueToCopy = null;
-
-			valueToCopy = recordToCopy.getField(fieldToCopy).getValue().toString();
+		if (anEntry != null) {
 
 			//set access date
-			if (recordToCopy instanceof PwsRecordV3)
-				recordToCopy.setField(new PwsTimeField(PwsRecordV3.LAST_ACCESS_TIME, new Date()));
+			if (!isReadOnly() && "3".equals(anEntry.getVersion())) {
+				if (anEntry.isSparse()) {
+					log.warn("ignoring sparse entry for updating access time in copyToClipboard", //$NON-NLS-1$
+							new IllegalArgumentException ("Sparse entry not allowed")); //$NON-NLS-1$
+				} else {
+					anEntry.setLastAccess(new Date());
+					dataStore.updateEntry(anEntry);
+				}
+			}
 			 			
 			if (valueToCopy != null) {
 				cb.setContents(new Object[]{valueToCopy}, new Transfer[]{TextTransfer.getInstance()});
@@ -724,6 +731,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Edits the selected record in a new dialog.
+	 * @param newEntry the entry's new values
 	 */
 	public void editRecord(PwsEntryBean newEntry) {
 		if (log.isDebugEnabled())
@@ -734,7 +742,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Adds a new record to the safe in a new dialog.
-	 */
+     * @param newEntry the entry to add
+     */
 	public void addRecord(PwsEntryBean newEntry) {
 		if (log.isDebugEnabled())
 			log.debug("Dialog has created new record, updating safe"); 
@@ -1124,11 +1133,20 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	/**
+	 * TODO: Refactor this to one or several external Listeners.
+	 * The URL copy action should only be enabled when an URL is available.
+	 * @param enabled
+	 */
+    public void setUrlCopyEnabled(boolean enabled) {
+        copyURLAction.setEnabled(enabled);
+    }
+
+	/**
 	 * Exports the contents of the password safe to tab separated file.
 	 * 
 	 * @param filename
 	 *            full path to output file
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException if the password file was not found
 	 */
 	public void exportToText(String filename) {
 		FileWriter fw = null;
@@ -1214,7 +1232,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			}
 		}
 		
-		
 		this.updateViewers();
 		
 	}
@@ -1283,7 +1300,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 * @param filename
 	 *            the filename to export to
-	 * @throws IOException
+	 * @throws IOException if there was a problem with the export to the XML file
 	 */
 	public void exportToXML(String filename) throws IOException {
 
