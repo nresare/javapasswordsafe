@@ -17,22 +17,23 @@ Schneier - 'nuff said.
 3. Open Source: The source code for the project is available for
 inspection. For more information, see http://jpwsafe.sourceforge.net
 
-Password Safe SWT currently runs on Windows 2000, XP and Vista, Mac OS X
-and Linux (x86 and x86_64). Support for additional platforms
-is planned for future releases. 
+Password Safe SWT currently runs on Windows 2000, XP and Vista (all 32bit), 
+Mac OS X (32 carbon and 64 cocoa) and Linux (x86 and x86_64). Support for 
+additional platforms is planned for future releases. 
 
 How to Build
 ============
 This is the Eclipse project for the SWT Gui for PasswordSafe, 
-Eclipse 3.4 is recommmended.
+Eclipse 3.5 is recommmended.
 
 In order to compile in Eclipse, you need to satisfy two project dependencies: 
 org.eclipse.swt and PasswordSafeLib
 
 For a howto for the org.eclipse.swt project, see http://www.eclipse.org/swt/eclipse.php
-In short, download the swt.zip for your platform and import it as a project into eclipse.
+In short, download the swt.zip for your platform and import it as an existing 
+project into eclipse.
 
-to get PasswordSafeLib, create a new eclipse project "Checkout projects from svn",
+To get PasswordSafeLib, create a new eclipse project "Checkout projects from svn",
 choose http(s)://jpwsafe.svn.sourceforge.net/svnroot/jpwsafe as a repository and 
 navigate to /trunk/PasswordSafeLib.
 Alternatively, modify your build path to use the passwordsafelib.jar instead.
