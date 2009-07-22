@@ -19,6 +19,7 @@
         <!-- platform specific bundling stuff -->
         <property name="platform.dir" location="platform" />
         <property name="mac.dir" location="${platform.dir}/macosx" />
+        <property name="mac-x86_64.dir" location="${platform.dir}/macosx-x86_64" />
         <property name="linux.dir" location="${platform.dir}/linux" />
         <property name="linux-x86_64.dir" location="${platform.dir}/linux-x86_64" />
         <property name="win32.dir" location="${platform.dir}/win32" />
@@ -26,6 +27,7 @@
         <!-- where resulting binaries are placed -->
         <property name="dist.src.dir" location="${deploy.dir}/src" />
         <property name="dist.mac.dir" location="${deploy.dir}/mac" />
+        <property name="dist.mac-x86_64.dir" location="${deploy.dir}/mac-x86_64" />
         <property name="dist.linux.dir" location="${deploy.dir}/linux" />
         <property name="dist.linux-x86_64.dir" location="${deploy.dir}/linux-x86_64" />
         <property name="dist.win32.dir" location="${deploy.dir}/win32" />
@@ -40,8 +42,10 @@
 
         <property name="build.version" value="${build.release.major}.${build.release.minor}.${build.number}"/>
         <property name="build.version.tag" value="Release_${build.release.major}_${build.release.minor}_${build.number}" />
-
-        <property name="zip.dir.name" value="${app.name}-${build.release.major}.${build.release.minor}"/>
+    	
+        <property name="short.version" value="${build.release.major}.${build.release.minor}" />
+        
+    	<property name="zip.dir.name" value="${app.name}-${build.release.major}.${build.release.minor}"/>
 
         <mkdir dir="${deploy.dir}" />
 
@@ -259,7 +263,14 @@
         <!-- http://www.loomcom.com/jarbundler/ -->
         <taskdef name="jarbundler" classpath="${lib.dir}/jarbundler-1.8.1.jar:${lib.dir}/xercesImpl.jar" classname="net.sourceforge.jarbundler.JarBundler" />
 
-        <jarbundler dir="${dist.mac.dir}/${zip.dir.name}" name="${app.name}" mainclass="${main.class.mac}" icon="${mac.dir}/PasswordSafe.icns" version="1.0" aboutmenuname="${app.name}" jvmversion="1.5*" infostring="PasswordSafeSWT, (c) 2008,2009">
+        <jarbundler dir="${dist.mac.dir}/${zip.dir.name}" 
+        	name="${app.name}" 
+        	mainclass="${main.class.mac}" 
+        	icon="${mac.dir}/PasswordSafe.icns" 
+        	version="${short.version}" 
+        	aboutmenuname="${app.name}" 
+        	jvmversion="1.5*" 
+        	infostring="PasswordSafeSWT, (c) 2008,2009">
             <jarfileset dir="${deploy.dir}">
                 <include name="PasswordSafeSWT.jar" />
             </jarfileset>
@@ -291,6 +302,58 @@
     	<echo>create -srcfolder ${dist.mac.dir}/${zip.dir.name} ${dist.mac.dir}/${dist.dmg.file}</echo>
     	<exec executable="hdiutil">
     		<arg line='create -srcfolder "${dist.mac.dir}/${zip.dir.name}" "${dist.mac.dir}/${dist.dmg.file}"'/>
+    	</exec>    	
+
+    </target>
+
+    <target name="deploy.mac-x86_64" depends="jar.mac" description="Builds PasswordSafeSWT for Mac OS X 64bit">
+
+        <delete dir="${dist.mac-x86_64.dir}/${zip.dir.name}" />
+        <mkdir dir="${dist.mac-x86_64.dir}/${zip.dir.name}" />
+
+        <!-- http://www.loomcom.com/jarbundler/ -->
+        <taskdef name="jarbundler" classpath="${lib.dir}/jarbundler-1.8.1.jar:${lib.dir}/xercesImpl.jar" classname="net.sourceforge.jarbundler.JarBundler" />
+
+        <jarbundler dir="${dist.mac-x86_64.dir}/${zip.dir.name}" 
+        	name="${app.name}" 
+        	mainclass="${main.class.mac}" 
+        	icon="${mac-x86_64.dir}/PasswordSafe.icns" 
+        	version="${short.version}" 
+        	aboutmenuname="${app.name}" 
+        	jvmversion="1.5*" 
+        	infostring="PasswordSafeSWT, (c) 2008,2009">
+            <jarfileset dir="${deploy.dir}">
+                <include name="PasswordSafeSWT.jar" />
+            </jarfileset>
+            <jarfileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+                <exclude name="jarbundler*.*" />
+            </jarfileset>
+            <jarfileset dir="${mac-x86_64.dir.dir}">
+                <include name="**/*.jar" />
+            </jarfileset>
+            <jarfileset dir="${mac-x86_64.dir.dir}/dll">
+                <include name="**.*" />
+            </jarfileset>
+        </jarbundler>
+
+        <!-- And set the jni libs executable... -->
+        <chmod perm="a+x">
+            <fileset dir="${dist.mac-x86_64.dir}/${zip.dir.name}/${app.name}.app/Contents/Resources/Java">
+                <include name="*.jnilib" />
+            </fileset>
+        </chmod>
+
+        <replace file="${dist.mac-x86_64.dir}/${zip.dir.name}/${app.name}.app/Contents/Info.plist" 
+        	token="&lt;key&gt;ClassPath" value="&lt;key&gt;StartOnMainThread&lt;/key&gt;&lt;true/&gt; &lt;key&gt;ClassPath" />
+
+    	<!-- Finally, create a DMG file for the distro -->
+    	<property name="dist.dmg.file" value="${zip.dir.name}.dmg"/>
+    	<delete file="${dist.mac.dir}/${dist.dmg.file}"/>
+    	
+    	<echo>create -srcfolder ${dist.mac-x86_64.dir}/${zip.dir.name} ${dist.mac-x86_64.dir}/${dist.dmg.file}</echo>
+    	<exec executable="hdiutil">
+    		<arg line='create -srcfolder "${dist.mac-x86_64.dir}/${zip.dir.name}" "${dist.mac-x86_64.dir}/${dist.dmg.file}"'/>
     	</exec>    	
 
     </target>
