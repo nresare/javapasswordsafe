@@ -61,6 +61,14 @@ public abstract class PwsField implements Comparable, Serializable
 	}
 
 	/**
+	 * Tries to wipe the value from memory.
+	 * TODO 
+	 */
+	public void dispose () {
+		
+	}
+	
+	/**
 	 * Converts this field into an array of bytes suitable for writing to a PasswordSafe file.
 	 * 
 	 * @return The field as a byte array.

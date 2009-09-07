@@ -26,6 +26,8 @@ import org.pwsafe.lib.exception.EndOfFileException;
  */
 public class PwsRecordV3 extends PwsRecord
 {
+	private static final long serialVersionUID = -3160317668375599155L;
+
 	private static final Log LOG = Log.getInstance(PwsRecordV3.class.getPackage().getName());
 
 	/**
@@ -130,24 +132,24 @@ public class PwsRecordV3 extends PwsRecord
 	 */
 	private static final Object []	VALID_TYPES	= new Object []
 	{
-		new Object [] { new Integer(V3_ID_STRING),		"V3_ID_STRING",			PwsVersionField.class },
-		new Object [] { new Integer(UUID),				"UUID",					PwsUUIDField.class },
-		new Object [] { new Integer(GROUP),				"GROUP",				PwsStringUnicodeField.class },
-		new Object [] { new Integer(TITLE),				"TITLE",				PwsStringUnicodeField.class },
-		new Object [] { new Integer(USERNAME),			"USERNAME",				PwsStringUnicodeField.class },
-		new Object [] { new Integer(NOTES),				"NOTES",				PwsStringUnicodeField.class },
-		new Object [] { new Integer(PASSWORD),			"PASSWORD",				PwsStringUnicodeField.class },
-		new Object [] { new Integer(CREATION_TIME),		"CREATION_TIME",		PwsTimeField.class },
-		new Object [] { new Integer(PASSWORD_MOD_TIME),	"PASSWORD_MOD_TIME",	PwsTimeField.class },
-		new Object [] { new Integer(LAST_ACCESS_TIME),	"LAST_ACCESS_TIME",		PwsTimeField.class },
-		new Object [] { new Integer(PASSWORD_LIFETIME),	"PASSWORD_LIFETIME",	PwsTimeField.class },
-		new Object [] { new Integer(PASSWORD_POLICY_DEPRECATED),	"PASSWORD_POLICY_OLD",		PwsStringUnicodeField.class },
-		new Object [] { new Integer(LAST_MOD_TIME),		"LAST_MOD_TIME",		PwsTimeField.class },
-		new Object [] { new Integer(URL),				"URL",					PwsStringUnicodeField.class },
-		new Object [] { new Integer(AUTOTYPE),			"AUTOTYPE",				PwsStringUnicodeField.class },
-		new Object [] { new Integer(PASSWORD_HISTORY),	"PASSWORD_HISTORY",		PwsStringUnicodeField.class },
-		new Object [] { new Integer(PASSWORD_POLICY),	"PASSWORD_POLICY",		PwsStringUnicodeField.class },
-		new Object [] { new Integer(PASSWORD_EXPIRY_INTERVAL),	"PASSWORD_EXPIRY_INTERVAL",		PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(V3_ID_STRING),		"V3_ID_STRING",			PwsVersionField.class },
+		new Object [] { Integer.valueOf(UUID),				"UUID",					PwsUUIDField.class },
+		new Object [] { Integer.valueOf(GROUP),				"GROUP",				PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(TITLE),				"TITLE",				PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(USERNAME),			"USERNAME",				PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(NOTES),				"NOTES",				PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(PASSWORD),			"PASSWORD",				PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(CREATION_TIME),		"CREATION_TIME",		PwsTimeField.class },
+		new Object [] { Integer.valueOf(PASSWORD_MOD_TIME),	"PASSWORD_MOD_TIME",	PwsTimeField.class },
+		new Object [] { Integer.valueOf(LAST_ACCESS_TIME),	"LAST_ACCESS_TIME",		PwsTimeField.class },
+		new Object [] { Integer.valueOf(PASSWORD_LIFETIME),	"PASSWORD_LIFETIME",	PwsTimeField.class },
+		new Object [] { Integer.valueOf(PASSWORD_POLICY_DEPRECATED),	"PASSWORD_POLICY_OLD",		PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(LAST_MOD_TIME),		"LAST_MOD_TIME",		PwsTimeField.class },
+		new Object [] { Integer.valueOf(URL),				"URL",					PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(AUTOTYPE),			"AUTOTYPE",				PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(PASSWORD_HISTORY),	"PASSWORD_HISTORY",		PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(PASSWORD_POLICY),	"PASSWORD_POLICY",		PwsStringUnicodeField.class },
+		new Object [] { Integer.valueOf(PASSWORD_EXPIRY_INTERVAL),	"PASSWORD_EXPIRY_INTERVAL",		PwsStringUnicodeField.class },
 	};
 	
 
@@ -203,6 +205,17 @@ public class PwsRecordV3 extends PwsRecord
 		super(base);
 	}
 
+	
+	/**
+	 * The V3 format allows and requires to ability to add formerly unknown fields.
+	 * 
+	 * @return true
+	 */
+	@Override
+	protected boolean allowUnknownFieldTypes() {
+		return true;
+	}
+
 	/**
 	 * Creates a deep clone of this record.
 	 * 
@@ -210,11 +223,11 @@ public class PwsRecordV3 extends PwsRecord
 	 */
 	@Override
 	public Object clone()
-//	throws CloneNotSupportedException
 	{
 		return new PwsRecordV3( this );
 	}
 
+	
 	/**
 	 * Compares this record to another returning a value that is less than zero if
 	 * this record is "less than" <code>other</code>, zero if they are "equal", or
@@ -304,26 +317,26 @@ public class PwsRecordV3 extends PwsRecord
 		{
 			super();
 			try {
-				RawData = file.readBlock();
+				rawData = file.readBlock();
 			} catch (EndOfFileException eofe) {
-				Data = new byte[32]; // to hold closing HMAC
-				file.readBytes(Data);
+				data = new byte[32]; // to hold closing HMAC
+				file.readBytes(data);
 				byte[] hash = file.hasher.doFinal();
-				if (!Util.bytesAreEqual(Data, hash)) {
+				if (!Util.bytesAreEqual(data, hash)) {
 					LOG.error("HMAC record did not match. File may have been tampered");
 					throw new IOException("HMAC record did not match. File has been tampered");
 				}
 				throw eofe;
 			}
 			
-			Length	= Util.getIntFromByteArray( RawData, 0 );
-			Type = RawData[4] & 0x000000ff; // rest of header is now random data
-			Data    = new byte[Length];
-			byte[] remainingDataInRecord = Util.getBytes(RawData, 5, 11);
-			if (Length <= 11) {
-				Util.copyBytes(Util.getBytes(remainingDataInRecord, 0, Length), Data);
-			} else if (Length > 11) {
-				int bytesToRead = Length - 11;
+			length	= Util.getIntFromByteArray( rawData, 0 );
+			type = rawData[4] & 0x000000ff; // rest of header is now random data
+			data    = new byte[length];
+			byte[] remainingDataInRecord = Util.getBytes(rawData, 5, 11);
+			if (length <= 11) {
+				Util.copyBytes(Util.getBytes(remainingDataInRecord, 0, length), data);
+			} else if (length > 11) {
+				int bytesToRead = length - 11;
 				int blocksToRead = bytesToRead / file.getBlockSize();
 				
 				// if blocksToRead doesn't fit neatly into current block 
@@ -341,9 +354,9 @@ public class PwsRecordV3 extends PwsRecord
 					}
 					remainingRecords = Util.mergeBytes(remainingRecords, nextBlock);
 				}
-				Data = Util.mergeBytes(remainingDataInRecord, remainingRecords);
+				data = Util.mergeBytes(remainingDataInRecord, remainingRecords);
 			}
-			byte[] dataToHash = Data;
+			byte[] dataToHash = data;
 			file.hasher.digest(dataToHash);
 		
 		}
@@ -443,12 +456,12 @@ public class PwsRecordV3 extends PwsRecord
 	throws IOException
 	{
 		LOG.debug2( "----- START OF RECORD -----" );
-		for ( Iterator iter = getFields(); iter.hasNext(); )
+		for ( Iterator<Integer> iter = getFields(); iter.hasNext(); )
 		{
 			int			type;
 			PwsField	value;
 
-			type	= ((Integer) iter.next()).intValue();
+			type	= iter.next().intValue();
 			value	= getField( type );
 
 			if ( LOG.isDebug2Enabled() ) LOG.debug2( "Writing field " + type + " (" + ((Object[])VALID_TYPES[type])[1] + ") : \"" + value.toString() + "\"" );
@@ -461,6 +474,18 @@ public class PwsRecordV3 extends PwsRecord
 		writeField( file, new PwsStringField( END_OF_RECORD, "" ) );
 		LOG.debug2( "----- END OF RECORD -----" );
 	}
+
+	/**
+	 * Sets a field on this record from <code>item</code>.
+	 * 
+	 * @param item the <code>Item</code> containg the field's data.
+	 */
+	@Override
+	protected void setField( Item item )
+	{
+		setField( new PwsStringUnicodeField( item.getType(), item.getData() ) );
+	}
+
 	
 	/**
 	 * Writes a single field to the file.
