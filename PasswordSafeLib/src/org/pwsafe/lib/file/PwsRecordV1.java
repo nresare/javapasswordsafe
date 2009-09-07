@@ -133,7 +133,6 @@ public class PwsRecordV1 extends PwsRecord implements Comparable
 	 */
 	@Override
 	public Object clone()
-//	throws CloneNotSupportedException
 	{
 		return new PwsRecordV1( this );
 	}

@@ -116,9 +116,12 @@ public final class PwsFileV3 extends PwsFile {
 	@Override
 	public void dispose() {
 		super.dispose();
-		Arrays.fill(stretchedPassword,(byte)0);
-		Arrays.fill(decryptedHmacKey,(byte)0);
-		Arrays.fill(decryptedRecordKey,(byte)0);
+		if (stretchedPassword != null)
+			Arrays.fill(stretchedPassword,(byte)0);
+		if (decryptedHmacKey != null)
+			Arrays.fill(decryptedHmacKey,(byte)0);
+		if (decryptedRecordKey != null)
+			Arrays.fill(decryptedRecordKey,(byte)0);
 	}
 
 	@Override
@@ -183,7 +186,6 @@ public final class PwsFileV3 extends PwsFile {
 	 */
 	@Override
 	public void save() throws IOException {
-		int i = 1;
 		if (isReadOnly())
 			throw new IOException("File is read only");
 
@@ -206,7 +208,7 @@ public final class PwsFileV3 extends PwsFile {
 			writeExtraHeader( this );
 			
 			PwsRecordV3	rec;
-			for (Iterator iter = getRecords(); iter.hasNext();) {
+			for (Iterator<? extends PwsRecord> iter = getRecords(); iter.hasNext();) {
 				rec = (PwsRecordV3) iter.next();
 				if (!rec.isHeaderRecord())
 					rec.saveRecord(this);

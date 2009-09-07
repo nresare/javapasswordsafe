@@ -1,4 +1,6 @@
 /*
+ *  * $Id:$
+ * 
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
@@ -431,14 +433,14 @@ public class PwsEntryBean implements Cloneable {
     /**
      * Only set a date into a PwsTimeField if the date != null.  
      * @param v3
-     * @param type
+     * @param aType
      * @param aDate
      * @return true if the date != null, else false 
      */
-	private boolean setSafeDate(final PwsRecordV3 v3, final int type, final Date aDate) {
+	private boolean setSafeDate(final PwsRecordV3 v3, final int aType, final Date aDate) {
 		if (aDate == null)
 			return false;
-		v3.setField(new PwsTimeField(type, aDate));
+		v3.setField(new PwsTimeField(aType, aDate));
 		return true;
 	}
 

@@ -37,16 +37,16 @@ import org.pwsafe.lib.exception.PasswordSafeException;
 public class CryptoOutputStream extends OutputStream {
 	private static final Log LOG = Log.getInstance(CryptoOutputStream.class.getPackage().getName());
 	
-	private byte [] block = new byte[16];
+	private final byte [] block = new byte[16];
 	private int index = 0;
 	/* Header info */
-	private byte []	randStuff = null;
+	private byte [] 	randStuff = null;
 	private byte []	randHash = null;
-	private byte [] salt = null;
-	private byte [] ipThing = null;
+	private byte [] 	salt = null;
+	private byte [] 	ipThing = null;
 	
-	private String passphrase;
-	private OutputStream rawStream;
+	private final String passphrase;
+	private final OutputStream rawStream;
 	private BlowfishPws engine;
 	/**
 	 * The constructor for the encrytped output stream class.
@@ -102,6 +102,7 @@ public class CryptoOutputStream extends OutputStream {
 	 * Closes the stream and writes out the final block (zero padded if
 	 * necessary.
 	 */
+	@Override
 	public void close() throws IOException {
 		if (salt==null) initialize();
 		for(;index<16;index++) { block[index] = 0; }
@@ -118,6 +119,7 @@ public class CryptoOutputStream extends OutputStream {
 	/**
 	 * Writes an individual byte.
 	 */
+	@Override
 	public void write(int b) throws IOException {
 		/** first time through, parse header and set up engine */
 		if (salt==null) initialize();

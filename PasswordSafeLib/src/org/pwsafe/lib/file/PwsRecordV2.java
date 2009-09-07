@@ -169,7 +169,6 @@ public class PwsRecordV2 extends PwsRecord
 	 */
 	@Override
 	public Object clone()
-//	throws CloneNotSupportedException
 	{
 		return new PwsRecordV2( this );
 	}

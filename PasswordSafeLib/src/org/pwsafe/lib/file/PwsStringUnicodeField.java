@@ -16,6 +16,8 @@ import java.io.UnsupportedEncodingException;
  */
 public class PwsStringUnicodeField extends PwsField
 {
+	private static final long serialVersionUID = -4530429748953931053L;
+
 	/**
 	 * Constructor
 	 * 

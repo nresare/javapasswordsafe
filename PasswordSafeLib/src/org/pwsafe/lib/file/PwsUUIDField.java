@@ -16,6 +16,8 @@ import org.pwsafe.lib.UUID;
  */
 public class PwsUUIDField extends PwsField
 {
+	private static final long serialVersionUID = 4760068611660875030L;
+
 	/**
 	 * Constructor
 	 * 
