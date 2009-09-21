@@ -207,7 +207,7 @@ public class PwsRecordV3 extends PwsRecord
 
 	
 	/**
-	 * The V3 format allows and requires to ability to add formerly unknown fields.
+	 * The V3 format allows and requires the ability to add formerly unknown fields.
 	 * 
 	 * @return true
 	 */

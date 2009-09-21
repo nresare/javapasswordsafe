@@ -1,5 +1,5 @@
 /*
- *  * $Id:$
+ *  * $Id$
  * 
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
@@ -272,9 +272,9 @@ public class PwsEntryBean implements Cloneable {
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
-	protected Object clone() {
+	protected PwsEntryBean clone() {
 		try {
-			return super.clone();
+			return (PwsEntryBean) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new Error (e);// should never happen, otherwise there is a serious problem
 		}

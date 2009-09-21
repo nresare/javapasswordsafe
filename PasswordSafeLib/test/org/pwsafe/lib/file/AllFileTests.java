@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
@@ -17,10 +17,11 @@ public class AllFileTests {
 		TestSuite suite = new TestSuite("Test for org.pwsafe.lib.file");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(PwsFileV3Test.class);
-		suite.addTestSuite(FileTest.class);
+		suite.addTestSuite(PwsFileV1Test.class);
+		suite.addTestSuite(PwsFileV2Test.class);
 		suite.addTestSuite(PwsFileFactoryTest.class);
 		suite.addTestSuite(StreamTests.class);
-		suite.addTestSuite(TestSparseRecords.class);
+		suite.addTestSuite(PwsFieldTest.class);
 		//$JUnit-END$
 		return suite;
 	}

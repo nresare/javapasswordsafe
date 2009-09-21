@@ -42,8 +42,8 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 	
 	public PwsEntryStoreImpl (PwsFile aPwsFile) {
 		super();
-		setDefaultSparseFields();
 		pwsFile = aPwsFile;
+		setDefaultSparseFields();
 		init ();
 	}
 

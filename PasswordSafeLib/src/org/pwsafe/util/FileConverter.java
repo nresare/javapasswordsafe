@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.pwsafe.lib.Log;
+import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.file.PwsFile;
 import org.pwsafe.lib.file.PwsFileStorage;
 import org.pwsafe.lib.file.PwsFileV1;
@@ -29,6 +31,7 @@ import org.pwsafe.lib.file.PwsRecordV2;
  */
 public class FileConverter
 {
+	private static final Log LOGGER = Log.getInstance(FileConverter.class.getName());
 	/**
 	 * Private for the singleton pattern.
 	 */
@@ -47,9 +50,10 @@ public class FileConverter
 	 * @return A file in the latest format containing the data from <code>oldFile</code>.
 	 * 
 	 * @throws IOException
+	 * @throws PasswordSafeException 
 	 */
 	public static PwsFile convertToLatest( PwsFile oldFile )
-	throws IOException
+	throws IOException, PasswordSafeException
 	{
 		if ( oldFile instanceof PwsFileV2 )
 		{
@@ -66,9 +70,10 @@ public class FileConverter
 	 * @return The version 2 database.
 	 * 
 	 * @throws IOException
+	 * @throws PasswordSafeException 	 
 	 */ 
 	public static PwsFile convertV1ToV2( PwsFileV1 oldFile )
-	throws IOException
+	throws IOException, PasswordSafeException
 	{
 		PwsFileV2	newFile;
 		PwsRecordV1	oldRec;
@@ -76,14 +81,10 @@ public class FileConverter
 
 		newFile = new PwsFileV2();
 
-		newFile.setPassphrase( oldFile.getPassphrase() );
-//<<<<<<< .working
-//		newFile.setFilename( makeNewFilename(oldFile.getFilename(), "v2-") );
-//=======
-		PwsFileStorage oldStorage = (PwsFileStorage)oldFile.getStorage();
+		newFile.setPassphrase( new StringBuilder( oldFile.getPassphrase() ));
+		PwsFileStorage oldStorage = (PwsFileStorage) oldFile.getStorage();
 		PwsFileStorage newStorage = new PwsFileStorage(makeNewFilename(oldStorage.getFilename(), "v2-"));
 		newFile.setStorage( newStorage );
-//>>>>>>> .merge-right.r320
 
 		for ( Iterator iter = oldFile.getRecords(); iter.hasNext(); )
 		{
@@ -94,6 +95,7 @@ public class FileConverter
 			newRec.setField( oldRec.getField(PwsRecordV1.USERNAME) );
 			newRec.setField( oldRec.getField(PwsRecordV1.PASSWORD) );
 			newRec.setField( oldRec.getField(PwsRecordV1.NOTES) );
+			newFile.add(newRec);
 		}
 
 		return newFile;
@@ -109,9 +111,10 @@ public class FileConverter
 	 * @return The version 1 database.
 	 * 
 	 * @throws IOException
+	 * @throws PasswordSafeException 
 	 */
 	public static PwsFile convertV2ToV1( PwsFileV2 oldFile )
-	throws IOException
+	throws IOException, PasswordSafeException
 	{
 		PwsFileV1	newFile;
 		PwsRecordV2	oldRec;
@@ -119,15 +122,10 @@ public class FileConverter
 
 		newFile = new PwsFileV1();
 
-		newFile.setPassphrase( oldFile.getPassphrase() );
-//<<<<<<< .working
-//		newFile.setFilename( makeNewFilename(oldFile.getFilename(), "v1-") );
-//=======
-		PwsFileStorage oldStorage = (PwsFileStorage)oldFile.getStorage();
+		newFile.setPassphrase( new StringBuilder(oldFile.getPassphrase()) );
+		PwsFileStorage oldStorage = (PwsFileStorage) oldFile.getStorage();
 		PwsFileStorage newStorage = new PwsFileStorage(makeNewFilename(oldStorage.getFilename(), "v1-"));
 		newFile.setStorage( newStorage );
-//>>>>>>> .merge-right.r320
-
 		for ( Iterator iter = oldFile.getRecords(); iter.hasNext(); )
 		{
 			oldRec	= (PwsRecordV2) iter.next();
@@ -137,8 +135,8 @@ public class FileConverter
 			newRec.setField( oldRec.getField(PwsRecordV2.USERNAME) );
 			newRec.setField( oldRec.getField(PwsRecordV2.PASSWORD) );
 			newRec.setField( oldRec.getField(PwsRecordV2.NOTES) );
+			newFile.add(newRec);
 		}
-
 		return newFile;
 	}
 
@@ -153,24 +151,20 @@ public class FileConverter
 	 * @param prefix
 	 * @return
 	 */
-	private static String makeNewFilename( String filename, String prefix )
-	{
-		File			file;
-		String			path;
-		String			name;
-		StringBuffer	sb;
-		String			newName;
-
-		file	= new File( filename );
-		path	= file.getParent();
-		name	= file.getName();
-		sb		= new StringBuffer(path.length() + prefix.length() + name.length());
-		newName	= sb.append(path).append(prefix).append(name).toString();
+	private static String makeNewFilename( String filename, String prefix )	{
+		
+		File 			file	= new File( filename );
+		String			path	= file.getParent() != null ? file.getParent() : "";
+		String			name	= file.getName();
+		StringBuilder 	sb		= new StringBuilder(path.length() + prefix.length() + name.length());
+		String			newName	= sb.append(path).append(prefix).append(name).toString();
+		
 		file	= new File( newName );
 
 		if ( file.exists() )
 		{
 			// TODO generate a temporary filename
+			throw new IllegalStateException("new File already exists: " + file.getAbsolutePath());
 		}
 
 		return newName;

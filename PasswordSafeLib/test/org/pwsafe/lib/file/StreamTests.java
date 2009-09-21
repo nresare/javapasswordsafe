@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 
 import org.pwsafe.lib.Util;
 
-import com.amazonaws.crypto.Base64;;
+import com.amazonaws.crypto.Base64;
 
 public class StreamTests extends TestCase {
 	public void testCryptoStreams() throws Exception {
@@ -23,7 +23,7 @@ public class StreamTests extends TestCase {
 		byte[] longArray = new byte[1027];
 		byte[] giantArray = new byte[88372];
 		
-		for(int i=0;i<100;i++) {
+		for(int i=0;i<10;i++) {
 			System.out.println("Test round "+i);
 			Util.newRandBytes(shortArray);
 //			System.out.println("Short Array:");

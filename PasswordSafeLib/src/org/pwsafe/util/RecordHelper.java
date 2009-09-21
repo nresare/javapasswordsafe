@@ -17,10 +17,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.UUID;
-import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
 import org.pwsafe.lib.file.PwsFile;
-import org.pwsafe.lib.file.PwsFileFactory;
 import org.pwsafe.lib.file.PwsFileV1;
 import org.pwsafe.lib.file.PwsFileV2;
 import org.pwsafe.lib.file.PwsRecord;
@@ -29,9 +27,12 @@ import org.pwsafe.lib.file.PwsRecordV2;
 
 /**
  * Provides utility methods for converting a collection of {@link PwsRecord}s taken from a
- * {@link PwsFile) into other collection types suitable for processing as a heirarchical
+ * {@link PwsFile) into other collection types suitable for processing as a hierarchical
  * structure or adding to a swing component.
+ * 
+ * @deprecated will be moved to PasswordJ project.
  */
+@Deprecated
 public class RecordHelper
 {
 	/**
@@ -74,20 +75,6 @@ public class RecordHelper
 			}
 		}
 		return node;
-	}
-
-	/**
-	 * Creates a simple test tree.
-	 * 
-	 * @return
-	 * 
-	 * @throws PasswordSafeException
-	 * @throws UnsupportedFileVersionException
-	 */
-	public static DefaultMutableTreeNode createTestTree()
-	throws PasswordSafeException, UnsupportedFileVersionException
-	{
-		return recordsAsSwingNodes( PwsFileFactory.testFile() );
 	}
 
 	/**

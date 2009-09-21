@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
@@ -11,78 +11,61 @@ package org.pwsafe.lib.file;
 import java.io.File;
 import java.io.IOException;
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 
 import junit.framework.TestCase;
 
-import org.pwsafe.lib.exception.PasswordSafeException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pwsafe.lib.datastore.PwsEntryStore;
+import org.pwsafe.lib.exception.InvalidPassphraseException;
 
 
 public class PwsFileFactoryTest extends TestCase {
 
+	private final static Log LOGGER = LogFactory.getLog(PwsFileFactoryTest.class);
 	private final static String testV2Filename = "password_file_2.dat";
-	private final static String groupName = "bank.online";
 	
+	private final static String PASSPHRASE = "THEFISH";
 	
-	public void testFile()
-	throws PasswordSafeException
-	{
-		PwsFileV2	file;
-		PwsRecordV2	rec;
 
-		int i = 0;
-		file	= new PwsFileV2();
-		createdummyRecord(file, ++i);
-		createdummyRecord(file, ++i);
-		createdummyRecord(file, ++i);
-		createdummyRecord(file, ++i);
-		createdummyRecord(file, ++i);
-		
+//	/**
+//	 * Make sure a new safe is available.
+//	 * @throws PasswordSafeException
+//	 */
+//	public void testFile() throws PasswordSafeException
+//	{
+//		PwsFileV2	file;
+//
+//		file	= new PwsFileV2();
+//		TestUtils.addDummyRecords(file, 5);
+//		
+//	}
 
-		assertEquals(i, file.getRecordCount());
-		for (Iterator theFiles = file.getRecords(); theFiles.hasNext(); ) {
-			rec = (PwsRecordV2) theFiles.next();
-			assertNotNull(rec.getField(PwsRecordV2.USERNAME));
-			assertNotNull(rec.getField(PwsRecordV2.PASSWORD));
-			assertNotNull(rec.getField(PwsRecordV2.TITLE));
-			assertNotNull(rec.getField(PwsRecordV2.GROUP));
-			assertNotNull(rec.getField(PwsRecordV2.GROUP));
-			assertEquals(groupName, rec.getField(PwsRecordV2.GROUP).toString());
-		}
-
-	}
-
-	private void createdummyRecord(PwsFileV2 file, int i)
-			throws PasswordSafeException {
-		PwsRecordV2 rec;
-		rec		= (PwsRecordV2) file.newRecord();
-		
-		rec.setField( new PwsStringField( PwsRecordV2.USERNAME, "User " + i) );
-		rec.setField( new PwsStringField( PwsRecordV2.PASSWORD, "Pass " + i) );
-		rec.setField( new PwsStringField( PwsRecordV2.TITLE, "Online Bank " + i) );
-		rec.setField( new PwsStringField( PwsRecordV2.GROUP, groupName) );
-		
-		file.add( rec );
-	}
-	
-	public void testFileStorage() throws Exception {
-		PwsFileStorage pfs = new PwsFileStorage(testV2Filename);
-		byte[] data = pfs.load();
-		assertNotNull(data);
-		assertTrue(data.length > 0);
-	}
 
 	public void testLoadFile () throws Exception {
-		PwsFile theFile = PwsFileFactory.loadFile(testV2Filename, "THEFISH");
+		PwsFile theFile = PwsFileFactory.loadFile(testV2Filename, new StringBuilder(PASSPHRASE));
 		
 		assertNotNull(theFile);
 		assertTrue(theFile instanceof PwsFileV2);
 		
 		assertEquals (1, theFile.getRecordCount());
+		
+		PwsEntryStore theStore = PwsFileFactory.getStore(theFile);
+		assertNotNull(theStore);
+		assertEquals(1, theStore.getSparseEntries().size());
+	
+		try {
+			theFile = PwsFileFactory.loadFile(testV2Filename, new StringBuilder("wrong passphrase"));
+			fail ("Wrong passphrase should lead to an InvalidPassphraseException");
+		} catch (InvalidPassphraseException e) {
+			//ok
+			LOGGER.info(e.toString());
+		}
+		
 	}
 
 	public void testReadOnly() throws Exception {
-		PwsFile pwsFile = PwsFileFactory.loadFile(testV2Filename, "THEFISH");
+		PwsFile pwsFile = PwsFileFactory.loadFile(testV2Filename, new StringBuilder(PASSPHRASE));
 		pwsFile.setReadOnly(true);
 		try {
 			pwsFile.save();
@@ -93,7 +76,7 @@ public class PwsFileFactoryTest extends TestCase {
 	}
 
 	public void testConcurrentMod() throws Exception {
-		PwsFile pwsFile = PwsFileFactory.loadFile(testV2Filename, "THEFISH");
+		PwsFile pwsFile = PwsFileFactory.loadFile(testV2Filename, new StringBuilder(PASSPHRASE));
 
 		File file = new File(testV2Filename);
 		file.setLastModified(System.currentTimeMillis() + 1000);
@@ -113,7 +96,14 @@ public class PwsFileFactoryTest extends TestCase {
 		} catch (ConcurrentModificationException e) {
 			//ok
 		}
-
 	}
+	
+	public void testNewFile () {
+		PwsFile theFile = PwsFileFactory.newFile();
+		
+		assertNotNull (theFile);
+		assertEquals(PwsFileV3.class, theFile.getClass());
+	}
+	
 
 }

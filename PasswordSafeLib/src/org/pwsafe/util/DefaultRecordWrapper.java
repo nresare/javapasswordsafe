@@ -14,11 +14,13 @@ import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsRecordV2;
 
 /**
- *
+ * Swing helper class, will be moved to PasswordJ project.
+ * @deprecated
  */
+@Deprecated
 public class DefaultRecordWrapper
 {
-	private PwsRecord	Record;
+	private final PwsRecord	Record;
 
 	/**
 	 * 
@@ -43,6 +45,7 @@ public class DefaultRecordWrapper
 	 * 
 	 * @return
 	 */
+	@Override
 	public String toString()
 	{
 		if ( Record instanceof PwsRecordV1 )

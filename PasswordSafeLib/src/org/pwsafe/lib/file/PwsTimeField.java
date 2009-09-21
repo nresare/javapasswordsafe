@@ -79,7 +79,7 @@ public class PwsTimeField extends PwsField
 
 		value	= ((Date) getValue()).getTime();
 		
-		// Force a size of 4, otherwise ot would be set to a size of blocklength 
+		// Force a size of 4, otherwise it would be set to a size of blocklength 
 //		retval	= PwsFile.allocateBuffer( 4 );
 		retval  = new byte[4];
 

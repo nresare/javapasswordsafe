@@ -6,25 +6,17 @@
  * distributed with this code, or available from
  * http://www.opensource.org/licenses/artistic-license-2.0.php
  */
-package org.pwsafe;
+package org.pwsafe.lib.datastore;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.pwsafe.lib.AllLibTests;
-import org.pwsafe.lib.crypto.AllCryptoTests;
-import org.pwsafe.lib.datastore.AllDataStoreTests;
-import org.pwsafe.lib.file.AllFileTests;
-
-public class AllTests {
+public class AllDataStoreTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Tests for org.pwsafe");
+		TestSuite suite = new TestSuite("Tests for org.pwsafe.lib.datastore");
 		//$JUnit-BEGIN$
-		suite.addTest(AllLibTests.suite());
-		suite.addTest(AllCryptoTests.suite());
-		suite.addTest(AllFileTests.suite());
-		suite.addTest(AllDataStoreTests.suite());
+		suite.addTestSuite(TestSparseRecords.class);
 		//$JUnit-END$
 		return suite;
 	}

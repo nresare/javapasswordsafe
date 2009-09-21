@@ -33,6 +33,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
+import org.pwsafe.lib.crypto.SHA256Pws;
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.MemoryKeyException;
 import org.pwsafe.lib.exception.PasswordSafeException;
@@ -321,18 +322,21 @@ public abstract class PwsFile
     }
     
     private byte[] getKeyBytes () {
-    	//TODO: use a safer crypto way to create key
     	//TODO: scramble and hide key 
-    	if (memoryIv == null) {
-    		byte[] pass = getPassphrase().getBytes();
-	    	byte[] memoryIv = new byte[8];
-	    	if (pass.length > 8)
-	    		System.arraycopy(pass, 0, memoryIv, 0, 8);
-	    	else {
-	    		System.arraycopy(pass, 0, memoryIv, 0, pass.length);
-	    	}	
+    	if (memoryKey == null) {
+    		memoryKey = new byte[8];
+    		if (passphrase != null) {
+    			byte[] pass = SHA256Pws.digest(getPassphrase().getBytes());   		
+		    	if (pass.length > 8)
+		    		System.arraycopy(pass, 0, memoryKey, 0, 8);
+		    	else {
+		    		System.arraycopy(pass, 0, memoryKey, 0, pass.length);
+		    	}	
+    		} else {
+    			Util.newRandBytes(memoryKey);
+    		}
 	    }
-    	return memoryIv;
+    	return memoryKey;
     }
     
 	/**
@@ -365,7 +369,7 @@ public abstract class PwsFile
 	 */
 	public String getPassphrase()
 	{
-		return passphrase.toString();
+		return passphrase == null ? null : passphrase.toString();
 	}
 
 	/**
