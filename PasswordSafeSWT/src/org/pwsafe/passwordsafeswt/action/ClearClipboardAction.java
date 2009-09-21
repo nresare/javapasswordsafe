@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
@@ -33,7 +34,8 @@ public class ClearClipboardAction extends Action {
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
         Clipboard cb = new Clipboard(app.getShell().getDisplay());
