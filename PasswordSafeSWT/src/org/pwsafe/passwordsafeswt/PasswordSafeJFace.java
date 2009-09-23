@@ -52,6 +52,7 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -163,7 +164,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private Table table;
 	private TrayItem trayItem;
 	private Composite composite;
-	private boolean locked = false;
+	private volatile boolean locked = false;
 	private boolean readOnly = false;
 	private final Timer lockTimer = new Timer("SWTPassword lock timer", true); //$NON-NLS-1$
 	private TimerTask lockTask;
@@ -258,6 +259,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		
 		Image image = SWTResourceManager.getImage(PasswordSafeJFace.class,
 				"/org/pwsafe/passwordsafeswt/images/cpane.gif"); //$NON-NLS-1$
+		
+		ImageData data = image.getImageData();
+		data.scaledTo(16, 16);
+		image = new Image(getShell().getDisplay(), data);
 		
 		final Tray tray = getShell().getDisplay().getSystemTray();
 		if (tray == null) {
