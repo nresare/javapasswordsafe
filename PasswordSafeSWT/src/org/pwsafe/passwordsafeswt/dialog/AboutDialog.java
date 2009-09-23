@@ -7,6 +7,7 @@
  */
 package org.pwsafe.passwordsafeswt.dialog;
 
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -20,6 +21,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.pwsafe.passwordsafeswt.action.LicenseAction;
 import org.pwsafe.passwordsafeswt.action.VisitPasswordSafeWebsiteAction;
 import org.pwsafe.passwordsafeswt.util.VersionInfo;
 
@@ -97,7 +99,10 @@ public class AboutDialog extends org.eclipse.jface.dialogs.Dialog {
 	
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		// create OK buttons
+		// create buttons
+		((GridLayout) parent.getLayout()).numColumns++;// for layout
+		ActionContributionItem licenceContrib = new ActionContributionItem(new LicenseAction());
+		licenceContrib.fill(parent);		
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
 	}
