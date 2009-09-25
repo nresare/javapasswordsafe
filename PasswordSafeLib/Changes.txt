@@ -1,0 +1,48 @@
+Changes:
+
+changes in swt 0.8 beta 2
+- fix for asymmetric passphrase corruption in 0.8 beta 1
+- unknown V3 fields are handled ()
+- copy URL action (Patch #2813457 by timmydog)
+- reopen when doubleclicking on tray icon (Bug/Feature? #2790970)
+- passwordsafe lib Unit test coverage
+- upgrade to swt and jface 3.5
+- initial read only support (in startup screen, with a preference)
+- added licence dialoge
+- maintain tree expansion on delete item (Patch #2783428 by timmydog) 
+
+changes in swt 0.8 beta 1
+- Amazon S3 support (contrib by mtiller)
+- in-memory encryption of password safe records (Trac Ticket 6)
+- localisation in german (Trac Ticket 3)
+- check for changed passwordsafe file before saving
+- fix change safe combination (contrib by M.Panero)
+- check safe combination before export (Trac Ticket 5)
+- Default Preferences (Trac Ticket 2)  
+
+changes in swt 0.7 final
+- Fix for win passwordsafe (U3) files (Bug #2424785) 
+- win32 build changed from exe4j to launch4j (Bug #2327605)
+- linux start script log includes user name (Bug #2507288)
+- required java version now only java 5 (Bug #2412881)
+
+changes in swt 0.7 beta 3
+- fixed icon in build (Bug #2320920)
+- fixed V2 PasswordSafe incompatibility (Bug #2279526)
+- correct accelerators on mac (Bug #2320636)
+- fixed tray Icon on Linux (Bug #2352415)
+- first build for Linux x86_64 (Bug #2352497) 
+- upgrade to swt and jface v 3.4.x
+
+changes in swt 0.7 beta 2
+- date field bug fixed
+- updated bouncy castle to version 141
+- now requires Java version 5 (1.5 in old) 
+- updated build scripts
+
+changes in swt 0.7 beta 1
+- support for v3 fields like last change, valid until
+- tree and table columns now resizable
+- table columns can now be reordered and are sortable
+- upgrade to swt and jface v 3.3
+
