@@ -86,9 +86,9 @@ public class PwsFileV3Test extends TestCase {
 		
 		// dispose has to clean everything:
 		pwsFile.dispose();
-		assertEquals("",pwsFile.getPassphrase());
+		assertEquals(null,pwsFile.getPassphrase());
 		//the original Stringbuilder is also deleted:
-		assertEquals(savedPassphrase.toString(), pwsFile.getPassphrase());
+		assertEquals("", savedPassphrase.toString());
 	}
 
 	public void testReadOnly() throws Exception {

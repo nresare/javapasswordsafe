@@ -56,7 +56,7 @@ public class PwsFileV1Test extends TestCase
 		assertTrue( "Modified flag is not FALSE", !v1File.isModified() );
 		
 		v1File.dispose();
-		assertEquals("", v1File.getPassphrase());
+		assertEquals(null, v1File.getPassphrase());
 		
 	}
 	
