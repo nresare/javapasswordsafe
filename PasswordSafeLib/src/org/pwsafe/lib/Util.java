@@ -19,7 +19,7 @@ import org.pwsafe.lib.crypto.SHA256Pws;
  * 
  * @author Kevin Preece
  */
-public class Util
+public final class Util
 {
 	private static final Log LOG = Log.getInstance(Util.class.getPackage().getName());
 
@@ -31,7 +31,7 @@ public class Util
 	}
 	
 	/**
-	 * Private to prevent instatiation.
+	 * Private to prevent instantiation.
 	 */
 	private Util()
 	{
@@ -102,12 +102,8 @@ public class Util
 	public static byte[] getBytes(byte[] src, int offset, int length) {
 		
 		byte[] output = new byte[length];
-//		for (int i=0; i < length; i++) {
-//			output[i] = src[offset + i];
-//		}
 		System.arraycopy(src, offset, output, 0, length);
-		return output;
-		
+		return output;		
 	}
 	
 
@@ -119,9 +115,6 @@ public class Util
 	 * @param target second array
 	 */
 	public static void copyBytes(byte[] src, byte[] target) {
-//		for (int i = 0; i < src.length; i++) {
-//			target[i] = src[i];
-//		}
 		System.arraycopy(src, 0, target, 0, src.length);
 	}
 	
@@ -276,6 +269,20 @@ public class Util
 		LOG.leaveMethod( "Util.bytesToLittleEndian(byte[])" );
 	}
 
+	/**
+	 * Clears a StringBuilder by overwriting it's content and setting it to length 0.
+	 * After this a toString will return "".
+	 * 
+	 * @param someChars
+	 */
+	public static void clear (final StringBuilder someChars) {
+		char[] filler = new char[someChars.length()];
+		Arrays.fill(filler, '0');
+		someChars.setLength(0);
+		someChars.append(filler);
+		someChars.setLength(0);
+	}
+	
 	/**
 	 * Creates a clone of the given byte array.
 	 * 

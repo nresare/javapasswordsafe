@@ -30,10 +30,11 @@ import javax.crypto.SealedObject;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.bouncycastle.crypto.RuntimeCryptoException;
 import org.pwsafe.lib.I18nHelper;
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.Util;
-import org.pwsafe.lib.crypto.SHA256Pws;
+import org.pwsafe.lib.crypto.InMemoryKey;
 import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.MemoryKeyException;
 import org.pwsafe.lib.exception.PasswordSafeException;
@@ -92,9 +93,8 @@ public abstract class PwsFile
 	
 	/**
 	 * The passphrase for the file.
-	 * TODO: seal passphrase
 	 */
-	protected StringBuilder passphrase;
+	protected SealedObject passphrase;
 
 	/**
 	 * The stream used to read data from the storage.  It is non-null only whilst data
@@ -131,7 +131,7 @@ public abstract class PwsFile
 	 */
 	protected Date 				lastStorageChange;
 
-	private byte[] 				memoryKey;
+	private InMemoryKey			memoryKey;
 	private byte[] 				memoryIv;
 	
 	/**
@@ -273,14 +273,9 @@ public abstract class PwsFile
      * Wipes any sensitive data from memory.
      */
     public void dispose () {
-        char[] filler = new char[passphrase.length()];
-        Arrays.fill(filler,'x');
-        passphrase.setLength(0);
-        passphrase.append(filler);
-        passphrase.setLength(0);
+        passphrase = null;
         if (memoryKey != null) {
-        	Arrays.fill(memoryKey, (byte) 0);
-        	memoryKey = null;
+        	memoryKey.dispose();
         }
         if (memoryIv != null) {
         	Arrays.fill(memoryIv, (byte) 0);
@@ -322,21 +317,11 @@ public abstract class PwsFile
     }
     
     private byte[] getKeyBytes () {
-    	//TODO: scramble and hide key 
     	if (memoryKey == null) {
-    		memoryKey = new byte[8];
-    		if (passphrase != null) {
-    			byte[] pass = SHA256Pws.digest(getPassphrase().getBytes());   		
-		    	if (pass.length > 8)
-		    		System.arraycopy(pass, 0, memoryKey, 0, 8);
-		    	else {
-		    		System.arraycopy(pass, 0, memoryKey, 0, pass.length);
-		    	}	
-    		} else {
-    			Util.newRandBytes(memoryKey);
-    		}
+    		memoryKey = new InMemoryKey(16);
+    		memoryKey.init();    		
 	    }
-    	return memoryKey;
+    	return memoryKey.getKey();
     }
     
 	/**
@@ -369,7 +354,17 @@ public abstract class PwsFile
 	 */
 	public String getPassphrase()
 	{
-		return passphrase == null ? null : passphrase.toString();
+		try {
+			return passphrase == null ? null : passphrase.getObject(getCipher(false)).toString();
+		} catch (IllegalBlockSizeException e) {
+			throw new RuntimeCryptoException(e.getMessage());
+		} catch (BadPaddingException e) {
+			throw new RuntimeCryptoException(e.getMessage());
+		} catch (IOException e) {
+			throw new RuntimeCryptoException(e.getMessage());
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeCryptoException(e.getMessage());
+		}
 	}
 
 	/**
@@ -457,6 +452,7 @@ public abstract class PwsFile
 		try {
 			sealedRecord = new SealedObject(aRecord, cipher);
 	        sealedRecords.set(index, sealedRecord);
+	        setModified();
 		} catch (IllegalBlockSizeException e) {
 			throw new MemoryKeyException(e);
 		} catch (IOException e) {
@@ -640,12 +636,7 @@ public abstract class PwsFile
 	@Deprecated
 	public void setPassphrase( String pass )
 	{
-        if (passphrase != null) {
-            passphrase.setLength(0);
-            passphrase.append(pass);
-        } else {
-            passphrase	= new StringBuilder(pass);
-        }
+        this.setPassphrase(new StringBuilder(pass));
 
 	}
 
@@ -655,7 +646,16 @@ public abstract class PwsFile
 	 * @param pass
 	 */
 	public void setPassphrase( StringBuilder pass ) {
-		passphrase	= pass;
+	    // TODO: convert to byte[] first
+		try {
+			passphrase	= new SealedObject(pass, getCipher(true));
+			// now overwrite given StringBuider
+			Util.clear(pass);
+		} catch (IllegalBlockSizeException e) {
+			throw new RuntimeCryptoException(e.getMessage());
+		} catch (IOException e) {
+			throw new RuntimeCryptoException(e.getMessage());
+		}
 	}
 
 	/**

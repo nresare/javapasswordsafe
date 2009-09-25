@@ -10,18 +10,16 @@
 package org.pwsafe.lib;
 
 import org.apache.commons.logging.LogFactory;
-//import org.apache.log4j.Logger;
-//import org.apache.log4j.xml.DOMConfigurator;
 
 /**
- * This class provides logging facilities using log4j.
+ * This class provides logging facilities using commons logging.
  * 
  * @author Kevin Preece  
  */
 public class Log
 {
 	private int	DebugLevel;
-	private org.apache.commons.logging.Log	TheLogger;
+	private final org.apache.commons.logging.Log	TheLogger;
 
 	static
 	{
@@ -36,15 +34,27 @@ public class Log
 	}
 
 	/**
-	 * Returns an instance of <code>Log</code> for the Log4j logger named <code>name</code>.
+	 * Returns an instance of <code>Log</code> for the logger named <code>name</code>.
 	 * 
-	 * @param name the Log4j logger name.
+	 * @param name the logger name.
 	 * 
 	 * @return An <code>Log</code> instance.
 	 */
 	public static Log getInstance( String name )
 	{
 		return new Log( name );
+	}
+
+	/**
+	 * Returns an instance of <code>Log</code> for the logger named <code>Class.name</code>.
+	 * 
+	 * @param name the logger name.
+	 * 
+	 * @return An <code>Log</code> instance.
+	 */
+	public static Log getInstance( Class aClass )
+	{
+		return new Log( aClass.getName() );
 	}
 
 	/**

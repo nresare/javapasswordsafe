@@ -12,8 +12,6 @@ package org.pwsafe.lib.file;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.security.NoSuchAlgorithmException;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -139,7 +137,7 @@ public abstract class PwsFileV1V2 extends PwsFile {
 	{
 		LOG.enterMethod( "PwsFile.init" );
 
-		passphrase		= new StringBuilder(aPassphrase);
+		setPassphrase(new StringBuilder(aPassphrase));
 		
 		if (storage!=null) {
 			inStream		= new ByteArrayInputStream(storage.load());
@@ -211,7 +209,8 @@ public abstract class PwsFileV1V2 extends PwsFile {
 			header.save( this );
 
 			// Can only be created once the V1 header's been written.
-			algorithm	= makeBlowfish(Charset.defaultCharset().encode(CharBuffer.wrap(passphrase)).array());
+			//TODO: check whether this can be performed without toString 
+			algorithm	= makeBlowfish(getPassphrase().toString().getBytes());
 
 			writeExtraHeader( this );
 

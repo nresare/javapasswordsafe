@@ -22,6 +22,7 @@ public class AllFileTests {
 		suite.addTestSuite(PwsFileFactoryTest.class);
 		suite.addTestSuite(StreamTests.class);
 		suite.addTestSuite(PwsFieldTest.class);
+		suite.addTestSuite(InMemoryKeyTest.class);
 		//$JUnit-END$
 		return suite;
 	}

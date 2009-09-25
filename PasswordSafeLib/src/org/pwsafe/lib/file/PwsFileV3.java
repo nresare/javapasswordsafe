@@ -130,7 +130,7 @@ public final class PwsFileV3 extends PwsFile {
 	{
 		LOG.enterMethod( "PwsFileV3.init" );
 
-		passphrase		= new StringBuilder(aPassphrase);
+		setPassphrase(new StringBuilder(aPassphrase));
 		
 		if (storage!=null) {
 			inStream		= new ByteArrayInputStream(storage.load());

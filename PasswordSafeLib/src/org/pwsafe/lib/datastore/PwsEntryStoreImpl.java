@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.pwsafe.lib.Log;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.file.PwsFieldType;
 import org.pwsafe.lib.file.PwsFieldTypeV1;
@@ -27,6 +28,7 @@ import org.pwsafe.lib.file.PwsRecord;
 
 public class PwsEntryStoreImpl implements PwsEntryStore {
 
+	private final static Log LOGGER = Log.getInstance(PwsEntryStoreImpl.class);
 	private static final EnumSet<PwsFieldTypeV1> DEFAULT_V1_SPARSE_FIELDS = EnumSet.of(PwsFieldTypeV1.TITLE, PwsFieldTypeV1.USERNAME);
 	private static final EnumSet<PwsFieldTypeV2> DEFAULT_V2_SPARSE_FIELDS = EnumSet.of(PwsFieldTypeV2.TITLE, PwsFieldTypeV2.GROUP, PwsFieldTypeV2.USERNAME, PwsFieldTypeV2.NOTES);
 	private static final EnumSet<PwsFieldTypeV3> DEFAULT_V3_SPARSE_FIELDS = EnumSet.of(PwsFieldTypeV3.TITLE, PwsFieldTypeV3.GROUP, PwsFieldTypeV3.USERNAME, PwsFieldTypeV3.NOTES, PwsFieldTypeV3.URL);
@@ -181,6 +183,11 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 			throw new IndexOutOfBoundsException("record index too big - no record with index " + index);
 		}
 		PwsRecord theRecord = pwsFile.getRecord(index);
+		PwsEntryBean origBean = PwsEntryBean.fromPwsRecord(theRecord);
+		origBean.setStoreIndex(index);
+		if (origBean.equals(anEntry)) {
+			LOGGER.warn("Update without change");
+		}
 		anEntry.toPwsRecord(theRecord);
 		pwsFile.set(index, theRecord);
 		PwsEntryBean newEntry = PwsEntryBean.fromPwsRecord(theRecord,sparseFields);

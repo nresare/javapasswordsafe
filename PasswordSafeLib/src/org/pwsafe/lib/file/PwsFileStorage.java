@@ -9,6 +9,7 @@
  */
 package org.pwsafe.lib.file;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -50,7 +51,7 @@ public class PwsFileStorage implements PwsStorage {
 	/** Grab all the bytes in the file */
 	public byte[] load() throws IOException {
 		File file = new File(filename);
-        InputStream is = new FileInputStream(file);
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
         
         // Get the size of the file
         long length = file.length();
