@@ -42,6 +42,7 @@ import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 import org.pwsafe.passwordsafeswt.util.ShellHelpers;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
+import org.pwsafe.util.PassphraseUtils;
 
 /**
  * The Dialog that allows a user to edit password entries.
@@ -515,11 +516,11 @@ public class EditDialog extends Dialog {
 	}
 	
 	private String generatePassword() {
-		String BASE_LETTERS = "abcdefghijklmnopqrstuvwxyz"; //$NON-NLS-1$
-        String BASE_LETTERS_EASY = "abcdefghjkmnpqrstuvwxyz"; //$NON-NLS-1$
-		String BASE_DIGITS = "1234567890"; //$NON-NLS-1$
-        String BASE_DIGITS_EASY = "23456789"; //$NON-NLS-1$
-		String BASE_SYMBOLS = "!@#$%^&*()"; //$NON-NLS-1$
+		String BASE_LETTERS 								= String.valueOf(PassphraseUtils.LOWERCASE_CHARS);
+		String BASE_DIGITS 									= String.valueOf(PassphraseUtils.DIGIT_CHARS); 
+        String BASE_LETTERS_EASY 							= "abcdefghjkmnpqrstuvwxyz"; //$NON-NLS-1$
+        String BASE_DIGITS_EASY 							= "23456789"; //$NON-NLS-1$
+		String BASE_SYMBOLS 								= "!@#$%^&*()"; //$NON-NLS-1$
 		StringBuilder pwSet = new StringBuilder();
 		
 		UserPreferences.reload(); // make sure we have a fresh copy

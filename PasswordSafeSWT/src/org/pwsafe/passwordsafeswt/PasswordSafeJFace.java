@@ -742,6 +742,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		if (log.isDebugEnabled())
 			log.debug("Dialog has been edited, updating safe"); 		
 		getPwsDataStore().updateEntry(newEntry);
+		if (isDirty()) {
+			saveOnUpdateOrEditCheck();
+		}
 		updateViewers();
 	}
 
@@ -758,8 +761,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		} catch (PasswordSafeException e) {
 			displayErrorDialog(Messages.getString("PasswordSafeJFace.AddEntryError.Title"), Messages.getString("PasswordSafeJFace.AddEntryError.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+		
 		updateViewers();
-
 	}
 
 	/**

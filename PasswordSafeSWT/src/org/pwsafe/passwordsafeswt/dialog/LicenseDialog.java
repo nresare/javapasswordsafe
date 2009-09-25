@@ -10,15 +10,11 @@ package org.pwsafe.passwordsafeswt.dialog;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.commons.logging.Log;
@@ -122,47 +118,38 @@ public class LicenseDialog extends TitleAreaDialog {
 		if (address == null) {
 			address = getClass().getResource(licenceFileName); 
 		}
-		if (address == null) {
-			try {
-				address = new File(licenceFileName).toURL(); 
-			} catch (MalformedURLException e) {
-				LOG.error(e);
-			}
-		}
-		LOG.debug("License path " + address); //$NON-NLS-1$
-		URI licenceUri = null;
-		try {
-			licenceUri = address.toURI();
-		} catch (URISyntaxException e3) {
-			LOG.error(e3);
-			return licence;
-		}
-				
 		InputStream in = null;
 		try {
-			in = new FileInputStream(new File(licenceUri));
+			if (address == null) {
+				address = new File(licenceFileName).toURI().toURL(); 
+			}
+			LOG.debug("License path " + address); //$NON-NLS-1$
+					
+			in = address.openStream();
 			in = new BufferedInputStream(in);
-		} catch (FileNotFoundException e2) {
-			LOG.error(e2);
-			return licence;
-		}
 
-		InputStreamReader inReader = null;
-		try {
+			InputStreamReader inReader = null;
 			inReader = new InputStreamReader(in, "UTF-8"); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e1) {
-			LOG.error(e1);
-			return licence;
-		}
-		try {
 			while (true) {
 				int c = inReader.read();
 				if (c == -1) break;
 				licence.append((char) c);
 			}
 			inReader.close();
+		} catch (MalformedURLException e) {
+			LOG.error(e);
+		} catch (UnsupportedEncodingException e1) {
+			LOG.error(e1);
+
 		} catch (IOException e) {
 			LOG.error(e);
+		} finally {
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e) {
+					LOG.warn("Exception on close" + e);
+				}
 		}
 		return licence;
 	}
