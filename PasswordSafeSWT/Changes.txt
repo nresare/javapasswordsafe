@@ -2,7 +2,7 @@ Changes:
 
 changes in swt 0.8 beta 2
 - fix for asymmetric passphrase corruption in 0.8 beta 1
-- unknown V3 fields are handled ()
+- unknown V3 fields are handled (Bug #2462736)
 - expand/collapse tree on doubleclick
 - added copy URL action (Patch #2813457 by timmydog)
 - reopen when doubleclicking on tray icon (Bug #2790970)
@@ -19,7 +19,8 @@ changes in swt 0.8 beta 1
 - check for changed passwordsafe file before saving
 - fix change safe combination (contrib by M.Panero)
 - check safe combination before export (Trac Ticket 5)
-- Default Preferences (Trac Ticket 2)  
+- Default Preferences (Trac Ticket 2) 
+- fixed File->Export To->Plain Text (tab separated) does not work (Bug #2557998) 
 
 changes in swt 0.7 final
 - Fix for win passwordsafe (U3) files (Bug #2424785) 
