@@ -7,7 +7,7 @@ changes in swt 0.8 beta 2
 - added copy URL action (Patch #2813457 by timmydog)
 - reopen when doubleclicking on tray icon (Bug #2790970)
 - passwordsafe lib Unit test coverage
-- upgrade to swt and jface 3.5
+- upgrade to swt and jface 3.5.1 / 3.5.0
 - initial read only support (in startup screen, with a preference)
 - added licence dialogue
 - maintain tree expansion on delete item (Patch #2783428 by timmydog) 
