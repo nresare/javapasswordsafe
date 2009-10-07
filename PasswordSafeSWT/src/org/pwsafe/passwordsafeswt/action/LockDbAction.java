@@ -67,7 +67,8 @@ public class LockDbAction extends Action {
 	    }
     }
 
-    public void performUnlock() {
+    public boolean performUnlock() {
+    	boolean isUnlocked = false;
     	// calling code should stop a running locker timer first
 	    PasswordSafeJFace app = PasswordSafeJFace.getApp();
     	log.info(Messages.getString("LockDbAction.Log.TryToUnlock")); //$NON-NLS-1$
@@ -79,11 +80,13 @@ public class LockDbAction extends Action {
         if (password != null) {
             try {
                 app.openFile(fileName, password); // readonly state stays unchanged
+                isUnlocked = true;
+                app.setLocked(false);
             } catch (Exception anEx) {
                 app.displayErrorDialog(Messages.getString("LockDbAction.ReOpenError.Title"), Messages.getString("LockDbAction.ReOpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
             }
-		}
-        app.setLocked(false);
+		} 
+        return isUnlocked;
     }
 
 }

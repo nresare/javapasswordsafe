@@ -1,4 +1,5 @@
 /*
+ * $Id$
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
@@ -46,29 +47,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Tray;
-import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -162,7 +154,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private ImportFromTextAction importFromTextAction;
 	private LockDbAction lockDbAction;
 	private Table table;
-	private TrayItem trayItem;
+	private SysTray systemTray; 
 	private Composite composite;
 	private volatile boolean locked = false;
 	private boolean readOnly = false;
@@ -245,93 +237,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		return app;
 	}
 
-	/**
-	 * On platforms where a tray is supported, installs the event handlers for
-	 * showing and hiding the tray.
-	 */
-	private void setupTrayItem() {
-		
-		IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-		
-		if (! thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
-			return;
-		}
-		
-		Image image = SWTResourceManager.getImage(PasswordSafeJFace.class,
-				"/org/pwsafe/passwordsafeswt/images/cpane.gif"); //$NON-NLS-1$
-		
-		ImageData data = image.getImageData();
-		data.scaledTo(16, 16);
-		image = new Image(getShell().getDisplay(), data);
-		
-		final Tray tray = getShell().getDisplay().getSystemTray();
-		if (tray == null) {
-			if (log.isInfoEnabled())
-				log.info("The system tray is not available"); 
-		} else {
-			if (log.isDebugEnabled())
-				log.debug("Setting up System Tray"); 
-
-			trayItem = new TrayItem(tray, SWT.NONE);
-			trayItem.setToolTipText(PasswordSafeJFace.APP_NAME);
-
-			trayItem.addListener(SWT.DefaultSelection, new Listener() {
-				public void handleEvent(Event event) {
-					getShell().setVisible(true);
-					getShell().setMinimized(false);
-				}
-			});
-			final Menu menu = new Menu(getShell(), SWT.POP_UP);
-						
-			MenuItem trayRestore = new MenuItem(menu, SWT.PUSH);
-			trayRestore.setText(Messages.getString("PasswordSafeJFace.Tray.RestoreLabel")); //$NON-NLS-1$
-			trayRestore.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-					getShell().setVisible(true);
-					getShell().setMinimized(false);
-				}
-			});
-			new MenuItem(menu, SWT.SEPARATOR);
-			MenuItem trayExit = new MenuItem(menu, SWT.PUSH);
-			trayExit.setText(Messages.getString("PasswordSafeJFace.Tray.ExitLabel")); //$NON-NLS-1$
-			trayExit.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-					new ExitAppAction().run();
-				}
-			});
-			trayItem.addListener(SWT.MenuDetect, new Listener() {
-				public void handleEvent(Event event) {
-					menu.setVisible(true);
-				}
-			});
-			
-			trayItem.setImage(image);
-			// restore on double click
-			trayItem.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					getShell().setVisible(true);
-					getShell().setMinimized(false);
-				}
-				
-			});
-			getShell().addShellListener(new ShellAdapter() {
-				@Override
-				public void shellIconified(ShellEvent e) {
-					final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-					if (trayItem != null
-							&& thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
-						if (log.isDebugEnabled())
-							log.debug("Shrinking to tray"); 
-						getShell().setVisible(false);
-					}
-				}
-
-			});
-		}
-	}
 
 	/**
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
@@ -354,8 +259,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			viewAsListAction.setChecked(false);
 		}
 
-
-		setupTrayItem();
+		SysTray tray = new SysTray();
+		final boolean isAvailable = tray.init(null);
+		if (isAvailable) {
+			systemTray = tray;
+		}
 
 		return container;
 	}
@@ -933,8 +841,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		tidyUpOnExit();
 		getShell().close();
 		getShell().dispose();
-		if (trayItem != null)
-			trayItem.dispose();
+		if (systemTray != null)
+			systemTray.dispose();
 	}
 
 	/**
@@ -1373,7 +1281,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				event.doit = false; // don't close now
 				
 		    	final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-				if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
+				if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY) && systemTray != null) {
 					// minimize on close when sys tray is present
 					getShell().setMinimized(true);
 					setReturnCode(OK);
@@ -1420,20 +1328,24 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			
 
 			/**
-			 * Sent when a shell is un-minimized.
-			 * The default behavior is to do nothing.
+			 * In <em>theory</em>, sent when a shell is un-minimized.
+			 * On windows sent when the shell is set visible. 
+			 * Do <strong>not</strong> call setVisible(true)
+			 * within this method, danger of endless loop.
 			 *
 			 * @param e an event containing information about the un-minimization
 			 */
 			@Override
 			public void shellDeiconified(ShellEvent e) {
+				log.info("PWSJface listener deiconify - unlocking");
 				if (lockTask != null) {
 					lockTask.cancel();
 					lockTask = null;
 				}
 				if (locked) {
-					lockDbAction.performUnlock();	
-				}
+					boolean unlocked = lockDbAction.performUnlock();
+					e.doit = unlocked;
+				}				
 
 			}
 
@@ -1459,11 +1371,22 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						saveFileAction.run();
 					}
 				}
+
+				// minimize to tray if available
+				if (systemTray != null
+						&& thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
+					if (log.isDebugEnabled())
+						log.debug("Shrinking to tray"); 
+					getShell ().setVisible(false);
+				}
 				
+				// lock safe
 				if (thePrefs.getBoolean(JpwPreferenceConstants.LOCK_DB_ON_MIN)) {
 					lockDbAction.performLock();
 				}
 				startLockTimer();
+				
+
 			}
 			
 			private void startLockTimer() {
