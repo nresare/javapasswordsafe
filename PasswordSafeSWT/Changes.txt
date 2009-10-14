@@ -1,6 +1,10 @@
 Changes:
 
-changes in swt 0.8 beta 2
+- fixed "open safe" in first time startup dialogue
+- close on doubleclick on tray icon (Bug #2790970)
+- do not open several passphrase entry dialogs on restore
+
+changes in swt 0.8 beta 2 (30.09.2009)
 - fix for asymmetric passphrase corruption in 0.8 beta 1
 - unknown V3 fields are handled (Bug #2462736)
 - expand/collapse tree on doubleclick
@@ -12,7 +16,7 @@ changes in swt 0.8 beta 2
 - added licence dialogue
 - maintain tree expansion on delete item (Patch #2783428 by timmydog) 
 
-changes in swt 0.8 beta 1
+changes in swt 0.8 beta 1 (26.04.2009)
 - Amazon S3 support (contrib by mtiller)
 - in-memory encryption of password safe records (Trac Ticket 6)
 - localisation in german (Trac Ticket 3)
@@ -22,13 +26,13 @@ changes in swt 0.8 beta 1
 - Default Preferences (Trac Ticket 2) 
 - fixed File->Export To->Plain Text (tab separated) does not work (Bug #2557998) 
 
-changes in swt 0.7 final
+changes in swt 0.7 final (14.01.2009)
 - Fix for win passwordsafe (U3) files (Bug #2424785) 
 - win32 build changed from exe4j to launch4j (Bug #2327605)
 - linux start script log includes user name (Bug #2507288)
 - required java version now only java 5 (Bug #2412881)
 
-changes in swt 0.7 beta 3
+changes in swt 0.7 beta 3 (03.12.2008)
 - fixed icon in build (Bug #2320920)
 - fixed V2 PasswordSafe incompatibility (Bug #2279526)
 - correct accelerators on mac (Bug #2320636)
@@ -36,7 +40,7 @@ changes in swt 0.7 beta 3
 - first build for Linux x86_64 (Bug #2352497) 
 - upgrade to swt and jface v 3.4.x
 
-changes in swt 0.7 beta 2
+changes in swt 0.7 beta 2 (01.10.2008)
 - date field bug fixed
 - updated bouncy castle to version 141
 - now requires Java version 5 (1.5 in old) 
