@@ -840,7 +840,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	public void exitApplication() {
 		tidyUpOnExit();
 		getShell().close();
-		getShell().dispose();
+		if (getShell() != null && (! getShell().isDisposed()))
+			getShell().dispose();
 		if (systemTray != null)
 			systemTray.dispose();
 	}
