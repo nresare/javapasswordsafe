@@ -64,7 +64,7 @@ public class StartupDialog extends Dialog {
 		ShellHelpers.centreShell(getParent(), shell);
 		shell.open();
 		shell.layout();
-		if (mruList != null) {
+		if (mruList != null && mruList.length > 0) {
 			for (int i=0; i < mruList.length; i++) {
 				cboFilename.add(mruList[i]);
 			}
