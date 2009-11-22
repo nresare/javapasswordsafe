@@ -26,12 +26,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 import org.pwsafe.passwordsafeswt.action.ExitAppAction;
+import org.pwsafe.passwordsafeswt.action.LockDbAction;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 import com.swtdesigner.SWTResourceManager;
 
 /**
- * 
+ * Builds and manages the system tray.
  * @author roxon
  *
  */
@@ -45,6 +46,8 @@ public class SysTray {
 	/**
 	 * On platforms where a tray is supported, installs the event handlers for
 	 * showing and hiding the tray.
+	 * 
+	 * @return true if a tray is available and was successfully setup, false otherwise.
 	 */
 	public boolean init(final Shell aMainShell) {
 		IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
@@ -84,18 +87,16 @@ public class SysTray {
 			trayItem.setToolTipText(PasswordSafeJFace.APP_NAME);
 
 			// hide / restore on double click
-			trayItem.addSelectionListener(new SelectionAdapter () {
-				//TODO: Check whether to FIRST check for locking etc. 
+			trayItem.addSelectionListener(new SelectionAdapter () { 
 				@Override
-				public void widgetDefaultSelected(SelectionEvent arg0) {
+				public void widgetDefaultSelected(SelectionEvent anEvent) {
+					log.debug("SelectionEvent: detail " + anEvent.detail + ", data " + anEvent.data + " " + anEvent);
 					final Shell mainShell = getPwsMainShell ();
-
-					if (! mainShell.getVisible()) {
+					if (mainShell.getVisible()) {
+						mainShell.setMinimized(true);					
+					} else if (unlockSuccessful()){
 						mainShell.setVisible(true);
 						mainShell.setMinimized(false);
-					} else {
-						mainShell.setVisible(false);
-						mainShell.setMinimized(true);					
 					}
 
 				}
@@ -108,18 +109,25 @@ public class SysTray {
 					@Override
 					public void widgetSelected(SelectionEvent arg0) {
 						final Shell mainShell = getPwsMainShell ();
-						mainShell.setVisible(true);
-						mainShell.setMinimized(false);
+						if (unlockSuccessful()) {
+							mainShell.setVisible(true);
+							mainShell.setMinimized(false);
+						}
 					}
 				});
 			
 			new MenuItem(menu, SWT.SEPARATOR);
 			MenuItem trayExit = new MenuItem(menu, SWT.PUSH);
 			trayExit.setText(Messages.getString("PasswordSafeJFace.Tray.ExitLabel")); //$NON-NLS-1$
+			final Display localDisplay = display;
 			trayExit.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					new ExitAppAction().run();
+					localDisplay.asyncExec(new Runnable () {
+						public void run () {
+							new ExitAppAction().run();
+						}
+					});
 				}
 			});
 			trayItem.addListener(SWT.MenuDetect, new Listener() {
@@ -129,21 +137,6 @@ public class SysTray {
 			});
 			
 			trayItem.setImage(image);
-			// hide / restore on double click
-//			trayItem.addSelectionListener(new SelectionAdapter() {
-//				@Override
-//				public void widgetSelected(SelectionEvent arg0) {
-//					final Shell mainShell = getPwsMainShell ();
-//					if (mainShell.getMinimized()) {
-//						mainShell.setMinimized(false);
-//						mainShell.setVisible(true);
-//					} else if (mainShell.isVisible()) {
-//						mainShell.setMinimized(true);					
-//						mainShell.setVisible(false);
-//					}
-//
-//				}
-//			});
 			
 			return true;
 		}
@@ -159,4 +152,13 @@ public class SysTray {
 		trayItem.dispose();
 	}
 
+	private boolean unlockSuccessful () {
+		PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		if (app.isLocked()) {
+			LockDbAction lockDbAction = new LockDbAction();
+			return lockDbAction.performUnlock();
+		} else {	
+			return true;
+		}
+	}
 }

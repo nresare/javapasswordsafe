@@ -131,6 +131,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	protected OptionsAction optionsAction;
 	private TreeViewer treeViewer;
 	private Tree tree;
+	
 	private HelpAction helpAction;
 	protected AboutAction aboutAction;
 	private ChangeSafeCombinationAction changeSafeCombinationAction;
@@ -153,9 +154,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private ExportToTextAction exportToTextAction;
 	private ImportFromTextAction importFromTextAction;
 	private LockDbAction lockDbAction;
+	
 	private Table table;
 	private SysTray systemTray; 
 	private Composite composite;
+	
 	private volatile boolean locked = false;
 	private boolean readOnly = false;
 	private final Timer lockTimer = new Timer("SWTPassword lock timer", true); //$NON-NLS-1$
@@ -839,11 +842,13 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	public void exitApplication() {
 		tidyUpOnExit();
+		if (systemTray != null) {
+			systemTray.dispose();
+			systemTray = null;
+		}
 		getShell().close();
 		if (getShell() != null && (! getShell().isDisposed()))
 			getShell().dispose();
-		if (systemTray != null)
-			systemTray.dispose();
 	}
 
 	/**
@@ -1403,7 +1408,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						lockTimer.schedule(lockTask, mins * 60 * 1000);
 						
 					} catch (NumberFormatException anEx) {
-						log.warn("Unable to set lock timer to an amount of" + idleMins + " minutes");  
+						log.warn("Unable to set lock timer to an amount of " + idleMins + " minutes"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
@@ -1412,7 +1417,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		};
 	}
 
-
+	/**
+	 * Clears the current view of all data.
+	 */
 	public void clearView() {
 		if (isTreeViewShowing())
 			tree.clearAll(true);

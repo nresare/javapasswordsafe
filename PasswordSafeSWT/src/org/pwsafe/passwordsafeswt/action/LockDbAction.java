@@ -12,6 +12,8 @@ import java.util.TimerTask;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
@@ -44,7 +46,7 @@ public class LockDbAction extends Action {
     	return new TimerTask() {
     		@Override
 			public void run () {
-    			//calls outer class
+    			//calls outer class, use the event tread
     			PasswordSafeJFace.getApp().getShell().getDisplay().syncExec(
     					new Runnable () {
     						public void run () {
@@ -59,7 +61,7 @@ public class LockDbAction extends Action {
     public void performLock () {
 	    PasswordSafeJFace app = PasswordSafeJFace.getApp();
 	    if (app.getPwsFile() != null) {
-		    log.debug(Messages.getString("LockDbAction.Log.Locking")); //$NON-NLS-1$
+		    log.info(Messages.getString("LockDbAction.Log.Locking")); //$NON-NLS-1$
 		    app.getPwsFile().dispose();
 		    app.clearView();
 		    app.setPwsFile(null);
@@ -72,12 +74,20 @@ public class LockDbAction extends Action {
     	// calling code should stop a running locker timer first
 	    PasswordSafeJFace app = PasswordSafeJFace.getApp();
     	log.info(Messages.getString("LockDbAction.Log.TryToUnlock")); //$NON-NLS-1$
-        PasswordDialog pd = new PasswordDialog(app.getShell());
+    	PasswordDialog pd;
+    	if (app.getShell().isVisible()) {
+    		pd = new PasswordDialog(app.getShell());
+    	} else { // use a new shell so the main window is not shown first
+    		Display display = Display.getDefault();
+    		Shell parent = new Shell(display);
+    		pd = new PasswordDialog(parent);
+    	}
+    	
         pd.setVerified(false);
         String fileName = UserPreferences.getInstance().getMRUFile();
         pd.setFileName(fileName);
         StringBuilder password = pd.open();
-        if (password != null) {
+        if (password != null && ! "".equals(password)) {
             try {
                 app.openFile(fileName, password); // readonly state stays unchanged
                 isUnlocked = true;

@@ -58,8 +58,13 @@ public class PasswordDialog extends Dialog {
 		ShellHelpers.centreShell(getParent(), shell);
 		// shell.pack();
 		shell.open();
+		shell.forceActive();//try to make sure this is drawn on top
 		shell.layout();
 		Display display = getParent().getDisplay();
+		Shell activeShell = display.getActiveShell();
+		if (activeShell != shell) {
+			activeShell.moveBelow(shell);
+		}
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
