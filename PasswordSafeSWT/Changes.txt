@@ -1,5 +1,7 @@
 Changes:
 
+- added safe access time preference (default is false)
+- fixed unlocking with open edit dialoge (Trac Ticket 14)
 - fixed "open safe" in first time startup dialogue
 - close on doubleclick on tray icon (Bug #2790970)
 - do not open several passphrase entry dialogs on restore

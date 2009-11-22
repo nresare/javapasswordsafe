@@ -7,12 +7,17 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
+import java.util.Date;
+
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Copies the password from selected item to the clipboard.
@@ -48,5 +53,12 @@ public class CopyPasswordAction extends Action {
         app.copyToClipboard(cb, theEntry, theEntry.getPassword().toString());
 
         cb.dispose();
+        
+        final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+        final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
+        if (recordAccessTime) {
+        	theEntry.setLastAccess(new Date());
+        	app.editRecord(theEntry);
+        }
     }
 }

@@ -52,8 +52,8 @@ public class AddRecordAction extends Action {
 		}
         EditDialog ed = new EditDialog(app.getShell(), newEntry);
         newEntry = (PwsEntryBean) ed.open();
-        newEntry.setSparse(false);
         if (newEntry != null) {
+        	newEntry.setSparse(false);
             app.addRecord(newEntry);
         }
 

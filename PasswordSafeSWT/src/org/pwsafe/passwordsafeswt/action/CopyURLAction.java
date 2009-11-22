@@ -8,13 +8,18 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.dnd.Clipboard;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Copies the URL from selected item to the clipboard.
@@ -50,5 +55,13 @@ public class CopyURLAction extends Action {
         app.copyToClipboard(cb, theEntry, theEntry.getUrl() );
 
         cb.dispose();
+        
+        final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+        final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
+        if (recordAccessTime) {
+        	theEntry.setLastAccess(new Date());
+        	app.editRecord(theEntry);
+        }
+
     }
 }

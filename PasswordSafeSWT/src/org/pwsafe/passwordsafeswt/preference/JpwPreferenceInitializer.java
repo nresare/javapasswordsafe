@@ -1,5 +1,6 @@
 package org.pwsafe.passwordsafeswt.preference;
 
+
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ALWAYS_ON_TOP;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CONFIRM_COPY_TO_CLIPBOARD;
@@ -17,6 +18,7 @@ import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_ON_IDLE;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.LOCK_ON_IDLE_MINS;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.QUERY_FOR_DEFAULT_USERNAME;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SAVE_IMMEDIATELY_ON_EDIT;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE;
@@ -91,6 +93,7 @@ public class JpwPreferenceInitializer extends AbstractPreferenceInitializer {
 		theStore.setDefault(HOT_KEY, false);
 		theStore.setDefault(DOUBLE_CLICK_COPIES_TO_CLIPBOARD, true);
 		theStore.setDefault(DEFAULT_OPEN_READ_ONLY, false);
+		theStore.setDefault(RECORD_LAST_ACCESS_TIME, false);
 
 	}
 

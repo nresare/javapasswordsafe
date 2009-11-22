@@ -13,6 +13,7 @@ import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.DOUBL
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ESCAPE_KEY_EXITS_APP;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.HOT_KEY;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.HOT_KEY_ACTIVE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SAVE_IMMEDIATELY_ON_EDIT;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -36,6 +37,7 @@ public class MiscPreferences extends PreferencePage {
 	// Text fields for user to enter preferences
 	private Button btnConfirmDeletion;
 	private Button btnSaveImmediately;
+	private Button btnRecordAccessTime;
 	private Button btnOpenReadOnly;
 	private Button btnEscapeExitsApp;
 	private Button btnHotKey;
@@ -63,9 +65,14 @@ public class MiscPreferences extends PreferencePage {
 	    btnSaveImmediately.setText(Messages.getString("MiscPreferences.SaveOnChange")); //$NON-NLS-1$
 	    btnSaveImmediately.setSelection(preferenceStore.getBoolean(SAVE_IMMEDIATELY_ON_EDIT));
 
+	    btnRecordAccessTime = new Button(composite, SWT.CHECK);
+	    btnRecordAccessTime.setText(Messages.getString("MiscPreferences.RecordLastAccessTime")); //$NON-NLS-1$
+	    btnRecordAccessTime.setSelection(preferenceStore.getBoolean(RECORD_LAST_ACCESS_TIME));
+
 	    btnOpenReadOnly = new Button(composite, SWT.CHECK);
 	    btnOpenReadOnly.setText(Messages.getString("MiscPreferences.DefaultOpenReadOnly")); //$NON-NLS-1$
 	    btnOpenReadOnly.setSelection(preferenceStore.getBoolean(DEFAULT_OPEN_READ_ONLY));
+
 
 	    btnEscapeExitsApp = new Button(composite, SWT.CHECK);
 	    btnEscapeExitsApp.setText(Messages.getString("MiscPreferences.QuitOnEsc")); //$NON-NLS-1$
@@ -129,6 +136,7 @@ public class MiscPreferences extends PreferencePage {
 	    // Reset the fields to the defaults
 	    btnConfirmDeletion.setSelection(preferenceStore.getDefaultBoolean(CONFIRM_ITEM_DELETION));
 	    btnSaveImmediately.setSelection(preferenceStore.getDefaultBoolean(SAVE_IMMEDIATELY_ON_EDIT));
+	    btnRecordAccessTime.setSelection(preferenceStore.getDefaultBoolean(RECORD_LAST_ACCESS_TIME));
 	    btnOpenReadOnly.setSelection(preferenceStore.getDefaultBoolean(DEFAULT_OPEN_READ_ONLY));
 	    btnEscapeExitsApp.setSelection(preferenceStore.getDefaultBoolean(ESCAPE_KEY_EXITS_APP));
 	    btnHotKey.setSelection(preferenceStore.getDefaultBoolean(HOT_KEY_ACTIVE));
@@ -152,11 +160,12 @@ public class MiscPreferences extends PreferencePage {
 
 	    // Set the values from the fields
 	    preferenceStore.setValue(CONFIRM_ITEM_DELETION, btnConfirmDeletion.getSelection());
-   		preferenceStore.setValue(SAVE_IMMEDIATELY_ON_EDIT,btnSaveImmediately.getSelection());
-   		preferenceStore.setValue(DEFAULT_OPEN_READ_ONLY,btnOpenReadOnly.getSelection());
-   		preferenceStore.setValue(ESCAPE_KEY_EXITS_APP,btnEscapeExitsApp.getSelection());
-		preferenceStore.setValue(HOT_KEY_ACTIVE,btnHotKey.getSelection());
-		preferenceStore.setValue(HOT_KEY,txtHotKey.getText());
+   		preferenceStore.setValue(SAVE_IMMEDIATELY_ON_EDIT, btnSaveImmediately.getSelection());
+   		preferenceStore.setValue(RECORD_LAST_ACCESS_TIME, btnRecordAccessTime.getSelection());
+   		preferenceStore.setValue(DEFAULT_OPEN_READ_ONLY, btnOpenReadOnly.getSelection());
+   		preferenceStore.setValue(ESCAPE_KEY_EXITS_APP, btnEscapeExitsApp.getSelection());
+		preferenceStore.setValue(HOT_KEY_ACTIVE, btnHotKey.getSelection());
+		preferenceStore.setValue(HOT_KEY, txtHotKey.getText());
 		preferenceStore.setValue(DOUBLE_CLICK_COPIES_TO_CLIPBOARD, btnCopiesPasswordToClipboard.getSelection());
 	    
 	    // Return true to allow dialog to close

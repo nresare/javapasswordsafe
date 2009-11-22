@@ -7,12 +7,17 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
+import java.util.Date;
+
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.EditDialog;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Displays the Edit dialog.
@@ -33,14 +38,25 @@ public class EditRecordAction extends Action {
      */
     @Override
 	public void run() {
-        PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        PwsEntryBean selectedRecord = app.getSelectedRecord();
+        final PasswordSafeJFace app = PasswordSafeJFace.getApp();
+        final PwsEntryBean selectedRecord = app.getSelectedRecord();
         if (selectedRecord != null) {
-        	PwsEntryBean filledEntry = app.getPwsDataStore().getEntry(selectedRecord.getStoreIndex());
-            EditDialog ed = new EditDialog(app.getShell(), filledEntry);
-            filledEntry = (PwsEntryBean) ed.open();
-            if (! app.isReadOnly() && filledEntry != null) {
-                app.editRecord(filledEntry);
+        	final PwsEntryBean filledEntry = app.getPwsDataStore().getEntry(selectedRecord.getStoreIndex());
+            EditDialog dialogue = new EditDialog(app.getShell(), filledEntry);
+            final PwsEntryBean changedEntry = (PwsEntryBean) dialogue.open();
+
+            if (! app.isReadOnly()) {
+            	final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+            	final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
+            	if (changedEntry != null) {
+            		if (recordAccessTime) {
+            			changedEntry.setLastAccess(new Date());
+            		}
+            		app.editRecord(changedEntry);
+            	} else if (recordAccessTime) { // we still have to update the record
+            		filledEntry.setLastAccess(new Date());
+            		app.editRecord(filledEntry);
+            	}
             }
         }
 
