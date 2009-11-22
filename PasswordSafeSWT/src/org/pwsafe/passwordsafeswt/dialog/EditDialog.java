@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
@@ -65,8 +64,7 @@ public class EditDialog extends Dialog {
 	private CLabel lastAccess;
 	private CLabel createTime;
 	private Text txtPasswordExpire;
-    private DateTime dtPasswordExpire;
-    private boolean dirty;
+    private volatile boolean dirty;
 	protected Object result;
 	protected Shell shell;
     private final PwsEntryBean entryToEdit;
@@ -75,6 +73,7 @@ public class EditDialog extends Dialog {
 		super(parent, style);
         this.entryToEdit = entryToEdit;
 	}
+	
 	public EditDialog(Shell parent, PwsEntryBean entryToEdit) {
 		this(parent, SWT.NONE, entryToEdit);
 	}
@@ -371,8 +370,8 @@ public class EditDialog extends Dialog {
                     entryToEdit.setGroup(txtGroup.getText());
                     entryToEdit.setTitle(txtTitle.getText());
                     entryToEdit.setUsername(txtUsername.getText());
-                    if (! txtPassword.getText().equals(entryToEdit.getPassword())) {
-                    	entryToEdit.setPassword(txtPassword.getText());
+                    if (! txtPassword.getText().equals(entryToEdit.getPassword().toString())) {
+                    	entryToEdit.setPassword(new StringBuilder(txtPassword.getText()));
                     	entryToEdit.setLastPwChange(now);
                     }
                     entryToEdit.setNotes(txtNotes.getText());
