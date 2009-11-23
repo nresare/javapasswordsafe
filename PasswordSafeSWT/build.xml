@@ -19,7 +19,7 @@
         <!-- platform specific bundling stuff -->
         <property name="platform.dir" location="platform" />
         <property name="mac.dir" location="${platform.dir}/macosx" />
-        <property name="mac-x86_64.dir" location="${platform.dir}/macosx-x86_64" />
+        <property name="mac-x86_64.dir" location="${platform.dir}/macosx-x86-64" />
         <property name="linux.dir" location="${platform.dir}/linux" />
         <property name="linux-x86_64.dir" location="${platform.dir}/linux-x86_64" />
         <property name="win32.dir" location="${platform.dir}/win32" />
@@ -267,7 +267,7 @@
         	icon="${mac.dir}/PasswordSafe.icns" 
         	version="${short.version}" 
         	aboutmenuname="${app.name}" 
-        	jvmversion="1.5+" 
+        	jvmversion="1.5+"        	
         	infostring="PasswordSafeSWT, (c) 2008,2009">
             <jarfileset dir="${deploy.dir}">
                 <include name="PasswordSafeSWT.jar" />
@@ -291,7 +291,7 @@
             </fileset>
         </chmod>
 
-        <replace file="${dist.mac.dir}/${zip.dir.name}/${app.name}.app/Contents/Info.plist" token="&lt;key&gt;ClassPath" value="&lt;key&gt;StartOnMainThread&lt;/key&gt;&lt;true/&gt; &lt;key&gt;ClassPath" />
+        <replace file="${dist.mac.dir}/${zip.dir.name}/${app.name}.app/Contents/Info.plist" token="&lt;key&gt;ClassPath" value="&lt;key&gt;StartOnMainThread&lt;/key&gt;&lt;true/&gt; &lt;key&gt;JVMArchs&lt;/key&gt;&lt;string&gt;i386&lt;/string&gt; &lt;key&gt;ClassPath" />
 
     	<!-- Finally, create a DMG file for the distro -->
     	<property name="dist.dmg.file" value="${zip.dir.name}.dmg"/>
@@ -314,8 +314,8 @@
 
         <jarbundler dir="${dist.mac-x86_64.dir}/${zip.dir.name}" 
         	name="${app.name}" 
-        	mainclass="${main.class.mac}" 
-        	icon="${mac-x86_64.dir}/PasswordSafe.icns" 
+        	mainclass="${main.class}" 
+        	icon="${mac.dir}/PasswordSafe.icns" 
         	version="${short.version}" 
         	aboutmenuname="${app.name}" 
         	jvmversion="1.5*" 
@@ -327,11 +327,8 @@
                 <include name="**/*.jar" />
                 <exclude name="jarbundler*.*" />
             </jarfileset>
-            <jarfileset dir="${mac-x86_64.dir.dir}">
+            <jarfileset dir="${mac-x86_64.dir}">
                 <include name="**/*.jar" />
-            </jarfileset>
-            <jarfileset dir="${mac-x86_64.dir.dir}/dll">
-                <include name="**.*" />
             </jarfileset>
         </jarbundler>
 
