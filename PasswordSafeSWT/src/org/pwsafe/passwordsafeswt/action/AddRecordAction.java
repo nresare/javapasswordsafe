@@ -45,7 +45,7 @@ public class AddRecordAction extends Action {
 		}
 		if (app.isTreeViewShowing()) {
 			// create new entry within existing group
-			String selectedGroup = app.getSelectedTreeGroup();
+			String selectedGroup = app.getSelectedTreeGroupPath();
 			if (selectedGroup != null && selectedGroup.length() > 0) {
 				newEntry.setGroup(selectedGroup);
 			}

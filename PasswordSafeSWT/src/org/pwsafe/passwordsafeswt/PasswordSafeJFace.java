@@ -38,11 +38,13 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -50,6 +52,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -167,6 +170,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	protected static final Log log = LogFactory.getLog(PasswordSafeJFace.class);
 
 	public static final String APP_NAME = "PasswordSafeSWT"; //$NON-NLS-1$
+	public static final String JPW_ICON = "jpwIcon";
 
 	private static PasswordSafeJFace app;
 
@@ -492,8 +496,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PasswordSafeJFace.APP_NAME);
-		newShell.setImage(SWTResourceManager.getImage(PasswordSafeJFace.class,
-				"/org/pwsafe/passwordsafeswt/images/cpane.ico")); //$NON-NLS-1$
+		Image jpwIcon = SWTResourceManager.getImage(PasswordSafeJFace.class, "/org/pwsafe/passwordsafeswt/images/cpane.ico"); //$NON-NLS-1$
+		newShell.setImage(jpwIcon); 
+		// provide it for the rest of jpwsafe:
+		JFaceResources.getImageRegistry().put(JPW_ICON, jpwIcon); //$NON-NLS-1$
+		Window.setDefaultImage(jpwIcon);
 		WidgetPreferences.tuneShell(newShell, getClass());
 		startOpeningDialogThread(newShell);
 	}
@@ -646,12 +653,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	/**
-	 * Edits the selected record in a new dialog.
+	 * Updates an existing record.
 	 * @param newEntry the entry's new values
 	 */
-	public void editRecord(PwsEntryBean newEntry) {
+	public void updateRecord(PwsEntryBean newEntry) {
 		if (log.isDebugEnabled())
-			log.debug("Dialog has been edited, updating safe"); 		
+			log.debug("Dialog has been edited, updating safe"); //$NON-NLS-1$
 		getPwsDataStore().updateEntry(newEntry);
 		if (isDirty()) {
 			saveOnUpdateOrEditCheck();
@@ -665,7 +672,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
      */
 	public void addRecord(PwsEntryBean newEntry) {
 		if (log.isDebugEnabled())
-			log.debug("Dialog has created new record, updating safe"); 
+			log.debug("Dialog has created new record, updating safe"); //$NON-NLS-1$
 		try {
 			getPwsDataStore().addEntry(newEntry);
 			saveOnUpdateOrEditCheck();
@@ -1002,25 +1009,24 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		return (tree != null);
 	}
 	
-	public String getSelectedTreeGroup() {
-		
-		if (isTreeViewShowing()) {
-			//TODO: return Tree PATH (node.subnode1.subnode2), not only node name (subnode2) 
-			if (tree.getSelectionCount() == 1) {
-				TreeItem ti = tree.getSelection()[0];
-				if (ti.getItemCount() > 0) {
-					return ti.getText();
-				} else {
-					// we're in a leaf node
-					if (ti.getParentItem() != null) {
-						return ti.getParentItem().getText(); 
-					} else {
-						return ""; // empty root element //$NON-NLS-1$
-					}
-				}
+	public String getSelectedTreeGroupPath() {
+		StringBuilder theGroupPath = new StringBuilder (); 
+		if (isTreeViewShowing() && tree.getSelectionCount() == 1) {
+			TreeItem ti = tree.getSelection()[0];
+			
+			if (ti.getItemCount() <= 0) {// leaf node
+				ti = ti.getParentItem();
 			}
+			while (ti != null) {
+				theGroupPath.insert(0,ti.getText());
+				ti = ti.getParentItem();
+				if (ti != null)
+					theGroupPath.insert(0, '.');
+				
+			}
+			log.debug("Group path constructed *" + theGroupPath + "*"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return null;
+		return theGroupPath.toString();
 	}
 
 	/**

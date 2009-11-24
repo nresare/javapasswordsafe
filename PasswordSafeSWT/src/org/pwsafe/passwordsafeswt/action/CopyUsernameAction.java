@@ -58,7 +58,7 @@ public class CopyUsernameAction extends Action {
         final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
         if (recordAccessTime) {
         	theEntry.setLastAccess(new Date());
-        	app.editRecord(theEntry);
+        	app.updateRecord(theEntry);
         }
 
     }

@@ -52,10 +52,10 @@ public class EditRecordAction extends Action {
             		if (recordAccessTime) {
             			changedEntry.setLastAccess(new Date());
             		}
-            		app.editRecord(changedEntry);
+            		app.updateRecord(changedEntry);
             	} else if (recordAccessTime) { // we still have to update the record
             		filledEntry.setLastAccess(new Date());
-            		app.editRecord(filledEntry);
+            		app.updateRecord(filledEntry);
             	}
             }
         }
