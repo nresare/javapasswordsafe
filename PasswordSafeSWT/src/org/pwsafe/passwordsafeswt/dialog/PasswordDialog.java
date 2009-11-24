@@ -11,6 +11,7 @@ import java.io.File;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -18,12 +19,14 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.util.ShellHelpers;
 
 /**
@@ -56,10 +59,10 @@ public class PasswordDialog extends Dialog {
 	public StringBuilder open() {
 		createContents();
 		ShellHelpers.centreShell(getParent(), shell);
-		// shell.pack();
+		shell.layout();
+		shell.pack();
 		shell.open();
 		shell.forceActive();//try to make sure this is drawn on top
-		shell.layout();
 		Display display = getParent().getDisplay();
 		Shell activeShell = display.getActiveShell();
 		if (activeShell != shell) {
@@ -74,8 +77,11 @@ public class PasswordDialog extends Dialog {
 
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		shell.setImage(JFaceResources.getImage(PasswordSafeJFace.JPW_ICON)); 
 		shell.setLayout(new FormLayout());
-		shell.setSize(380, 250);
+		
+		int heigth = verified ? 230 : 170; 
+		shell.setSize(380, heigth);
 		shell.setText(windowTitle);
 		final Label label = new Label(shell, SWT.WRAP);
 		final FormData formData = new FormData();
@@ -88,7 +94,7 @@ public class PasswordDialog extends Dialog {
 
 		final Label lblCombination = new Label(shell, SWT.NONE);
 		final FormData formData_1 = new FormData();
-		formData_1.top = new FormAttachment(label, 30, SWT.BOTTOM);
+		formData_1.top = new FormAttachment(label, 20, SWT.BOTTOM);
 		formData_1.left = new FormAttachment(10, 0);
 		lblCombination.setLayoutData(formData_1);
 		lblCombination.setText(Messages.getString("PasswordDialog.SafeCombination")); //$NON-NLS-1$;
@@ -99,11 +105,13 @@ public class PasswordDialog extends Dialog {
 		formData_2.left = new FormAttachment(lblCombination, 5);
 		formData_2.right = new FormAttachment(85, 0);
 		txtCombination.setLayoutData(formData_2);
-
+		
+		Control buttonOrientation = txtCombination; 
+		
 		if (verified) {
 			final Label lblVerify = new Label(shell, SWT.NONE);
 			final FormData formData_3 = new FormData();
-			formData_3.top = new FormAttachment(lblCombination, 20);
+			formData_3.top = new FormAttachment(txtCombination, 10);
 			formData_3.right = new FormAttachment(lblCombination, 0, SWT.RIGHT);
 			lblVerify.setLayoutData(formData_3);
 			lblVerify.setText(Messages.getString("PasswordDialog.Verify")); //$NON-NLS-1$
@@ -114,6 +122,8 @@ public class PasswordDialog extends Dialog {
 			formData_4.left = new FormAttachment(txtCombination, 0, SWT.LEFT);
 			formData_4.right = new FormAttachment(txtCombination, 0, SWT.RIGHT);
 			txtVerify.setLayoutData(formData_4);
+			
+			buttonOrientation = txtVerify;
 		}
 		final Button btnCancel = new Button(shell, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -124,6 +134,7 @@ public class PasswordDialog extends Dialog {
 		});
 		final FormData formData_7 = new FormData();
 		formData_7.width = 80;
+		formData_7.top = new FormAttachment(buttonOrientation, 20);
 		formData_7.bottom = new FormAttachment(100, -10);
 		formData_7.left = new FormAttachment(50, -5);
 		btnCancel.setLayoutData(formData_7);

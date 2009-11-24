@@ -15,6 +15,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.KeyAdapter;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pwsafe.lib.datastore.PwsEntryBean;
+import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 import org.pwsafe.passwordsafeswt.util.ShellHelpers;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
@@ -113,6 +115,7 @@ public class EditDialog extends Dialog {
 
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.RESIZE | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		shell.setImage(JFaceResources.getImage(PasswordSafeJFace.JPW_ICON)); 
 		shell.setSize(590, 603);
 		shell.setText(Messages.getString("EditDialog.Title")); //$NON-NLS-1$
 		final GridLayout gridLayout_2 = new GridLayout();
@@ -316,7 +319,7 @@ public class EditDialog extends Dialog {
 
 		txtPasswordExpire = new Text(compositeFields, SWT.BORDER);
 		final FormData fd_txtPasswordExpire = new FormData();
-		fd_txtPasswordExpire.left = new FormAttachment(lblPasswordExpire, 0, SWT.RIGHT);
+		fd_txtPasswordExpire.left = new FormAttachment(txtAutotype, 0, SWT.LEFT);
 		fd_txtPasswordExpire.right = new FormAttachment(txtAutotype, 0, SWT.RIGHT);
 		fd_txtPasswordExpire.top = new FormAttachment(txtAutotype, 10, SWT.BOTTOM);
 		txtPasswordExpire.setLayoutData(fd_txtPasswordExpire);
@@ -452,7 +455,7 @@ public class EditDialog extends Dialog {
 //		formData_14.left = new FormAttachment(txtNotes, 10, SWT.RIGHT);
 		formData_14.left = new FormAttachment(100, -160);
 		formData_14.top = new FormAttachment(btnShowPassword, 5, SWT.TOP);
-		formData_14.right = new FormAttachment(100, -5);
+		formData_14.right = new FormAttachment(100, -10);
 		group.setLayoutData(formData_14);
 
 		final Button btnGenerate = new Button(group, SWT.NONE);
