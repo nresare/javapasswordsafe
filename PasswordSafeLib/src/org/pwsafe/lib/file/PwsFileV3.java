@@ -142,13 +142,14 @@ public final class PwsFileV3 extends PwsFile {
 		
 		int iter = theHeaderV3.getIter();
 		LOG.debug1("Using iterations: [" + iter + "]");
+		final SHA256Pws shaHasher = new SHA256Pws();
 		stretchedPassword = Util.stretchPassphrase(aPassphrase.getBytes(), theHeaderV3.getSalt(), iter);
 		
-		if (!Util.bytesAreEqual(theHeaderV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
+		if (!Util.bytesAreEqual(theHeaderV3.getPassword(), shaHasher.digest(stretchedPassword))) {
 			//try another method to avoid asymmetric encoding bug in V0.8 Beta1
 	        CharBuffer buf = CharBuffer.wrap(aPassphrase);
 			stretchedPassword = Util.stretchPassphrase(Charset.defaultCharset().encode(buf).array(), theHeaderV3.getSalt(), iter);
-			if (Util.bytesAreEqual(theHeaderV3.getPassword(), SHA256Pws.digest(stretchedPassword))) {
+			if (Util.bytesAreEqual(theHeaderV3.getPassword(), shaHasher.digest(stretchedPassword))) {
 				LOG.warn("Succeeded workaround for asymmetric password encoding bug");
 			} else {
 				throw new IOException("Invalid password");

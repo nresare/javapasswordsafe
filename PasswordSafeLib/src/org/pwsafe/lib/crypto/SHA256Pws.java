@@ -16,10 +16,10 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
  */
 public class SHA256Pws {
 
+	private final SHA256Digest digest = new SHA256Digest();
 
-    public static byte[] digest(byte[] incoming) {
+    public byte[] digest(byte[] incoming) {
     	
-    	SHA256Digest digest = new SHA256Digest();
     	byte[] output = new byte[digest.getDigestSize()];
     	
     	digest.update(incoming, 0, incoming.length);

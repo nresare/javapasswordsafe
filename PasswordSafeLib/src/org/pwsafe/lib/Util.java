@@ -475,10 +475,11 @@ public final class Util
 	 * @return the stretched user key for comparison
 	 */
 	public static byte[] stretchPassphrase(byte[] passphrase, byte[] salt, int iter) {
-		byte[] p = mergeBytes(passphrase, salt);
-		byte[] hash = SHA256Pws.digest(p);
+		final SHA256Pws hasher = new SHA256Pws();
+		final byte[] p = mergeBytes(passphrase, salt);
+		byte[] hash = hasher.digest(p);
 		for (int i = 0; i < iter; i++) {
-			hash = SHA256Pws.digest(hash);
+			hash = hasher.digest(hash);
 		}
 		return hash;
 		

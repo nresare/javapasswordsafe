@@ -245,8 +245,8 @@ public class PwsFileHeaderV3 implements Serializable
 		LOG.enterMethod( "PwsFileHeaderV3.update" );
 
 		final byte[] stretchedPassword = Util.stretchPassphrase(aPassphrase.getBytes(), salt, iter);
-		
-		password = SHA256Pws.digest(stretchedPassword);
+		final SHA256Pws hasher = new SHA256Pws();
+		password = hasher.digest(stretchedPassword);
 		
 		final byte[] b1pt = new byte[16];
 		Util.newRandBytes(b1pt);
