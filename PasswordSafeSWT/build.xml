@@ -28,7 +28,7 @@
         <property name="dist.src.dir" location="${deploy.dir}/src" />
         <property name="dist.mac.dir" location="${deploy.dir}/mac" />
         <property name="dist.mac-x86_64.dir" location="${deploy.dir}/mac-x86_64" />
-        <property name="dist.linux.dir" location="${deploy.dir}/linux" />
+        <property name="dist.linux.dir" location="${deploy.dir}/linux-x86" />
         <property name="dist.linux-x86_64.dir" location="${deploy.dir}/linux-x86_64" />
         <property name="dist.win32.dir" location="${deploy.dir}/win32" />
 
@@ -40,7 +40,7 @@
 
         <property file="${version.file}" />
 
-        <property name="build.version" value="${build.release.major}.${build.release.minor}.${build.number}"/>
+        <property name="build.version" value="${build.release.major}.${build.release.minor} (${build.number})"/>
         <property name="build.version.tag" value="Release_${build.release.major}_${build.release.minor}_${build.number}" />
     	
         <property name="short.version" value="${build.release.major}.${build.release.minor}" />
@@ -200,7 +200,7 @@
             </fileset>
         </chmod>
 
-        <tar destfile="${dist.linux.dir}/${zip.dir.name}-linux.tar.gz"
+        <tar destfile="${dist.linux.dir}/${zip.dir.name}-linux-x86.tar.gz"
                        compression="gzip">
     	  <tarfileset dir="${dist.linux.dir}/${zip.dir.name}" mode="755">
     	    <include name="*.sh"/>
