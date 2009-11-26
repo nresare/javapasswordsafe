@@ -10,10 +10,7 @@ package org.pwsafe.passwordsafeswt.action;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.MessageBox;
-import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
+import org.pwsafe.passwordsafeswt.util.IOUtils;
 
 
 /**
@@ -34,25 +31,12 @@ public class VisitPasswordSafeWebsiteAction extends Action {
      */
     @Override
 	public void run() {
-        final PasswordSafeJFace app = PasswordSafeJFace.getApp();
         new Thread() {
             @Override
 			public void run() {
+ 	
             	final String url = "http://jpwsafe.sf.net/"; //$NON-NLS-1$
-                try {
-                	boolean success = Program.launch(url);
-                	if (! success) {
-                		log.warn("failed to launch a web browser for URL " + url);
-                	}
-                } catch (Exception ioe) {
-            		log.error("failed to launch a web browser for URL " + url, ioe);
-
-                    MessageBox mb = new MessageBox(app.getShell(),
-                            SWT.ICON_ERROR);
-                    mb.setText(Messages.getString("VisitPwWebsiteAction.ErrorDialog.Title")); //$NON-NLS-1$
-                    mb.setMessage(Messages.getString("VisitPwWebsiteAction.ErrorDialog.Message")); //$NON-NLS-1$
-                    mb.open();
-                }
+                IOUtils.openBrowser(url);
             }
         }.start();
     }

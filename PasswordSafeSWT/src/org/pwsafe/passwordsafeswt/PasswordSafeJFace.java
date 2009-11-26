@@ -95,6 +95,7 @@ import org.pwsafe.passwordsafeswt.action.LockDbAction;
 import org.pwsafe.passwordsafeswt.action.MRUFileAction;
 import org.pwsafe.passwordsafeswt.action.NewFileAction;
 import org.pwsafe.passwordsafeswt.action.OpenFileAction;
+import org.pwsafe.passwordsafeswt.action.OpenUrlAction;
 import org.pwsafe.passwordsafeswt.action.OptionsAction;
 import org.pwsafe.passwordsafeswt.action.SaveFileAction;
 import org.pwsafe.passwordsafeswt.action.SaveFileAsAction;
@@ -152,6 +153,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private SaveFileAsAction saveFileAsAction;
 	private SaveFileAction saveFileAction;
 	private OpenFileAction openFileAction;
+	private OpenUrlAction openUrlAction;
 	private ViewAsListAction viewAsListAction;
 	private ViewAsTreeAction viewAsTreeAction;
 	private ExportToTextAction exportToTextAction;
@@ -304,6 +306,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		exportToXMLAction = new ExportToXMLAction();
 		importFromXMLAction = new ImportFromXMLAction();
 		lockDbAction = new LockDbAction();
+		openUrlAction = new OpenUrlAction();
 	}
 
 	/**
@@ -360,6 +363,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		menuManagerEdit.add(copyPasswordAction);
 		menuManagerEdit.add(copyUsernameAction);
 		menuManagerEdit.add(copyURLAction);
+		menuManagerEdit.add(openUrlAction);		
 		menuManagerEdit.add(clearClipboardAction);
 
 		final MenuManager menuManagerView = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.View")); //$NON-NLS-1$
@@ -403,6 +407,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		menuListPopup.add(copyPasswordAction);
 		menuListPopup.add(copyUsernameAction);
 		menuListPopup.add(copyURLAction);
+		menuListPopup.add(openUrlAction);
 		menuListPopup.add(new Separator());
 		menuListPopup.add(addRecordAction);
 		menuListPopup.add(editRecordAction);
@@ -425,6 +430,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		toolBarManager.add(copyUsernameAction);
 		toolBarManager.add(copyPasswordAction);
 		toolBarManager.add(copyURLAction);
+		toolBarManager.add(openUrlAction);		
 		toolBarManager.add(clearClipboardAction);
 		toolBarManager.add(new Separator());
 		toolBarManager.add(addRecordAction);
@@ -643,7 +649,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				}					
 			}
 		} else {
-			if (table.getSelectionCount() == 1) {
+			if (table != null && table.getSelectionCount() == 1) {
 				TableItem ti = table.getSelection()[0];
 				recordToCopy = (PwsEntryBean) ti.getData();
 			}

@@ -16,26 +16,26 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.dnd.Clipboard;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
+import org.pwsafe.passwordsafeswt.util.IOUtils;
 
 /**
- * Copies the URL from selected item to the clipboard.
+ * Open the URL from selected item to the clipboard.
  *
- * @author Glen Smith, Tim Hughes
+ * @author roxon
  */
-public class CopyURLAction extends Action {
-    private static final Log log = LogFactory.getLog(CopyURLAction.class);
+public class OpenUrlAction extends Action {
+    private static final Log log = LogFactory.getLog(OpenUrlAction.class);
 
-    public CopyURLAction() {
-        super(Messages.getString("CopyURLAction.Label")); //$NON-NLS-1$
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_url.gif"))); //$NON-NLS-1$
+    public OpenUrlAction() {
+        super(Messages.getString("OpenUrlAction.Label")); //$NON-NLS-1$
+        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_openurl.gif"))); //$NON-NLS-1$
         // TODO: set disabled image
-        setToolTipText(Messages.getString("CopyURLAction.Tooltip")); //$NON-NLS-1$
+        setToolTipText(Messages.getString("OpenUrlAction.Tooltip")); //$NON-NLS-1$
     }
-
+    
     /* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#isEnabled()
 	 */
@@ -43,47 +43,27 @@ public class CopyURLAction extends Action {
 	public boolean isEnabled() {
 		
 		return super.isEnabled();
-		
-		// TODO: the following will always disable the actions, find a better way:
-//        PasswordSafeJFace app = PasswordSafeJFace.getApp();
-//
-//        PwsEntryBean selected = app.getSelectedRecord();
-//        if (selected == null)
-//        	return false;
-//	  
-//		if (selected.getUrl() != null) {
-//			return true;
-//		}
-//		
-//		return false; 
 	}
 
-    /**
+	/**
      * @see org.eclipse.jface.action.Action#run()
      */
     @Override
 	public void run() {
-        // todo: disable option if v1 or v2; URL only seems to be available in V3 files
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
         PwsEntryBean selected = app.getSelectedRecord();
-        if (selected == null)
+        if (selected == null || selected.getUrl() == null || selected.getUrl().length() == 0)
         	return;
-        // retrieve filled Entry for sparse
-        PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
-
-        Clipboard cb = new Clipboard(app.getShell().getDisplay());
-
-        app.copyToClipboard(cb, theEntry, theEntry.getUrl() );
-
-        cb.dispose();
+        
+        IOUtils.openBrowser(selected.getUrl());
         
         final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
         final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
         if (recordAccessTime) {
+            PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
         	theEntry.setLastAccess(new Date());
         	app.updateRecord(theEntry);
         }
-
     }
 }
