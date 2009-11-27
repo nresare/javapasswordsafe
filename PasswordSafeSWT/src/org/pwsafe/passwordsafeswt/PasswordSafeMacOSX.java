@@ -4,7 +4,6 @@
 package org.pwsafe.passwordsafeswt;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.internal.Callback;
@@ -177,11 +176,16 @@ public class PasswordSafeMacOSX extends PasswordSafeJFace
       PasswordSafeMacOSX window = new PasswordSafeMacOSX();
       window.setBlockOnOpen( true );
       window.open();
-      SWTResourceManager.dispose();
-      Display.getCurrent().dispose();
     } catch( Exception e ) {
       log.error( "Error Starting PasswordSafe", e );
-    }
+    } finally { //try to clean up in any case
+		try {
+			SWTResourceManager.dispose();
+		} catch (Exception anEx) {}// ok
+		try {
+			Display.getCurrent().dispose();
+		} catch (Exception anEx1) {}// ok
+	}
     log.info( "PasswordSafe terminating..." );
   }
 }

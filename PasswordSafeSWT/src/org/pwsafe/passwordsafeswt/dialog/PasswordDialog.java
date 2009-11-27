@@ -65,7 +65,7 @@ public class PasswordDialog extends Dialog {
 		shell.forceActive();//try to make sure this is drawn on top
 		Display display = getParent().getDisplay();
 		Shell activeShell = display.getActiveShell();
-		if (activeShell != shell) {
+		if (activeShell != null && activeShell != shell) {
 			activeShell.moveBelow(shell);
 		}
 		while (!shell.isDisposed()) {
@@ -160,6 +160,7 @@ public class PasswordDialog extends Dialog {
 				}
 			});
 		} else {
+			//TODO: On Mac Carbon dispose leads to a recall of Main Window shellActivated - check this
 			btnOk.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

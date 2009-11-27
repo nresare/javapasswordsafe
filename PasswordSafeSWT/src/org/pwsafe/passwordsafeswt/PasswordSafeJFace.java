@@ -1294,6 +1294,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	@Override
 	protected ShellListener getShellListener() {
 		return new ShellAdapter() {
+			boolean activating = false; 			
+			
 			@Override
 			public void shellClosed(ShellEvent event) {
 				event.doit = false; // don't close now
@@ -1323,14 +1325,21 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 */
 			@Override
 			public void shellActivated(ShellEvent e) {
-				if (lockTask != null) {
-					lockTask.cancel();
-					lockTask = null;
+				//TODO: avoid recalling while in progress, still not perfect on mac carbon 
+				if (activating) 
+					return;
+				activating = true;
+				try {
+					if (lockTask != null) {
+						lockTask.cancel();
+						lockTask = null;
+					}
+					if (locked) {
+						lockDbAction.performUnlock();
+					}
+				} finally {
+					activating = false;
 				}
-				if (locked) {
-					lockDbAction.performUnlock();
-				}
-
 			}
 
 			/**
