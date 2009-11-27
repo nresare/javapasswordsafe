@@ -73,7 +73,7 @@ public class IOUtils
     	if (anUrl == null) {
     		return;
     	}
-    	if (! anUrl.contains("//:")) {
+    	if (! anUrl.contains("://")) {
     		anUrl = "http://" + anUrl;
     	}
         try {
