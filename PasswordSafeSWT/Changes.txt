@@ -1,10 +1,16 @@
 Changes:
 
-- added safe access time preference (default is false)
+changes in swt 0.8 beta 3 (27.11.2009)
+- added open url action to menu toolbar and context menu
+- open jpwsafe website should now work in Linux KDE desktop (Java 6)
+- added record access time saving preference (default is false)
 - fixed unlocking with open edit dialoge (Trac Ticket 14)
 - fixed "open safe" in first time startup dialogue
 - close on doubleclick on tray icon (Bug #2790970)
 - do not open several passphrase entry dialogs on restore
+- replace tabs and other whitespace with space in notes column for tree and table view
+- fixed excessive object allocation with SHA256 digest (Trac Ticket 10) 
+- update jface/eclipse libs to 3.5.1
 
 changes in swt 0.8 beta 2 (30.09.2009)
 - fix for asymmetric passphrase corruption in 0.8 beta 1
