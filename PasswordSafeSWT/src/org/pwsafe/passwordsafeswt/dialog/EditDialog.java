@@ -83,9 +83,9 @@ public class EditDialog extends Dialog {
 	public Object open() {
 		createContents();
 		ShellHelpers.centreShell(getParent(), shell);
+		shell.layout();
 		shell.pack();
 		shell.open();
-		shell.layout();
 		Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
@@ -420,7 +420,7 @@ public class EditDialog extends Dialog {
 		});
 		final FormData formData_11 = new FormData();
 		formData_11.top = new FormAttachment(txtGroup, 0, SWT.TOP);
-		formData_11.left = new FormAttachment(100,-80);
+		formData_11.left = new FormAttachment(100,-90);
 		formData_11.right = new FormAttachment(100, -10);
 		btnOk.setLayoutData(formData_11);
 		btnOk.setText(Messages.getString("EditDialog.OkButton")); //$NON-NLS-1$
@@ -453,7 +453,7 @@ public class EditDialog extends Dialog {
 		group.setText(Messages.getString("EditDialog.RandomPassword")); //$NON-NLS-1$
 		final FormData formData_14 = new FormData();
 //		formData_14.left = new FormAttachment(txtNotes, 10, SWT.RIGHT);
-		formData_14.left = new FormAttachment(100, -160);
+		formData_14.left = new FormAttachment(100, -170);
 		formData_14.top = new FormAttachment(btnShowPassword, 5, SWT.TOP);
 		formData_14.right = new FormAttachment(100, -10);
 		group.setLayoutData(formData_14);
