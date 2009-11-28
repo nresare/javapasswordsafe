@@ -99,6 +99,7 @@ import org.pwsafe.passwordsafeswt.action.OpenUrlAction;
 import org.pwsafe.passwordsafeswt.action.OptionsAction;
 import org.pwsafe.passwordsafeswt.action.SaveFileAction;
 import org.pwsafe.passwordsafeswt.action.SaveFileAsAction;
+import org.pwsafe.passwordsafeswt.action.UnlockDbAction;
 import org.pwsafe.passwordsafeswt.action.ViewAsListAction;
 import org.pwsafe.passwordsafeswt.action.ViewAsTreeAction;
 import org.pwsafe.passwordsafeswt.action.VisitPasswordSafeWebsiteAction;
@@ -159,6 +160,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private ExportToTextAction exportToTextAction;
 	private ImportFromTextAction importFromTextAction;
 	private LockDbAction lockDbAction;
+	private UnlockDbAction unlockDbAction;
 	
 	private Table table;
 	private SysTray systemTray; 
@@ -307,6 +309,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		importFromXMLAction = new ImportFromXMLAction();
 		lockDbAction = new LockDbAction();
 		openUrlAction = new OpenUrlAction();
+		unlockDbAction = new UnlockDbAction();
 	}
 
 	/**
@@ -1294,7 +1297,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	@Override
 	protected ShellListener getShellListener() {
 		return new ShellAdapter() {
-			boolean activating = false; 			
+			boolean unlocking = false; 			
 			
 			@Override
 			public void shellClosed(ShellEvent event) {
@@ -1325,20 +1328,22 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 */
 			@Override
 			public void shellActivated(ShellEvent e) {
-				//TODO: avoid recalling while in progress, still not perfect on mac carbon 
-				if (activating) 
+				//TODO: avoid recalling when aborting unlock  
+				if (unlocking) 
 					return;
-				activating = true;
+				unlocking = true;
 				try {
 					if (lockTask != null) {
 						lockTask.cancel();
 						lockTask = null;
 					}
 					if (locked) {
-						lockDbAction.performUnlock();
+						log.info("PWSJface shell listener activating - unlocking"); //$NON-NLS-1$
+						e.doit = false;
+						Display.getDefault().asyncExec(unlockDbAction);
 					}
 				} finally {
-					activating = false;
+					unlocking = false;
 				}
 			}
 
@@ -1364,14 +1369,22 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 */
 			@Override
 			public void shellDeiconified(ShellEvent e) {
-				log.info("PWSJface listener deiconify - unlocking");
+				if (unlocking)
+					return;
 				if (lockTask != null) {
 					lockTask.cancel();
 					lockTask = null;
 				}
 				if (locked) {
-					boolean unlocked = lockDbAction.performUnlock();
-					e.doit = unlocked;
+					unlocking = true;
+					try {
+						log.info("PWSJface shell listener deiconify - unlocking"); //$NON-NLS-1$
+						//e.doit unlocked = unlockDbAction.performUnlock();
+						e.doit = false;
+						Display.getDefault().asyncExec(unlockDbAction);
+					} finally {
+						unlocking = false;
+					}
 				}				
 
 			}

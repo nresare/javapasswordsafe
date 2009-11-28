@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 import org.pwsafe.passwordsafeswt.action.ExitAppAction;
-import org.pwsafe.passwordsafeswt.action.LockDbAction;
+import org.pwsafe.passwordsafeswt.action.UnlockDbAction;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 import com.swtdesigner.SWTResourceManager;
@@ -123,11 +123,7 @@ public class SysTray {
 			trayExit.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					localDisplay.asyncExec(new Runnable () {
-						public void run () {
-							new ExitAppAction().run();
-						}
-					});
+					localDisplay.asyncExec(new ExitAppAction());
 				}
 			});
 			trayItem.addListener(SWT.MenuDetect, new Listener() {
@@ -155,8 +151,8 @@ public class SysTray {
 	private boolean unlockSuccessful () {
 		PasswordSafeJFace app = PasswordSafeJFace.getApp();
 		if (app.isLocked()) {
-			LockDbAction lockDbAction = new LockDbAction();
-			return lockDbAction.performUnlock();
+			UnlockDbAction unlockDbAction = new UnlockDbAction();
+			return unlockDbAction.performUnlock();
 		} else {	
 			return true;
 		}
