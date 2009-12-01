@@ -1326,11 +1326,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 *
 			 * @param e an event containing information about the activation
 			 */
+			
 			@Override
 			public void shellActivated(ShellEvent e) {
 				//TODO: avoid recalling when aborting unlock  
-				if (unlocking) 
+				if (unlocking) {
+					e.doit = false;
 					return;
+				}
 				unlocking = true;
 				try {
 					if (lockTask != null) {
@@ -1339,8 +1342,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					}
 					if (locked) {
 						log.info("PWSJface shell listener activating - unlocking"); //$NON-NLS-1$
-						e.doit = false;
-						Display.getDefault().asyncExec(unlockDbAction);
+						//e.doit = false;
+						unlockDbAction.run();
 					}
 				} finally {
 					unlocking = false;
@@ -1367,10 +1370,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 *
 			 * @param e an event containing information about the un-minimization
 			 */
+/*			
 			@Override
 			public void shellDeiconified(ShellEvent e) {
-				if (unlocking)
+				
+				if (unlocking) {
+					e.doit = false;
 					return;
+				}
 				if (lockTask != null) {
 					lockTask.cancel();
 					lockTask = null;
@@ -1385,9 +1392,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					} finally {
 						unlocking = false;
 					}
-				}				
-
+				}					
 			}
+	`/		
 
 			/**
 			 * Sent when a shell is minimized.
