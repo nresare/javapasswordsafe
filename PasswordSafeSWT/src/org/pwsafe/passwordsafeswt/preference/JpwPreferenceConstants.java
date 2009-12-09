@@ -1,10 +1,19 @@
+/*
+ * $Id$
+ * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * All rights reserved. Use of the code is allowed under the
+ * Artistic License 2.0 terms, as specified in the LICENSE file
+ * distributed with this code, or available from
+ * http://www.opensource.org/licenses/artistic-license-2.0.php
+ */
 package org.pwsafe.passwordsafeswt.preference;
 
 public interface JpwPreferenceConstants {
 	
 	// Display
 	public static final String ALWAYS_ON_TOP = "display.always.on.top";
-	public static final String SHOW_PASSWORD_IN_LIST = "show.password.in.list";
+	public static final String SHOW_NOTES_IN_LIST = "show.notes.in.list";
+	public static final String SHOW_NOTES_IN_EDIT_MODE = "show.notes.in.edit.mode";
 	public static final String SHOW_PASSWORD_IN_EDIT_MODE = "show.password.in.edit.mode";
 	public static final String SHOW_ICON_IN_SYSTEM_TRAY = "show.icon.in.system.tray";
 	public static final String TREE_COLUMN_SIZE = "tree.width.column";

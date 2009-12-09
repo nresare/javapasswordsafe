@@ -1,5 +1,12 @@
+/*
+ * $Id$
+ * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * All rights reserved. Use of the code is allowed under the
+ * Artistic License 2.0 terms, as specified in the LICENSE file
+ * distributed with this code, or available from
+ * http://www.opensource.org/licenses/artistic-license-2.0.php
+ */
 package org.pwsafe.passwordsafeswt.preference;
-
 
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.ALWAYS_ON_TOP;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN;
@@ -21,8 +28,9 @@ import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.QUERY
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SAVE_IMMEDIATELY_ON_EDIT;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_NOTES_IN_EDIT_MODE;
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_NOTES_IN_LIST;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE;
-import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_PASSWORD_IN_LIST;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.TABLE_COLUMN_SIZE;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.TREE_COLUMN_SIZE;
 import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.USE_DEFAULT_USERNAME;
@@ -55,7 +63,8 @@ public class JpwPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Display
 		theStore.setDefault(ALWAYS_ON_TOP, false);
-		theStore.setDefault(SHOW_PASSWORD_IN_LIST, false);
+		theStore.setDefault(SHOW_NOTES_IN_LIST, true);
+		theStore.setDefault(SHOW_NOTES_IN_EDIT_MODE, true);
 		theStore.setDefault(SHOW_PASSWORD_IN_EDIT_MODE, false);
 		theStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, true);
 		theStore.setDefault(TREE_COLUMN_SIZE, 150); 
