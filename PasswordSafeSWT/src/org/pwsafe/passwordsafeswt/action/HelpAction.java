@@ -22,12 +22,15 @@ public class HelpAction extends Action {
         super(Messages.getString("HelpAction.Label")); //$NON-NLS-1$
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_help.gif"))); //$NON-NLS-1$
         setToolTipText(Messages.getString("HelpAction.Tooltip")); //$NON-NLS-1$
+        // TODO once it's working, enable it...
+        setEnabled(false);
     }
 
     /**
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    @Override
+	public void run() {
         final PasswordSafeJFace app = PasswordSafeJFace.getApp();
         //TODO show help here...
     }
