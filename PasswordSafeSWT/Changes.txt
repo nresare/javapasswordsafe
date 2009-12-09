@@ -1,5 +1,11 @@
 Changes:
 
+- fixed unlocking minized window: Enter passphrase once (Trac Ticket 18)
+- PasswordsafeSWT is now minimized when locked (fixes Trac Ticket 14 when working without tray icon)
+- added hide notes column display preference (Feature 2710943)
+- removed show password column display preference
+- enabled 64bit version on Mac OSX 10.6.2 (Bug #2908145)
+
 changes in swt 0.8 beta 3 (27.11.2009)
 - added open url action to menu toolbar and context menu
 - open jpwsafe website should now work in Linux KDE desktop (Java 6)

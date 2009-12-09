@@ -1334,6 +1334,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						//e.doit = false;
 						unlockDbAction.run();
 					}
+					if (getShell().getMinimized()) {
+						getShell().setMinimized(false);
+					}
 				} finally {
 					unlocking = false;
 				}

@@ -44,10 +44,17 @@ public class LockDbAction extends Action {
     		@Override
 			public void run () {
     			//calls outer class, use the event tread
+    			//TODO: have minimize in an extra Timer, and with a shorter period that so that it won't
     			PasswordSafeJFace.getApp().getShell().getDisplay().syncExec(
     					new Runnable () {
     						public void run () {
-    							performLock();
+    							PasswordSafeJFace app = PasswordSafeJFace.getApp();
+    							if (! app.getShell().getMinimized()) {
+    								PasswordSafeJFace.getApp().getShell().setMinimized(true);
+    							}
+    							if (! app.isLocked()) {
+    								performLock();
+    							}
     						}
     					});
     			
