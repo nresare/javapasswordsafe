@@ -7,8 +7,6 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
-import java.util.Date;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -45,21 +43,24 @@ public class CopyUsernameAction extends Action {
         if (selected == null)
         	return;
  
-        // retrieve filled Entry for sparse
-        PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+        // TODO: only fetch a filled entry if username is not part of sparse fields (-> never).
+        PwsEntryBean theEntry;
+        if (selected.getUsername() != null && selected.getUsername().length() > 0) {
+        	theEntry = selected;
+        } else {// retrieve filled Entry for sparse
+        	theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+        }
 
         Clipboard cb = new Clipboard(app.getShell().getDisplay());
 
-        app.copyToClipboard(cb, theEntry, theEntry.getUsername());
+        app.copyToClipboard(cb, theEntry.getUsername());
 
-        cb.dispose();
-        
         final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
         final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) {
-        	theEntry.setLastAccess(new Date());
-        	app.updateRecord(theEntry);
+        if (recordAccessTime) { // this could/should be sent to a background thread
+        	app.updateAccessTime(theEntry);
         }
 
+        cb.dispose();        
     }
 }

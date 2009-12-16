@@ -606,34 +606,36 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 * @param cb
 	 *            handle to the clipboard
-	 * @param anEntry
-	 *            the pwsafe (non-sparse!) entry to copy from
 	 * @param valueToCopy
-	 *            the value in that entry to copy
+	 *            the value to copy to clipboard
 	 */
-	public void copyToClipboard(Clipboard cb, PwsEntryBean anEntry, String valueToCopy) {
-
-		if (anEntry != null) {
-
-			//set access date
-			if (!isReadOnly() && "3".equals(anEntry.getVersion())) {
-				if (anEntry.isSparse()) {
-					log.warn("ignoring sparse entry for updating access time in copyToClipboard", //$NON-NLS-1$
-							new IllegalArgumentException ("Sparse entry not allowed")); //$NON-NLS-1$
-				} else {
-					anEntry.setLastAccess(new Date());
-					dataStore.updateEntry(anEntry);
-				}
-			}
-			 			
-			if (valueToCopy != null) {
-				cb.setContents(new Object[]{valueToCopy}, new Transfer[]{TextTransfer.getInstance()});
-				log.debug("Copied to clipboard"); 
-			}
+	public void copyToClipboard(final Clipboard cb, final String valueToCopy) {			 			
+		//TODO: check whether to create the clipboard here in order to reset it later
+		if (valueToCopy != null) {
+			cb.setContents(new Object[]{valueToCopy}, new Transfer[]{TextTransfer.getInstance()});
+			log.debug("Copied to clipboard"); 
 		}
-
 	}
 
+	/**
+	 * Update the access time of an entry.
+	 * This method should be moved to PwsDatastore in V0.9.
+	 * @param anEntry to update the access time, may be sparse
+	 */
+	public void updateAccessTime(PwsEntryBean anEntry) {
+		if (anEntry != null) {
+			//set access date
+			if (!isReadOnly() && "3".equals(anEntry.getVersion())) {
+				// fetch the real entry if sparse
+				if (anEntry.isSparse()) {
+					anEntry = getPwsDataStore().getEntry(anEntry.getStoreIndex());
+				}				
+				anEntry.setLastAccess(new Date());
+				dataStore.updateEntry(anEntry);
+			}
+		}
+	}
+	
 	/**
 	 * Locates the selected record in the underlying tree or table control.
 	 * 
@@ -645,7 +647,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		if (isTreeViewShowing()) {
 			if (tree.getSelectionCount() == 1) {
-				TreeItem ti = tree.getSelection()[0];
+			TreeItem ti = tree.getSelection()[0];
 				Object treeData = ti.getData();
 				if (treeData != null && treeData instanceof PwsEntryBean) { // must be a left, not a group entry
 					recordToCopy = (PwsEntryBean) treeData;
@@ -672,6 +674,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		if (isDirty()) {
 			saveOnUpdateOrEditCheck();
 		}
+		//TODO: this should only be called if the the update changes visible fields
 		updateViewers();
 	}
 

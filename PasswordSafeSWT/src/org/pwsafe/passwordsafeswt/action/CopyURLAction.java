@@ -8,8 +8,6 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
@@ -32,7 +30,6 @@ public class CopyURLAction extends Action {
     public CopyURLAction() {
         super(Messages.getString("CopyURLAction.Label")); //$NON-NLS-1$
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_url.gif"))); //$NON-NLS-1$
-        // TODO: set disabled image
         setToolTipText(Messages.getString("CopyURLAction.Tooltip")); //$NON-NLS-1$
     }
 
@@ -63,27 +60,31 @@ public class CopyURLAction extends Action {
      */
     @Override
 	public void run() {
-        // todo: disable option if v1 or v2; URL only seems to be available in V3 files
-        PasswordSafeJFace app = PasswordSafeJFace.getApp();
+        // TODO: disable option if v1 or v2; URL only seems to be available in V3 files
+        final PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
-        PwsEntryBean selected = app.getSelectedRecord();
+        final PwsEntryBean selected = app.getSelectedRecord();
         if (selected == null)
         	return;
-        // retrieve filled Entry for sparse
-        PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+        
+        // TODO: only fetch a filled entry if URL is not part of sparse fields.
+        PwsEntryBean theEntry;
+        if (selected.getUrl() != null && selected.getUrl().length() > 0) {
+        	theEntry = selected;
+        } else {// retrieve filled Entry for sparse
+        	theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+        }
 
         Clipboard cb = new Clipboard(app.getShell().getDisplay());
 
-        app.copyToClipboard(cb, theEntry, theEntry.getUrl() );
+        app.copyToClipboard(cb, theEntry.getUrl() );
 
-        cb.dispose();
-        
         final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
         final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) {
-        	theEntry.setLastAccess(new Date());
-        	app.updateRecord(theEntry);
+        if (recordAccessTime) { // this could/should be sent to a background thread
+        	app.updateAccessTime(theEntry);
         }
 
+        cb.dispose();
     }
 }

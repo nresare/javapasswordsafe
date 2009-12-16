@@ -7,8 +7,6 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
-import java.util.Date;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -45,20 +43,18 @@ public class CopyPasswordAction extends Action {
         if (selected == null)
         	return;
  
-        // retrieve filled Entry for sparse
+        // retrieve filled Entry, always needed for passwords 
         PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
 
         Clipboard cb = new Clipboard(app.getShell().getDisplay());
 
-        app.copyToClipboard(cb, theEntry, theEntry.getPassword().toString());
+        app.copyToClipboard(cb, theEntry.getPassword().toString());
 
-        cb.dispose();
-        
         final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
         final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) {
-        	theEntry.setLastAccess(new Date());
-        	app.updateRecord(theEntry);
+        if (recordAccessTime) { // this could/should be sent to a background thread
+        	app.updateAccessTime(theEntry);
         }
+        cb.dispose();        
     }
 }

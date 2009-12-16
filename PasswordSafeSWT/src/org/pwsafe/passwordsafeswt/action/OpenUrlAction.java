@@ -8,8 +8,6 @@
  */
 package org.pwsafe.passwordsafeswt.action;
 
-import java.util.Date;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.Action;
@@ -32,7 +30,6 @@ public class OpenUrlAction extends Action {
     public OpenUrlAction() {
         super(Messages.getString("OpenUrlAction.Label")); //$NON-NLS-1$
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_openurl.gif"))); //$NON-NLS-1$
-        // TODO: set disabled image
         setToolTipText(Messages.getString("OpenUrlAction.Tooltip")); //$NON-NLS-1$
     }
     
@@ -41,7 +38,7 @@ public class OpenUrlAction extends Action {
 	 */
 	@Override
 	public boolean isEnabled() {
-		
+		// TODO: only enable if an URL is available
 		return super.isEnabled();
 	}
 
@@ -52,6 +49,7 @@ public class OpenUrlAction extends Action {
 	public void run() {
         PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
+        // TODO: this should check if URL is part of sparse fields
         PwsEntryBean selected = app.getSelectedRecord();
         if (selected == null || selected.getUrl() == null || selected.getUrl().length() == 0)
         	return;
@@ -60,10 +58,8 @@ public class OpenUrlAction extends Action {
         
         final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
         final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) {
-            PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
-        	theEntry.setLastAccess(new Date());
-        	app.updateRecord(theEntry);
+        if (recordAccessTime) {// this could/should be sent to a background thread
+        	app.updateAccessTime(selected);
         }
     }
 }
