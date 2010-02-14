@@ -3,13 +3,17 @@
  */
 package org.pwsafe.passwordsafeswt;
 
+import static org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.internal.Callback;
 import org.eclipse.swt.internal.carbon.HICommand;
 import org.eclipse.swt.internal.carbon.OS;
 import org.eclipse.swt.widgets.Display;
+import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
 import com.swtdesigner.SWTResourceManager;
 
@@ -172,7 +176,13 @@ public class PasswordSafeMacOSX extends PasswordSafeJFace
     log.info( "java.library.path is: ["
               + System.getProperty( "java.library.path" ) + "]" );
     log.info( "log: " + log.getClass().getName() );
+    
     try {
+	  //IMPORTANT: Disable Systray on mac
+	  IPreferenceStore prefStore = UserPreferences.getInstance().getPreferenceStore();
+	  prefStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, false);
+	  prefStore.setValue(SHOW_ICON_IN_SYSTEM_TRAY, false);
+
       PasswordSafeMacOSX window = new PasswordSafeMacOSX();
       window.setBlockOnOpen( true );
       window.open();
