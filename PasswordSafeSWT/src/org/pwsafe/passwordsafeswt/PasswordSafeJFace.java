@@ -1289,7 +1289,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	@Override
 	protected ShellListener getShellListener() {
 		return new ShellAdapter() {
-			boolean unlocking = false; 			
+			volatile private boolean unlocking = false; 			
 			
 			@Override
 			public void shellClosed(ShellEvent event) {
@@ -1321,8 +1321,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			
 			@Override
 			public void shellActivated(ShellEvent e) {
-				//TODO: avoid recalling when aborting unlock  
+				//TODO: avoid recalling when aborting unlock
+				log.trace("PWSJface shell listener enter 'Activated'"); //$NON-NLS-1$
+				   
 				if (unlocking) {
+					log.info("PWSJface shell listener 'Activated' - aborted because unlocking"); //$NON-NLS-1$
 					e.doit = false;
 					return;
 				}
@@ -1333,7 +1336,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						lockTask = null;
 					}
 					if (locked) {
-						log.info("PWSJface shell listener activating - unlocking"); //$NON-NLS-1$
+						log.info("PWSJface shell listener 'Activated' - unlocking"); //$NON-NLS-1$
 						//e.doit = false;
 						unlockDbAction.run();
 					}
@@ -1343,6 +1346,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				} finally {
 					unlocking = false;
 				}
+				log.trace("PWSJface shell listener leave 'Activated'"); //$NON-NLS-1$
 			}
 
 			/**
@@ -1353,7 +1357,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 */
 			@Override
 			public void shellDeactivated(ShellEvent e) {
+				log.trace("PWSJface shell listener enter 'Deactivated'"); //$NON-NLS-1$
+
 				startLockTimer();
+				log.trace("PWSJface shell listener leave 'Deactivated'"); //$NON-NLS-1$
 			}
 			
 
@@ -1365,11 +1372,13 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 *
 			 * @param e an event containing information about the un-minimization
 			 */
-/*			
+			
 			@Override
 			public void shellDeiconified(ShellEvent e) {
+				log.trace("PWSJface shell listener enter 'Deiconified'"); //$NON-NLS-1$
 				
 				if (unlocking) {
+					log.info("PWSJface shell listener deiconify - abort because of unlocking"); //$NON-NLS-1$
 					e.doit = false;
 					return;
 				}
@@ -1381,15 +1390,17 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					unlocking = true;
 					try {
 						log.info("PWSJface shell listener deiconify - unlocking"); //$NON-NLS-1$
-						//e.doit unlocked = unlockDbAction.performUnlock();
-						e.doit = false;
-						Display.getDefault().asyncExec(unlockDbAction);
+						e.doit = unlockDbAction.performUnlock();
+						//e.doit = false;
+						//Display.getDefault().asyncExec(unlockDbAction);
 					} finally {
 						unlocking = false;
 					}
-				}					
+				}
+				log.trace("PWSJface shell listener leave 'Deiconified'"); //$NON-NLS-1$
+
 			}
-	`/		
+
 
 			/**
 			 * Sent when a shell is minimized.
@@ -1399,6 +1410,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			 */
 			@Override
 			public void shellIconified(ShellEvent e) {
+				log.trace("PWSJface shell listener enter 'Iconified'"); //$NON-NLS-1$
+				RuntimeException r = new RuntimeException();
+				r.fillInStackTrace();
+				System.out.println(r);
+
 				final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 				if (thePrefs.getBoolean(JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN)) {
 					clearClipboardAction.run();
@@ -1427,8 +1443,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					lockDbAction.performLock();
 				}
 				startLockTimer();
-				
-
+				log.trace("PWSJface shell listener leave 'Iconified'"); //$NON-NLS-1$
 			}
 			
 			private void startLockTimer() {
