@@ -178,10 +178,11 @@ public class PasswordSafeMacOSX extends PasswordSafeJFace
     log.info( "log: " + log.getClass().getName() );
     
     try {
-	  //IMPORTANT: Disable Systray on mac
-	  IPreferenceStore prefStore = UserPreferences.getInstance().getPreferenceStore();
-	  prefStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, false);
-	  prefStore.setValue(SHOW_ICON_IN_SYSTEM_TRAY, false);
+	  //IMPORTANT: Disable Systray on mac, see 
+      // PasswordSafeJFace.getShellListener.shellIconified
+	  IPreferenceStore thePrefs = UserPreferences.getInstance().getPreferenceStore();
+	  thePrefs.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, false);
+	  thePrefs.setValue(SHOW_ICON_IN_SYSTEM_TRAY, false);
 
       PasswordSafeMacOSX window = new PasswordSafeMacOSX();
       window.setBlockOnOpen( true );

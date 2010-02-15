@@ -1405,15 +1405,17 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			/**
 			 * Sent when a shell is minimized.
 			 * The default behavior is to do nothing.
+			 * <br>
+			 * On Mac Carbon, this is called the first time when disposing 
+			 * the password dialogue when reactivating from Systray.
+			 * The second time it is not called. Still no good, therefore 
+			 * Systray on Mac is blocked - see PasswordSafeMacOSX.main.
 			 *
 			 * @param e an event containing information about the minimization
 			 */
 			@Override
 			public void shellIconified(ShellEvent e) {
 				log.trace("PWSJface shell listener enter 'Iconified'"); //$NON-NLS-1$
-				RuntimeException r = new RuntimeException();
-				r.fillInStackTrace();
-				System.out.println(r);
 
 				final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 				if (thePrefs.getBoolean(JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN)) {
