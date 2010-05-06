@@ -88,6 +88,7 @@ public class PasswordDialog extends Dialog {
 		formData.top = new FormAttachment(0, 5);
 		formData.right = new FormAttachment(100, -5);
 		formData.left = new FormAttachment(0, 5);
+		formData.width = 360;
 		label.setLayoutData(formData);
 		label.setText(purposeText + " " + shortFileName); //$NON-NLS-1$;
 		label.setToolTipText(fileName);
