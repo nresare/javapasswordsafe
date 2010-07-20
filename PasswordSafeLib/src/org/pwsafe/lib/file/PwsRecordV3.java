@@ -11,7 +11,10 @@ package org.pwsafe.lib.file;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.pwsafe.lib.Log;
 import org.pwsafe.lib.UUID;
@@ -152,6 +155,8 @@ public class PwsRecordV3 extends PwsRecord
 		new Object [] { Integer.valueOf(PASSWORD_EXPIRY_INTERVAL),	"PASSWORD_EXPIRY_INTERVAL",		PwsStringUnicodeField.class },
 	};
 	
+	static public Set<PwsFieldTypeV3> MANDATORY_FIELDS = EnumSet.of(PwsFieldTypeV3.UUID,
+			PwsFieldTypeV3.TITLE, PwsFieldTypeV3.PASSWORD, PwsFieldTypeV3.CREATION_TIME);
 
 	/**
 	 * Create a new record with all mandatory fields given their default value.
@@ -478,8 +483,10 @@ public class PwsRecordV3 extends PwsRecord
 	/**
 	 * Sets a field on this record from <code>item</code>.
 	 * 
+	 * @deprecated
 	 * @param item the <code>Item</code> containg the field's data.
 	 */
+	@Deprecated
 	@Override
 	protected void setField( Item item )
 	{
@@ -538,21 +545,17 @@ public class PwsRecordV3 extends PwsRecord
 	@Override
 	public String toString()
 	{
-		StringBuffer	sb;
+		StringBuilder	sb;
 		boolean			first;
 
 		first	= true;
-		sb		= new StringBuffer();
+		sb		= new StringBuilder();
 
 		sb.append( "{ " );
-		
-		for ( Iterator iter = getFields(); iter.hasNext(); )
-		{
-			Integer	key;
-			String	value;
 
-			key		= (Integer) iter.next();
-			value	= getField( key ).toString();
+		for ( Map.Entry<Integer, PwsField> entry : attributes.entrySet() )
+		{
+			String value	= entry.getValue().toString();
 
 			if ( !first )
 			{
@@ -560,7 +563,7 @@ public class PwsRecordV3 extends PwsRecord
 			}
 			first	= false;
 
-			sb.append( ((Object[])VALID_TYPES[key.intValue()])[1] );
+			sb.append( ((Object[])VALID_TYPES[entry.getKey().intValue()])[1] );
 			sb.append( "=" );
 			sb.append( value );
 		}

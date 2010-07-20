@@ -1,5 +1,5 @@
 /*
- * $Id:$
+ * $Id$
  * 
  * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
@@ -50,5 +50,13 @@ public enum PwsFieldTypeV3 implements PwsFieldType {
 	public String getName() {
 
 		return name;
+	}
+	
+	public static PwsFieldTypeV3 valueOf (int anId) {
+		if (anId == 255) {
+			return END_OF_RECORD;
+		} else {			
+			return values()[anId];
+		}
 	}
 }

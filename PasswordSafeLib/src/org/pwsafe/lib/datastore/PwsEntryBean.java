@@ -444,9 +444,36 @@ public class PwsEntryBean implements Cloneable {
 		return true;
 	}
 
+    /**
+     * Only set a (utf8) String into a PwsTimeField if it is != null and != "".  
+     * 
+     * 
+     * @param v3
+     * @param aType
+     * @param aString
+     * @return true if the string != null && != "", else false 
+     */
+	private boolean setSafeString(final PwsRecordV3 v3, final int aType, final String aString) {
+		if (aString == null || aString.equals("")) {
+			
+			// Remove not possible yet, need to extend PwsRecord first 
+			// If a String wont't be set and is not a mandatory field, 
+		    // check to see if there is an entry of that type in the PwsRecord and 
+			// remove it. 
+			PwsField field = v3.getField(aType);
+			if (field != null && field instanceof PwsStringUnicodeField) {
+//					! PwsRecordV3.MANDATORY_FIELDS.contains(PwsFieldTypeV3.valueOf(aType))) {
+//				v3.removeField(aType);
+				v3.setField(new PwsStringUnicodeField(aType, ""));	
+			}
+			return false;
+		}
+		v3.setField(new PwsStringUnicodeField(aType, aString));
+		return true;
+	}
     
 	/**
-     * Moves the contents of the DTO into the supplied PwsRecord.
+     * Moves the contents of the PwsEntryBean into the supplied PwsRecord.
      * 
 	 * @param nextRecord the record to place the data into
 	 */
@@ -455,14 +482,14 @@ public class PwsEntryBean implements Cloneable {
 		if (nextRecord instanceof PwsRecordV3) {
 			
             PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.GROUP , getGroup()));// + '\u0000'));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.TITLE , getTitle()));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.USERNAME , getUsername()));
+            setSafeString(v3, PwsRecordV3.GROUP , getGroup());// + '\u0000'));
+            setSafeString(v3, PwsRecordV3.TITLE , getTitle());
+            setSafeString(v3, PwsRecordV3.USERNAME , getUsername());
             v3.setField(new PwsStringUnicodeField(PwsRecordV3.PASSWORD , getPassword()));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.NOTES , getNotes()));
+            setSafeString(v3, PwsRecordV3.NOTES , getNotes());
+            setSafeString(v3, PwsRecordV3.URL , getUrl());
+            setSafeString(v3, PwsRecordV3.AUTOTYPE , getAutotype());
             
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.URL , getUrl()));
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.AUTOTYPE , getAutotype()));
             setSafeDate(v3,PwsRecordV3.LAST_ACCESS_TIME, getLastAccess());
             setSafeDate(v3,PwsRecordV3.LAST_MOD_TIME, getLastChange());
             setSafeDate(v3,PwsRecordV3.PASSWORD_MOD_TIME, getLastPwChange());

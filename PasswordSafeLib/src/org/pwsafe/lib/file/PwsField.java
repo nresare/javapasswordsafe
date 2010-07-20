@@ -29,35 +29,35 @@ public abstract class PwsField implements Comparable, Serializable
 {
 //	private static final Log LOG = Log.getInstance(PwsField.class.getPackage().getName());
 
-	private Object	Value	= null;
-	private final int Type;
+	private Object	value	= null;
+	private final int type;
 
 	/**
 	 * Creates the field object.
 	 * 
-	 * @param type  the field type.
+	 * @param aType  the field type.
 	 * @param value the field value.
 	 */
-	protected PwsField( int type, Object value )
+	protected PwsField( int aType, Object aValue )
 	{
 		super();
 
-		Type	= type;
-		Value	= value;
+		type	= aType;
+		value	= aValue;
 	}
 
 	/**
 	 * Creates the field object.
 	 * 
-	 * @param type  the field type.
+	 * @param aType  the field type.
 	 * @param value the field value.
 	 */
-	protected PwsField( PwsFieldType type, Object value )
+	protected PwsField( PwsFieldType aType, Object aValue )
 	{
 		super();
 
-		Type	= type.getId();
-		Value	= value;
+		type	= aType.getId();
+		value	= aValue;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public abstract class PwsField implements Comparable, Serializable
 	 */
 	public int getType()
 	{
-		return Type;
+		return type;
 	}
 
 	/**
@@ -93,18 +93,41 @@ public abstract class PwsField implements Comparable, Serializable
 	 */
 	public Object getValue()
 	{
-		return Value;
+		return value;
 	}
 
-	/**
-	 * Returns a hash code for this object.
-	 * 
-	 * @return the hash code for the object.
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
-	public int hashCode()
-	{
-		return Value.hashCode();
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + type;
+		result = (value == null) ? result : prime * result + value.hashCode();
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PwsField other = (PwsField) obj;
+		if (type != other.type)
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
+			return false;
+		return true;
 	}
 
 	/**
@@ -115,6 +138,6 @@ public abstract class PwsField implements Comparable, Serializable
 	@Override
 	public String toString()
 	{
-		return Value.toString();
+		return value == null ? "null" : value.toString();
 	}
 }

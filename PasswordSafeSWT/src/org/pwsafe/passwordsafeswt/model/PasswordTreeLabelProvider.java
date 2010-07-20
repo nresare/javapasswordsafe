@@ -12,10 +12,10 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.pwsafe.lib.datastore.PwsEntryBean;
+import org.pwsafe.lib.file.PwsFieldTypeV2;
+import org.pwsafe.lib.file.PwsFieldTypeV3;
 import org.pwsafe.lib.file.PwsRecord;
-import org.pwsafe.lib.file.PwsRecordV2;
 import org.pwsafe.lib.file.PwsRecordV3;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
 
 /**
  * Label provider for tree viewer.
@@ -47,9 +47,9 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
 		} else if (node instanceof PwsRecord) { // deprecated
 		    PwsRecord record = (PwsRecord) node;
         	if (record instanceof PwsRecordV3) {
-        		result = PwsEntryDTO.getSafeValue(record, PwsRecordV3.TITLE);
+        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV3.TITLE);
         	} else {
-        		result = PwsEntryDTO.getSafeValue(record, PwsRecordV2.TITLE);	
+        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV2.TITLE);	
         	}
 		} 
         return result;
@@ -110,9 +110,9 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
               } else if (element instanceof PwsRecord) { // deprecated
                 PwsRecord record = (PwsRecord) element;
                 if (record instanceof PwsRecordV3) {
-                	result = PwsEntryDTO.getSafeValue(record, PwsRecordV3.TITLE);
+                	result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV3.TITLE);
                 } else {
-                	result = PwsEntryDTO.getSafeValue(record, PwsRecordV2.TITLE);
+                	result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV2.TITLE);
                 }
             } else if (element instanceof PasswordTreeContentProvider.TreeGroup) {
                 result = element.toString();
@@ -124,9 +124,9 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
                 result = theEntry.getUsername();
         	} else if (element instanceof PwsRecord) {// deprecated
             	if (element instanceof PwsRecordV3) {
-            		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV3.USERNAME);
+            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV3.USERNAME);
             	} else {
-            		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV2.USERNAME);	
+            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV2.USERNAME);	
             	}
             }
             break;
@@ -136,9 +136,9 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
                 result = theEntry.getNotes();
         	} else if (element instanceof PwsRecord) {// deprecated
             	if (element instanceof PwsRecordV3) {
-            		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV3.NOTES);
+            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV3.NOTES);
             	} else {
-            		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV2.NOTES);	
+            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV2.NOTES);	
             	}
             }
         	result = result.replace('\t',' ').replace('\r', ' ');//.replace('\n',' ')
@@ -149,9 +149,9 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
                 result = theEntry.getPassword() != null ? theEntry.getPassword().toString() : null;
         	} else if (element instanceof PwsRecord) {// deprecated
             	if (element instanceof PwsRecordV3) {
-            		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV3.PASSWORD);
+            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV3.PASSWORD);
             	} else {
-            		result = PwsEntryDTO.getSafeValue((PwsRecord) element, PwsRecordV2.PASSWORD);	
+            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV2.PASSWORD);	
             	}
             }
             break;

@@ -436,9 +436,11 @@ public abstract class PwsRecord implements Comparable, Serializable, Cloneable {
 	/**
 	 * Sets a field on this record from <code>item</code>.
 	 * 
+	 * @deprecated never used
 	 * @param item
 	 *            the <code>Item</code> containg the field's data.
 	 */
+	@Deprecated
 	protected void setField(Item item) {
 		setField(new PwsStringField(item.getType(), item.getData()));
 	}

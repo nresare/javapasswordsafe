@@ -70,6 +70,9 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.datastore.PwsEntryStore;
 import org.pwsafe.lib.exception.PasswordSafeException;
+import org.pwsafe.lib.file.PwsFieldTypeV1;
+import org.pwsafe.lib.file.PwsFieldTypeV2;
+import org.pwsafe.lib.file.PwsFieldTypeV3;
 import org.pwsafe.lib.file.PwsFile;
 import org.pwsafe.lib.file.PwsFileFactory;
 import org.pwsafe.lib.file.PwsFileStorage;
@@ -104,7 +107,6 @@ import org.pwsafe.passwordsafeswt.action.ViewAsListAction;
 import org.pwsafe.passwordsafeswt.action.ViewAsTreeAction;
 import org.pwsafe.passwordsafeswt.action.VisitPasswordSafeWebsiteAction;
 import org.pwsafe.passwordsafeswt.dialog.StartupDialog;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
 import org.pwsafe.passwordsafeswt.listener.TableColumnSelectionAdaptor;
 import org.pwsafe.passwordsafeswt.listener.ViewerDoubleClickListener;
 import org.pwsafe.passwordsafeswt.model.PasswordTableContentProvider;
@@ -1089,14 +1091,19 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				
 				if (nextRecord instanceof PwsRecordV1) {
 					nextEntry.add(V1_GROUP_PLACEHOLDER);
-					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV1.TITLE));
-					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV1.USERNAME));
-					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV1.PASSWORD));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV1.TITLE));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV1.USERNAME));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV1.PASSWORD));
+				} else if (nextRecord instanceof PwsRecordV2) {
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV2.GROUP));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV2.TITLE));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV2.USERNAME));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV2.PASSWORD));
 				} else {
-					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.GROUP));
-					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.TITLE));
-					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.USERNAME));
-					nextEntry.add(PwsEntryDTO.getSafeValue(nextRecord, PwsRecordV2.PASSWORD));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV3.GROUP));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV3.TITLE));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV3.USERNAME));
+					nextEntry.add(PwsEntryBean.getSafeValue(nextRecord, PwsFieldTypeV3.PASSWORD));
 				}
 				String[] nextLine = nextEntry.toArray(new String[0]);
 				csvWriter.writeNext(nextLine);
@@ -1136,16 +1143,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		PwsFile pwsFile = getPwsFile();
 		while ((nextLine = csvReader.readNext()) != null) {
 			if (nextLine.length < 2) continue; // ignore blank lines
-			PwsRecord newRecord = pwsFile.newRecord();
-			PwsEntryDTO entry = new PwsEntryDTO();
+			PwsEntryBean entry = PwsEntryBean.fromPwsRecord(getPwsFile().newRecord());
+			entry.setSparse(false);
 			if (!nextLine[0].equals(V1_GROUP_PLACEHOLDER)) {
 				entry.setGroup(nextLine[0]);
 			}
 			entry.setTitle(nextLine[1]);
 			entry.setUsername(nextLine[2]);
-			entry.setPassword(nextLine[3]);
-			entry.toPwsRecord(newRecord);
-			pwsFile.add(newRecord);
+			entry.setPassword(new StringBuilder(nextLine[3]));
+			getPwsDataStore().addEntry(entry);
 		}
 		} catch (Exception e) {
 			
@@ -1210,14 +1216,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
         }
 
 		XMLDataParser xdp = new XMLDataParser();
-		PwsEntryDTO[] entries = xdp.parse(utf8String);
+		PwsEntryBean[] entries = xdp.parse(utf8String);
 		if (entries != null && entries.length > 0) {
 			PwsFile pwsFile = getPwsFile();
-			for (int i = 0; i < entries.length; i++) {
-				PwsEntryDTO nextEntry = entries[i];
-				PwsRecord newRecord = pwsFile.newRecord();
-				nextEntry.toPwsRecord(newRecord);
-				pwsFile.add(newRecord);
+			for (PwsEntryBean entry : entries) {
+				entry.setSparse(false);
+				dataStore.addEntry(entry);
 			}
 			this.updateViewers();
 		}
@@ -1235,22 +1239,27 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		PwsFile pwsFile = getPwsFile();
 		if (pwsFile != null) {
-			List<PwsEntryDTO> entryList = new ArrayList<PwsEntryDTO>();
-			for (Iterator<? extends PwsRecord> iter = pwsFile.getRecords(); iter.hasNext();) {
-				PwsEntryDTO nextDTO = PwsEntryDTO.fromPwsRecord(iter.next());
+			List<PwsEntryBean> sparseEntries = dataStore.getSparseEntries();
+			List<PwsEntryBean> entryList = new ArrayList<PwsEntryBean>(sparseEntries.size());
+			for (PwsEntryBean sparseEntry : sparseEntries) {
+				PwsEntryBean nextDTO = dataStore.getEntry(sparseEntry.getStoreIndex());
 				entryList.add(nextDTO);
 			}
 			XMLDataParser xdp = new XMLDataParser();
-			String xmlOutput = xdp.convertToXML(entryList.toArray(new PwsEntryDTO[0]));
+			String xmlOutput = xdp.convertToXML(entryList);
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(filename));
 			// output the UTF-8 BOM byte by byte directly to the stream
 			// http://tech.badpen.com/index.cfm?mode=entry&entry=21
 			dos.write(239); // 0xEF
 			dos.write(187); // 0xBB
 			dos.write(191); // 0xBF
-			dos.write(xmlOutput.getBytes());
+			dos.write(xmlOutput.getBytes("UTF-8"));
 			dos.close();
-
+			
+			// TODO: Dispose entries !
+//			for (PwsEntryBean entry : entryList) {
+//				entry.dispose();
+//			}
 		}
 
 	}

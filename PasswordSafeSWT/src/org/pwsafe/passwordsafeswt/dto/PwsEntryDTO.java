@@ -8,10 +8,10 @@
 package org.pwsafe.passwordsafeswt.dto;
 
 import java.util.Date;
-import org.pwsafe.lib.UUID;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pwsafe.lib.UUID;
 import org.pwsafe.lib.file.PwsField;
 import org.pwsafe.lib.file.PwsRecord;
 import org.pwsafe.lib.file.PwsRecordV1;
@@ -26,8 +26,10 @@ import org.pwsafe.lib.file.PwsUUIDField;
  * Convenience class for transferring password info around in a 
  * version-independent manner.
  * 
+ * @deprecated use org.pwsafe.lib.datastore.PwsEntryBean instead!
  * @author Glen Smith
  */
+@Deprecated
 public class PwsEntryDTO {
     
 	private static final Log log = LogFactory.getLog(PwsEntryDTO.class);
@@ -209,6 +211,7 @@ public class PwsEntryDTO {
 
     
     
+	@Override
 	public String toString() {
 		StringBuffer all = new StringBuffer (200);
 		all.append("PwsEntryDTO ").append(version).append(": ID ");

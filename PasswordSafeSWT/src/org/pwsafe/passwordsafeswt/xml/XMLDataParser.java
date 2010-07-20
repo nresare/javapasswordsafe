@@ -26,7 +26,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
+import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -71,35 +71,43 @@ public class XMLDataParser {
 
 		Stack tagStack = new Stack();
 
-		PwsEntryDTO entryDTO = new PwsEntryDTO();
+		PwsEntryBean entryDTO = new PwsEntryBean();
 
 		List entryList = new ArrayList();
 		
-		StringBuffer tagContent = new StringBuffer();
+		StringBuilder tagContent = new StringBuilder();
+
+		
+		public XMLDataParserHandler() {
+			super();
+			entryDTO.setSparse(false);
+		}
 
 		/**
 		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
 		 *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
+		@Override
 		public void startElement(String uri, String localName, String qName,
 				Attributes attrs) throws SAXException {
 			tagStack.push(qName);
 			if (qName.startsWith(ENTRY_TAG)
 					&& tagStack.search(LIST_TAG) == PARENT_NODE) {
-				entryDTO = new PwsEntryDTO();
+				entryDTO = new PwsEntryBean();
 			}
 			if (qName.startsWith(GROUP_TAG)
 					&& tagStack.search(ENTRY_TAG) == PARENT_NODE) {
 				String treeName = attrs.getValue(TREE_ATTR);
 				entryDTO.setGroup(treeName);
 			}
-			tagContent = new StringBuffer();
+			tagContent.setLength(0);
 		}
 
 		/**
 		 * @see org.xml.sax.helpers.DefaultHandler#endElement(java.lang.String,
 		 *      java.lang.String, java.lang.String)
 		 */
+		@Override
 		public void endElement(String uri, String localName, String qName)
 				throws SAXException {
 			
@@ -109,27 +117,27 @@ public class XMLDataParser {
 			
 			String prevTag = (String) tagStack.peek();
 			
-			String xmlText = tagContent.toString();
+			tagContent.toString();
 
 			if (prevTag.equalsIgnoreCase(GROUP_TAG)) {
 				if (tagStack.search(ENTRY_TAG) == PARENT_NODE) {
-					entryDTO.setGroup(xmlText);
+					entryDTO.setGroup(tagContent.toString());
 				}
 			} else if (prevTag.equalsIgnoreCase(TITLE_TAG)) {
 				if (tagStack.search(ENTRY_TAG) == PARENT_NODE) {
-					entryDTO.setTitle(xmlText);
+					entryDTO.setTitle(tagContent.toString());
 				}
 			} else if (prevTag.equalsIgnoreCase(USERNAME_TAG)) {
 				if (tagStack.search(ENTRY_TAG) == PARENT_NODE) {
-					entryDTO.setUsername(xmlText);
+					entryDTO.setUsername(tagContent.toString());
 				}
 			} else if (prevTag.equalsIgnoreCase(PASSWORD_TAG)) {
 				if (tagStack.search(ENTRY_TAG) == PARENT_NODE) {
-					entryDTO.setPassword(xmlText);
+					entryDTO.setPassword(new StringBuilder(tagContent));
 				}
 			} else if (prevTag.equalsIgnoreCase(NOTES_TAG)) {
 				if (tagStack.search(ENTRY_TAG) == PARENT_NODE) {
-					entryDTO.setNotes(xmlText);
+					entryDTO.setNotes(tagContent.toString());
 				}
 			}
 			
@@ -140,6 +148,7 @@ public class XMLDataParser {
 		/**
 		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 		 */
+		@Override
 		public void characters(char[] ch, int start, int length)
 				throws SAXException {
 
@@ -153,9 +162,9 @@ public class XMLDataParser {
 	/**
 	 * @see au.gov.centrelink.itsecurity.tokenservice.saml.SubjectConfirmationDataParser#parse(java.lang.String)
 	 */
-	public PwsEntryDTO[] parse(String incomingXMLString) {
+	public PwsEntryBean[] parse(String incomingXMLString) {
 
-		PwsEntryDTO[] entries = null;
+		PwsEntryBean[] entries = null;
 
 		try {
 			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser()
@@ -167,8 +176,8 @@ public class XMLDataParser {
 			InputSource is = new InputSource(
 					new StringReader(incomingXMLString));
 			xmlReader.parse(is);
-			entries = (PwsEntryDTO[]) xmlHandler.entryList
-					.toArray(new PwsEntryDTO[0]);
+			entries = (PwsEntryBean[]) xmlHandler.entryList
+					.toArray(new PwsEntryBean[0]);
 		} catch (Exception e) {
 			// Almost certainly related issues parsing the XML.
 			throw new RuntimeException(e);
@@ -176,7 +185,7 @@ public class XMLDataParser {
 		return entries;
 	}
 
-	public String convertToXML(PwsEntryDTO[] entries) {
+	public String convertToXML(Iterable<PwsEntryBean> entries) {
 
 		String outputString = "";
 
@@ -191,9 +200,8 @@ public class XMLDataParser {
 
 		Element list = doc.createElement(LIST_TAG);
 
-		for (int i = 0; i < entries.length; i++) {
+		for (PwsEntryBean nextEntry : entries) {
 
-			PwsEntryDTO nextEntry = entries[i];
 			Element el = doc.createElement(ENTRY_TAG);
 
 			Element groupTag = doc.createElement(GROUP_TAG);
@@ -210,7 +218,7 @@ public class XMLDataParser {
 
 			Element passwordTag = doc.createElement(PASSWORD_TAG);
 			passwordTag
-					.appendChild(doc.createTextNode(nextEntry.getPassword()));
+					.appendChild(doc.createTextNode(nextEntry.getPassword().toString()));
 			el.appendChild(passwordTag);
 			
 			Element notesTag = doc.createElement(NOTES_TAG);

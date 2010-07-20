@@ -13,10 +13,12 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.pwsafe.lib.datastore.PwsEntryBean;
+import org.pwsafe.lib.file.PwsFieldTypeV1;
+import org.pwsafe.lib.file.PwsFieldTypeV2;
+import org.pwsafe.lib.file.PwsFieldTypeV3;
 import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsRecordV2;
 import org.pwsafe.lib.file.PwsRecordV3;
-import org.pwsafe.passwordsafeswt.dto.PwsEntryDTO;
 
 /**
  * Label Provider for the password Table.
@@ -60,46 +62,46 @@ public class PasswordTableLabelProvider implements ITableLabelProvider {
 			PwsRecordV3 v3 = (PwsRecordV3) element;
 			switch(columnIndex) {
 				case 0:
-					columnString =  PwsEntryDTO.getSafeValue(v3,PwsRecordV3.TITLE);
+					columnString =  PwsEntryBean.getSafeValue(v3,PwsFieldTypeV3.TITLE);
 					break;
 			    case 1:
-			    	columnString =  PwsEntryDTO.getSafeValue(v3,PwsRecordV3.USERNAME);
+			    	columnString =  PwsEntryBean.getSafeValue(v3,PwsFieldTypeV3.USERNAME);
 			    	break;
 			    case 2:
-			    	columnString = PwsEntryDTO.getSafeValue(v3,PwsRecordV3.NOTES);
+			    	columnString = PwsEntryBean.getSafeValue(v3,PwsFieldTypeV3.NOTES);
 			    	break;
 			    case 3:
-			    	columnString = PwsEntryDTO.getSafeValue(v3,PwsRecordV3.PASSWORD);
+			    	columnString = PwsEntryBean.getSafeValue(v3,PwsFieldTypeV3.PASSWORD);
 			}
 		} else if (element instanceof PwsRecordV2) {
 			PwsRecordV2 v2 = (PwsRecordV2) element;
 			switch(columnIndex) {
 				case 0:
-					columnString =  PwsEntryDTO.getSafeValue(v2,PwsRecordV2.TITLE);
+					columnString =  PwsEntryBean.getSafeValue(v2,PwsFieldTypeV2.TITLE);
 					break;
 			    case 1:
-			    	columnString =  PwsEntryDTO.getSafeValue(v2,PwsRecordV2.USERNAME);
+			    	columnString =  PwsEntryBean.getSafeValue(v2,PwsFieldTypeV2.USERNAME);
 			    	break;
 			    case 2:
-			    	columnString = PwsEntryDTO.getSafeValue(v2,PwsRecordV2.NOTES);
+			    	columnString = PwsEntryBean.getSafeValue(v2,PwsFieldTypeV2.NOTES);
 			    	break;
 			    case 3:
-			    	columnString = PwsEntryDTO.getSafeValue(v2,PwsRecordV2.PASSWORD);
+			    	columnString = PwsEntryBean.getSafeValue(v2,PwsFieldTypeV2.PASSWORD);
 			}
 		} else {
 			PwsRecordV1 v1 = (PwsRecordV1) element;
 			switch(columnIndex) {
 				case 0:
-					columnString = PwsEntryDTO.getSafeValue(v1,PwsRecordV1.TITLE);
+					columnString = PwsEntryBean.getSafeValue(v1,PwsFieldTypeV1.TITLE);
 					break;
 			    case 1:
-			    	columnString = PwsEntryDTO.getSafeValue(v1,PwsRecordV1.USERNAME);
+			    	columnString = PwsEntryBean.getSafeValue(v1,PwsFieldTypeV1.USERNAME);
 			    	break;
 			    case 2:
-			    	columnString = PwsEntryDTO.getSafeValue(v1,PwsRecordV1.NOTES);
+			    	columnString = PwsEntryBean.getSafeValue(v1,PwsFieldTypeV1.NOTES);
 			    	break;
 			    case 3:
-			    	columnString = PwsEntryDTO.getSafeValue(v1,PwsRecordV1.PASSWORD);
+			    	columnString = PwsEntryBean.getSafeValue(v1,PwsFieldTypeV1.PASSWORD);
 			    	break;
 			}
 			

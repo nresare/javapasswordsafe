@@ -23,6 +23,7 @@ public class AllFileTests {
 		suite.addTestSuite(StreamTests.class);
 		suite.addTestSuite(PwsFieldTest.class);
 		suite.addTestSuite(InMemoryKeyTest.class);
+		suite.addTestSuite(PwsFieldTypeTest.class);
 		//$JUnit-END$
 		return suite;
 	}

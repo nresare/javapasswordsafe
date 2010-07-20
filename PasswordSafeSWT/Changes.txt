@@ -1,10 +1,16 @@
 Changes:
 
+- fixed import from plain text and xml problem (Bug #3025261) 
+- Safe Combination Setup dialog width maximum set (Bug #2980874)
+
+changes in swt 0.8 beta 4 (15.02.2010)
 - Disable systray on MacOSX Carbon (preference is overriden/ignored)
-- fixed unlocking minized window: Enter passphrase once (Trac Ticket 18)
+- fixed unlocking minimized window: Enter passphrase once (Trac Ticket 18)
 - PasswordsafeSWT is now minimized when locked (fixes Trac Ticket 14 when working without tray icon)
 - added hide notes column display preference (Feature 2710943)
 - removed show password column display preference
+- changed accelerator key for Open and Copy URL actions to CTRL-L and CTRL-ALT-L, respectively 
+- avoid screen updates when updating an entries access time
 - enabled 64bit version on Mac OSX 10.6.2 (Bug #2908145)
 
 changes in swt 0.8 beta 3 (27.11.2009)

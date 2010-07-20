@@ -76,6 +76,9 @@ public class PwsFieldTest extends TestCase {
 	
 		assertEquals(0, orig.compareTo(twin));
 		assertTrue(orig.compareTo(other) < 0);
+		
+		PwsStringUnicodeField nullField = new PwsStringUnicodeField(PwsRecordV3.GROUP, (StringBuilder) null);
+		assertEquals("null", nullField.toString());
 	}
 	
 	public void testPwsUUIDField () {
@@ -141,6 +144,7 @@ public class PwsFieldTest extends TestCase {
 		
 		assertEquals(0, orig.compareTo(twin));
 		assertTrue(orig.compareTo(other) != 0);
+		
 	}
 
 
