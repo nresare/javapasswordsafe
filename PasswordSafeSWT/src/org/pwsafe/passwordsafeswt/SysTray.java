@@ -95,8 +95,9 @@ public class SysTray {
 					if (mainShell.getVisible()) {
 						mainShell.setMinimized(true);					
 					} else if (unlockSuccessful()){
-						mainShell.setVisible(true);
+						// sequence important for Ubuntu netbook remix
 						mainShell.setMinimized(false);
+						mainShell.setVisible(true);
 					}
 
 				}
@@ -110,8 +111,9 @@ public class SysTray {
 					public void widgetSelected(SelectionEvent arg0) {
 						final Shell mainShell = getPwsMainShell ();
 						if (unlockSuccessful()) {
-							mainShell.setVisible(true);
+							// sequence important for Ubuntu netbook remix
 							mainShell.setMinimized(false);
+							mainShell.setVisible(true);
 						}
 					}
 				});
