@@ -43,8 +43,13 @@ public class EditRecordAction extends Action {
         if (selectedRecord != null) {
         	final PwsEntryBean filledEntry = app.getPwsDataStore().getEntry(selectedRecord.getStoreIndex());
             EditDialog dialogue = new EditDialog(app.getShell(), filledEntry);
-            final PwsEntryBean changedEntry = (PwsEntryBean) dialogue.open();
-
+            app.getLockStatus().addObserver(dialogue);
+            final PwsEntryBean changedEntry;
+            try {
+            	changedEntry = (PwsEntryBean) dialogue.open();
+            } finally {
+            	app.getLockStatus().deleteObserver(dialogue);
+            }
             if (! app.isReadOnly()) {
             	final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
             	final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);

@@ -116,6 +116,7 @@ import org.pwsafe.passwordsafeswt.model.PasswordTreeContentProvider;
 import org.pwsafe.passwordsafeswt.model.PasswordTreeLabelProvider;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 import org.pwsafe.passwordsafeswt.preference.WidgetPreferences;
+import org.pwsafe.passwordsafeswt.state.LockState;
 import org.pwsafe.passwordsafeswt.util.IOUtils;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 import org.pwsafe.passwordsafeswt.xml.XMLDataParser;
@@ -128,7 +129,7 @@ import com.swtdesigner.SWTResourceManager;
 /**
  * A port of PasswordSafe to JFace. This is the main class that is launched from
  * the commandline.
- * 
+ *
  * @author Glen Smith
  */
 public class PasswordSafeJFace extends ApplicationWindow {
@@ -138,7 +139,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	protected OptionsAction optionsAction;
 	private TreeViewer treeViewer;
 	private Tree tree;
-	
+
 	private HelpAction helpAction;
 	protected AboutAction aboutAction;
 	private ChangeSafeCombinationAction changeSafeCombinationAction;
@@ -168,7 +169,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private SysTray systemTray; 
 	private Composite composite;
 	
-	private volatile boolean locked = false;
+	private final LockState lockState = new LockState();
 	private boolean readOnly = false;
 	private final Timer lockTimer = new Timer("SWTPassword lock timer", true); //$NON-NLS-1$
 	private TimerTask lockTask;
@@ -771,7 +772,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * @return true if the application has been locked
 	 */
 	public boolean isLocked() {
-		return locked;
+		return lockState.isLocked();
 	}
 
 	/**
@@ -779,11 +780,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * 
 	 * @param sets the locked mode
 	 */
-	public void setLocked(boolean isLocked) {
-		locked = isLocked;
+	public void setLocked(final boolean isLocked) {
+		lockState.setLocked(isLocked);
 	}
 
-	/**
+    public LockState getLockStatus() {
+        return lockState;
+    }
+
+    /**
 	 * Is the Application in read only mode.
 	 * 
 	 * @return true if the safe is opened read only
@@ -1344,7 +1349,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						lockTask.cancel();
 						lockTask = null;
 					}
-					if (locked) {
+					if (lockState.isLocked()) {
 						log.info("PWSJface shell listener 'Activated' - unlocking"); //$NON-NLS-1$
 						//e.doit = false;
 						unlockDbAction.run();
@@ -1395,7 +1400,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					lockTask.cancel();
 					lockTask = null;
 				}
-				if (locked) {
+				if (lockState.isLocked()) {
 					unlocking = true;
 					try {
 						log.info("PWSJface shell listener deiconify - unlocking"); //$NON-NLS-1$

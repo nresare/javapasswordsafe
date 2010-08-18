@@ -12,6 +12,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,19 +43,21 @@ import org.eclipse.swt.widgets.Text;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
+import org.pwsafe.passwordsafeswt.state.LockState;
 import org.pwsafe.passwordsafeswt.util.ShellHelpers;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 import org.pwsafe.util.PassphraseUtils;
+
 
 /**
  * The Dialog that allows a user to edit password entries.
  *
  * @author Glen Smith
  */
-public class EditDialog extends Dialog {
+public class EditDialog extends Dialog implements Observer {
 
 	private static final Log log = LogFactory.getLog(EditDialog.class);
-	
+
 	private Text txtNotes;
 	private Text txtPassword;
 	private Text txtUsername;
@@ -70,16 +74,16 @@ public class EditDialog extends Dialog {
 	protected Object result;
 	protected Shell shell;
     private final PwsEntryBean entryToEdit;
-    
+
 	public EditDialog(Shell parent, int style, PwsEntryBean entryToEdit) {
 		super(parent, style);
         this.entryToEdit = entryToEdit;
 	}
-	
+
 	public EditDialog(Shell parent, PwsEntryBean entryToEdit) {
 		this(parent, SWT.NONE, entryToEdit);
 	}
-    
+
 	public Object open() {
 		createContents();
 		ShellHelpers.centreShell(getParent(), shell);
@@ -93,36 +97,38 @@ public class EditDialog extends Dialog {
 		}
 		return result;
 	}
-    
+
+
+
 	/**
 	 * Returns whether the data in the dialog has been updated by the user.
-	 * 
+	 *
 	 * @return true if the data has been updated, false otherwise
 	 */
     public boolean isDirty() {
     	return dirty;
     }
-    
+
     /**
      * Marks the dialog as having data that needs to be updated.
-     * 
+     *
      * @param dirty true if the dialog data needs saving, false otherwise.
      */
     public void setDirty(boolean dirty) {
     	this.dirty = dirty;
     }
-    
+
 
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.RESIZE | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setImage(JFaceResources.getImage(PasswordSafeJFace.JPW_ICON)); 
+		shell.setImage(JFaceResources.getImage(PasswordSafeJFace.JPW_ICON));
 		shell.setSize(590, 603);
 		shell.setText(Messages.getString("EditDialog.Title")); //$NON-NLS-1$
 		final GridLayout gridLayout_2 = new GridLayout();
 		gridLayout_2.marginWidth = 10;
 		gridLayout_2.marginHeight = 10;
 		shell.setLayout(gridLayout_2);
-		
+
 		// Setup adapter to catch any keypress and mark dialog dirty
 		KeyAdapter dirtyKeypress = new KeyAdapter() {
 			@Override
@@ -130,14 +136,14 @@ public class EditDialog extends Dialog {
 				setDirty(true);
 			}
 		};
-		
+
 		//use a modify listener as the password field drops letter key events on Linux
 		ModifyListener entryEdited = new ModifyListener() {
 
 			public void modifyText(ModifyEvent e) {
-				setDirty(true);				
+				setDirty(true);
 			}
-			
+
 		};
 
 		final Composite compositeLabel = new Composite(shell, SWT.NONE);
@@ -254,7 +260,7 @@ public class EditDialog extends Dialog {
 		} else {
 			btnShowPassword.setText(Messages.getString("EditDialog.ShowPasswordButton")); //$NON-NLS-1$
 		}
-		
+
 		final Label lblNotes = new Label(compositeFields, SWT.NONE);
 		final FormData formData_9 = new FormData();
 		formData_9.top = new FormAttachment(txtPassword, 5, SWT.BOTTOM);
@@ -327,12 +333,12 @@ public class EditDialog extends Dialog {
 		txtPasswordExpire.addKeyListener(dirtyKeypress);
 
         addDateChooser (compositeFields);
-        
+
         shell.setDefaultButton(createButtons(compositeFields, btnShowPassword));
 
 		createTimesComposite(shell);
 	}
-	
+
 	private void addDateChooser(Composite compositeFields) {
 		Button open = new Button (compositeFields, SWT.PUSH);
 		final FormData fd_dtPasswordExpire = new FormData();
@@ -354,7 +360,7 @@ public class EditDialog extends Dialog {
 			}
 		});
 	}
-	
+
 	/**
 	 * Creates the controlling buttons on the dialog
 	 * @param compositeFields
@@ -385,15 +391,15 @@ public class EditDialog extends Dialog {
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(expireDate);
 							int year = cal.get(Calendar.YEAR);
-							if (year < 2000) { 
-								if (year < 100) 
+							if (year < 2000) {
+								if (year < 100)
 									year += 2000; // avoid years like 07 passing as 0007 (Linux / DE)
 								else
 									year += 100; // avoid years like 07 passing as 1907 (Win / US)
 								cal.set(Calendar.YEAR, year);
 								expireDate = cal.getTime();
 							}
-			
+
 							entryToEdit.setExpires(expireDate);
 						} catch (ParseException e1) {
 				            MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
@@ -403,15 +409,15 @@ public class EditDialog extends Dialog {
 				            if (result == SWT.NO) {
 				                return;
 				            }
-	
+
 						}
                     } else {
                     	entryToEdit.setExpires(null);
                     }
-                    	
+
 					entryToEdit.setUrl(txtUrl.getText());
                     entryToEdit.setAutotype(txtAutotype.getText());
-                    result = entryToEdit;   
+                    result = entryToEdit;
                 } else {
                 	result = null;
                 }
@@ -472,12 +478,12 @@ public class EditDialog extends Dialog {
 		final Button chkOverride = new Button(group, SWT.CHECK);
 		chkOverride.setText(Messages.getString("EditDialog.OverridePolicyButton")); //$NON-NLS-1$
 		chkOverride.setEnabled(false); //TODO: Open policy dialog and generate a password with it on exit
-		
+
 		return btnOk;
 	}
-	
+
 	/**
-	 * Creates a line showing change information about the record. 
+	 * Creates a line showing change information about the record.
 	 * @param aShell to Add the Composite to
 	 */
 	private void createTimesComposite(final Shell aShell) {
@@ -495,7 +501,7 @@ public class EditDialog extends Dialog {
 		final CLabel createdLbl = new CLabel(timesGroup, SWT.NONE);
 		createdLbl.setText(Messages.getString("EditDialog.Created")); //$NON-NLS-1$
 
-		createTime = new CLabel(timesGroup, SWT.NONE);			
+		createTime = new CLabel(timesGroup, SWT.NONE);
 		createTime.setText(format(entryToEdit.getCreated()));
 
 		final CLabel lastAccessLbl = new CLabel(timesGroup, SWT.NONE);
@@ -516,18 +522,18 @@ public class EditDialog extends Dialog {
 		passwordChange = new CLabel(timesGroup, SWT.NONE);
 		passwordChange.setText(format(entryToEdit.getLastPwChange()));
 	}
-	
+
 	private String generatePassword() {
 		String BASE_LETTERS 								= String.valueOf(PassphraseUtils.LOWERCASE_CHARS);
-		String BASE_DIGITS 									= String.valueOf(PassphraseUtils.DIGIT_CHARS); 
+		String BASE_DIGITS 									= String.valueOf(PassphraseUtils.DIGIT_CHARS);
         String BASE_LETTERS_EASY 							= "abcdefghjkmnpqrstuvwxyz"; //$NON-NLS-1$
         String BASE_DIGITS_EASY 							= "23456789"; //$NON-NLS-1$
 		String BASE_SYMBOLS 								= "!@#$%^&*()"; //$NON-NLS-1$
 		StringBuilder pwSet = new StringBuilder();
-		
+
 		UserPreferences.reload(); // make sure we have a fresh copy
 		UserPreferences preferenceStore = UserPreferences.getInstance();
-		
+
 		String passwordLengthStr = preferenceStore.getString(JpwPreferenceConstants.DEFAULT_PASSWORD_LENGTH);
 		int passwordLength = 0;
 		if (passwordLengthStr != null && passwordLengthStr.trim().length() > 0) {
@@ -535,13 +541,13 @@ public class EditDialog extends Dialog {
 		}
 		if (passwordLength <= 0)
 			passwordLength = 8; //let's be sensible about this..
-		
+
 		boolean useLowerCase = preferenceStore.getBoolean(JpwPreferenceConstants.USE_LOWERCASE_LETTERS);
 		boolean useUpperCase = preferenceStore.getBoolean(JpwPreferenceConstants.USE_UPPERCASE_LETTERS);
 		boolean useDigits = preferenceStore.getBoolean(JpwPreferenceConstants.USE_DIGITS);
 		boolean useSymbols = preferenceStore.getBoolean(JpwPreferenceConstants.USE_SYMBOLS);
 		boolean useEasyToRead = preferenceStore.getBoolean(JpwPreferenceConstants.USE_EASY_TO_READ);
-		
+
 		if (useLowerCase) {
 			if (useEasyToRead) {
                 pwSet.append(BASE_LETTERS_EASY.toLowerCase());
@@ -566,12 +572,12 @@ public class EditDialog extends Dialog {
             }
 		}
 
-		
+
 		if (useSymbols) {
 			pwSet.append(BASE_SYMBOLS);
 		}
-		
-		
+
+
 		StringBuffer sb = new StringBuffer();
 		if (pwSet.length() > 0) {
 			SecureRandom rand = new SecureRandom();
@@ -587,11 +593,27 @@ public class EditDialog extends Dialog {
 		return sb.toString();
 
 	}
-	
+
 	private String format (Date aDate) {
 		if (aDate != null)
 			return DateFormat.getDateInstance().format(aDate);
 		else
 			return ""; //$NON-NLS-1$
 	}
+
+    /**
+     * This method is called whenever the lock state of the application changes.
+     *
+     * @param o   the observable LockState object.
+     * @param arg the Boolean value that the lock state has been set to.
+     */
+    // todo move this method into a super-class (abstract LockStateObserver) if we have another similar dialog
+    public void update(Observable o, Object arg) {
+        if((o instanceof LockState) && (arg instanceof Boolean)) {
+        	// we expect do be called on the swt event thread, so we simply do: 
+            shell.setVisible(!(Boolean)arg );
+            //shell.setActive(); // always??
+        }
+    }
+
 }
