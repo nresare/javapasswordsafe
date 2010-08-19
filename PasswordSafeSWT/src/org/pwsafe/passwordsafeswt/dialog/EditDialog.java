@@ -611,8 +611,10 @@ public class EditDialog extends Dialog implements Observer {
     public void update(Observable o, Object arg) {
         if((o instanceof LockState) && (arg instanceof Boolean)) {
         	// we expect do be called on the swt event thread, so we simply do: 
-            shell.setVisible(!(Boolean)arg );
+        	final boolean lockState = (Boolean)arg;
+       		shell.setVisible(! lockState);
             //shell.setActive(); // always??
+        	int i = 0;
         }
     }
 

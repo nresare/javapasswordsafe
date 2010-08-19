@@ -1337,7 +1337,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			public void shellActivated(ShellEvent e) {
 				//TODO: avoid recalling when aborting unlock
 				log.trace("PWSJface shell listener enter 'Activated'"); //$NON-NLS-1$
-				   
+
 				if (unlocking) {
 					log.info("PWSJface shell listener 'Activated' - aborted because unlocking"); //$NON-NLS-1$
 					e.doit = false;
@@ -1391,6 +1391,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			public void shellDeiconified(ShellEvent e) {
 				log.trace("PWSJface shell listener enter 'Deiconified'"); //$NON-NLS-1$
 				
+				RuntimeException ex = new RuntimeException();
+				ex.fillInStackTrace();
+				ex.printStackTrace();
+
 				if (unlocking) {
 					log.info("PWSJface shell listener deiconify - abort because of unlocking"); //$NON-NLS-1$
 					e.doit = false;
@@ -1456,7 +1460,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				
 				// lock safe
 				if (thePrefs.getBoolean(JpwPreferenceConstants.LOCK_DB_ON_MIN)) {
-					lockDbAction.performLock();
+					// important: lock in an async fashion 
+					// otherwise LockState observers might be called
+					// before the shell has been minimized
+					getShell().getDisplay().asyncExec(lockDbAction);
 				}
 				startLockTimer();
 				log.trace("PWSJface shell listener leave 'Iconified'"); //$NON-NLS-1$

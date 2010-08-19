@@ -20,9 +20,11 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
  * This action expects all changes to be saved 
  * <b>BEFORE</b> it is called!
  *
+ * Implements Runnable so that it can be called asynchronously.
+ *
  * @author David Mueller
  */
-public class LockDbAction extends Action {
+public class LockDbAction extends Action implements Runnable {
 
 	private static final Log log = LogFactory.getLog(LockDbAction.class);
 
