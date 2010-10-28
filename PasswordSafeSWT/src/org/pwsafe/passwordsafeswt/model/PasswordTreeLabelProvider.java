@@ -141,7 +141,9 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
             		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV2.NOTES);	
             	}
             }
-        	result = result.replace('\t',' ').replace('\r', ' ');//.replace('\n',' ')
+        	if (result != null) {
+            	result = result.replace('\t',' ').replace('\r', ' ');//.replace('\n',' ')
+        	}
             break;
         case 3:
         	if (element instanceof PwsEntryBean) {
