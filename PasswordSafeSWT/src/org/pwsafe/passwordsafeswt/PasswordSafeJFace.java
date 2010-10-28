@@ -1307,6 +1307,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			
 			@Override
 			public void shellClosed(ShellEvent event) {
+				log.trace("PWSJface shell listener enter 'Closed'"); //$NON-NLS-1$
 				event.doit = false; // don't close now
 				
 		    	final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
@@ -1324,7 +1325,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					tidyUpOnExit();
 					handleShellCloseEvent(); // forwards to Window class
 				}
-
+				log.trace("PWSJface shell listener leave 'Closed'"); //$NON-NLS-1$
 			}
 			/**
 			 * Sent when a shell becomes the active window.
@@ -1354,9 +1355,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						//e.doit = false;
 						unlockDbAction.run();
 					}
-					if (getShell().getMinimized()) {
-						getShell().setMinimized(false);
-					}
+//					if (getShell().getMinimized()) {
+//						getShell().setMinimized(false);
+//					}
 				} finally {
 					unlocking = false;
 				}
@@ -1390,7 +1391,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			@Override
 			public void shellDeiconified(ShellEvent e) {
 				log.trace("PWSJface shell listener enter 'Deiconified'"); //$NON-NLS-1$
-
+				
 				if (unlocking) {
 					log.info("PWSJface shell listener deiconify - abort because of unlocking"); //$NON-NLS-1$
 					e.doit = false;

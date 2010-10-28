@@ -41,6 +41,8 @@ public class SysTray {
 	protected static final Log log = LogFactory.getLog(SysTray.class);
 
 	private TrayItem trayItem;
+	
+	volatile boolean unlocking = false;
 
 	
 	/**
@@ -92,12 +94,18 @@ public class SysTray {
 				public void widgetDefaultSelected(SelectionEvent anEvent) {
 					log.debug("SelectionEvent: detail " + anEvent.detail + ", data " + anEvent.data + " " + anEvent);
 					final Shell mainShell = getPwsMainShell ();
-					if (mainShell.getVisible()) {
-						mainShell.setMinimized(true);					
+					if ( mainShell.getVisible() && !mainShell.getMinimized() ) {
+							mainShell.setMinimized(true);					
 					} else if (unlockSuccessful()){
 						// sequence important for Ubuntu netbook remix
-						mainShell.setMinimized(false);
-						mainShell.setVisible(true);
+						if (mainShell.getMinimized()) {
+							mainShell.setMinimized(false);
+							mainShell.setVisible(true);
+						}
+						if (! mainShell.isVisible()) {
+							mainShell.setVisible(true);
+						}
+						mainShell.setActive();
 					}
 
 				}
@@ -112,8 +120,15 @@ public class SysTray {
 						final Shell mainShell = getPwsMainShell ();
 						if (unlockSuccessful()) {
 							// sequence important for Ubuntu netbook remix
-							mainShell.setMinimized(false);
-							mainShell.setVisible(true);
+							if (mainShell.getMinimized()) {
+								mainShell.setMinimized(false);
+								mainShell.setVisible(true);
+
+							}
+							if (! mainShell.isVisible()) {
+								mainShell.setVisible(true);
+							}
+							mainShell.setActive();
 						}
 					}
 				});
@@ -151,12 +166,20 @@ public class SysTray {
 	}
 
 	private boolean unlockSuccessful () {
-		PasswordSafeJFace app = PasswordSafeJFace.getApp();
-		if (app.isLocked()) {
-			UnlockDbAction unlockDbAction = new UnlockDbAction();
-			return unlockDbAction.performUnlock();
-		} else {	
-			return true;
+		if (unlocking) {
+			return false;
+		}
+		try {
+			unlocking = true;
+			PasswordSafeJFace app = PasswordSafeJFace.getApp();
+			if (app.isLocked()) {
+				UnlockDbAction unlockDbAction = new UnlockDbAction();
+				return unlockDbAction.performUnlock();
+			} else {	
+				return true;
+			}
+		} finally {
+			unlocking = false;
 		}
 	}
 }
