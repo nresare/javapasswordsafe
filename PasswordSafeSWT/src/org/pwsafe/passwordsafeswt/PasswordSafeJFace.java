@@ -1390,10 +1390,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			@Override
 			public void shellDeiconified(ShellEvent e) {
 				log.trace("PWSJface shell listener enter 'Deiconified'"); //$NON-NLS-1$
-				
-				RuntimeException ex = new RuntimeException();
-				ex.fillInStackTrace();
-				ex.printStackTrace();
 
 				if (unlocking) {
 					log.info("PWSJface shell listener deiconify - abort because of unlocking"); //$NON-NLS-1$
