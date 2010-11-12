@@ -215,6 +215,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					this.setReadOnly(sd.getReadonly());
 					
 					allDone = true;
+				} catch (FileNotFoundException anEx) {
+					log.warn("File + " + sd.getFilename() + " not found." );//$NON-NLS-1$
+					displayErrorDialog(Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.NoFileFoundMessage") + sd.getFilename() + "]", anEx); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					allDone = false;					
 				} catch (Exception anEx) {
 					log.error("Exception on opening file + " + sd.getFilename(), anEx);//$NON-NLS-1$
 					displayErrorDialog(Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
