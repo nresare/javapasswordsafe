@@ -28,8 +28,8 @@ import org.eclipse.swt.widgets.TrayItem;
 import org.pwsafe.passwordsafeswt.action.ExitAppAction;
 import org.pwsafe.passwordsafeswt.action.UnlockDbAction;
 import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
+import org.pwsafe.passwordsafeswt.util.IOUtils;
 
-import com.swtdesigner.SWTResourceManager;
 
 /**
  * Builds and manages the system tray.
@@ -69,7 +69,7 @@ public class SysTray {
 			display = aMainShell.getDisplay();
 		}
 		
-		Image image = SWTResourceManager.getImage(PasswordSafeJFace.class,
+		Image image = IOUtils.getImage(PasswordSafeJFace.class,
 				"/org/pwsafe/passwordsafeswt/images/cpane.gif"); //$NON-NLS-1$
 		
 		ImageData data = image.getImageData();

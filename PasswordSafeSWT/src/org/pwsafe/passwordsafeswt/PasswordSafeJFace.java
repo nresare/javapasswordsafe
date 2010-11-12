@@ -124,8 +124,6 @@ import org.pwsafe.passwordsafeswt.xml.XMLDataParser;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.swtdesigner.SWTResourceManager;
-
 /**
  * A port of PasswordSafe to JFace. This is the main class that is launched from
  * the commandline.
@@ -491,9 +489,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			log.error("Error Starting PasswordSafe", e); 
 		} finally { //try to clean up in any case
 			try {
-				SWTResourceManager.dispose();
-			} catch (Exception anEx) {}// ok
-			try {
 				Display.getCurrent().dispose();
 			} catch (Exception anEx1) {}// ok
 
@@ -508,7 +503,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PasswordSafeJFace.APP_NAME);
-		Image jpwIcon = SWTResourceManager.getImage(PasswordSafeJFace.class, "/org/pwsafe/passwordsafeswt/images/cpane.ico"); //$NON-NLS-1$
+		Image jpwIcon = IOUtils.getImage(PasswordSafeJFace.class, "/org/pwsafe/passwordsafeswt/images/cpane.ico"); //$NON-NLS-1$
 		newShell.setImage(jpwIcon); 
 		// provide it for the rest of jpwsafe:
 		JFaceResources.getImageRegistry().put(JPW_ICON, jpwIcon); //$NON-NLS-1$

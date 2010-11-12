@@ -20,9 +20,9 @@ import org.pwsafe.passwordsafeswt.preference.MiscPreferences;
 import org.pwsafe.passwordsafeswt.preference.PasswordPolicyPreferences;
 import org.pwsafe.passwordsafeswt.preference.SecurityPreferences;
 import org.pwsafe.passwordsafeswt.preference.UsernamePreferences;
+import org.pwsafe.passwordsafeswt.util.IOUtils;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
-import com.swtdesigner.SWTResourceManager;
 
 /**
  * Displays the options dialog to manage user preferences.
@@ -63,7 +63,7 @@ public class OptionsAction extends Action {
 
         // Create the preferences dialog
         PreferenceDialog dlg = new PreferenceDialog(app.getShell(), mgr);
-		PreferenceDialog.setDefaultImage(SWTResourceManager.getImage(PasswordSafeJFace.class,
+		PreferenceDialog.setDefaultImage(IOUtils.getImage(PasswordSafeJFace.class,
 				"/org/pwsafe/passwordsafeswt/images/clogo.gif")); //$NON-NLS-1$
 
         // Set the preference store

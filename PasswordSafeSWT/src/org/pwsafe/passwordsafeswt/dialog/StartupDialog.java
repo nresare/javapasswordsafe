@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pwsafe.passwordsafeswt.util.IOUtils;
 import org.pwsafe.passwordsafeswt.util.ShellHelpers;
 import org.pwsafe.passwordsafeswt.util.VersionInfo;
 
-import com.swtdesigner.SWTResourceManager;
 
 /**
  * StartupDialog is shown when the app starts up and is modal in front on the main window.
@@ -84,13 +84,13 @@ public class StartupDialog extends Dialog {
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shell.setLayout(new FormLayout());
-		shell.setImage(SWTResourceManager.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/clogo.gif")); //$NON-NLS-1$
+		shell.setImage(IOUtils.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/clogo.gif")); //$NON-NLS-1$
 		shell.setSize(550, 368);
 		shell.setText(Messages.getString("StartupDialog.Title")); //$NON-NLS-1$
 
 		final Label lblTextLogo = new Label(shell, SWT.NONE);
 		lblTextLogo.setAlignment(SWT.CENTER);
-		lblTextLogo.setImage(SWTResourceManager.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/psafetxtNew.gif")); //$NON-NLS-1$
+		lblTextLogo.setImage(IOUtils.getImage(StartupDialog.class, "/org/pwsafe/passwordsafeswt/images/psafetxtNew.gif")); //$NON-NLS-1$
 		final FormData formData_10 = new FormData();
 		formData_10.left = new FormAttachment(24, 0);
 		formData_10.top = new FormAttachment(0, 15);

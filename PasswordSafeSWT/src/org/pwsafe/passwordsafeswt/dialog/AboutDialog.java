@@ -15,17 +15,20 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.pwsafe.passwordsafeswt.action.LicenseAction;
 import org.pwsafe.passwordsafeswt.action.VisitPasswordSafeWebsiteAction;
+import org.pwsafe.passwordsafeswt.util.IOUtils;
 import org.pwsafe.passwordsafeswt.util.VersionInfo;
 
-import com.swtdesigner.SWTResourceManager;
 
 /**
  * AboutDialog shows author/contributor/contact details.
@@ -73,22 +76,24 @@ public class AboutDialog extends org.eclipse.jface.dialogs.Dialog {
 		final Label lblLogo = new Label(group, SWT.NONE);
 		lblLogo.setAlignment(SWT.CENTER);
 		lblLogo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
-		lblLogo.setImage(SWTResourceManager.getImage(AboutDialog.class, "/org/pwsafe/passwordsafeswt/images/psafetxtNew.gif")); //$NON-NLS-1$
+		lblLogo.setImage(IOUtils.getImage(AboutDialog.class, "/org/pwsafe/passwordsafeswt/images/psafetxtNew.gif")); //$NON-NLS-1$
 
-		final Label lblAuthor = new Label(group, SWT.NONE);
-		lblAuthor.setAlignment(SWT.CENTER);
+		final Text lblAuthor = new Text(group, SWT.CENTER | SWT.READ_ONLY);
+		//lblAuthor.
 		lblAuthor.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		lblAuthor.setText(Messages.getString("AboutDialog.Copyright")); //$NON-NLS-1$
 
-		final Label lblVersion = new Label(group, SWT.NONE);
-		lblVersion.setAlignment(SWT.CENTER);
+		final Text lblVersion = new Text(group, SWT.CENTER | SWT.READ_ONLY);
+		//lblVersion.setAlignment(SWT.CENTER);
+		lblVersion.setEnabled(true);
+
 		lblVersion.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
 		lblVersion.setText(NLS.bind(Messages.getString("AboutDialog.Version"), VersionInfo.getVersion())); //$NON-NLS-1$
 
 		final Label lblWebsite = new Label(group, SWT.CENTER);
 		lblWebsite.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void mouseUp(MouseEvent e) {
 				new VisitPasswordSafeWebsiteAction().run();
 			}
 		});
@@ -103,8 +108,9 @@ public class AboutDialog extends org.eclipse.jface.dialogs.Dialog {
 		((GridLayout) parent.getLayout()).numColumns++;// for layout
 		ActionContributionItem licenceContrib = new ActionContributionItem(new LicenseAction());
 		licenceContrib.fill(parent);		
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+		Button okBtn = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
 				true);
+
 	}
 
 }

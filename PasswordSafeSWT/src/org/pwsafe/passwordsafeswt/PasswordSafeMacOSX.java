@@ -10,12 +10,9 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.internal.Callback;
-import org.eclipse.swt.internal.carbon.HICommand;
-import org.eclipse.swt.internal.carbon.OS;
+import org.eclipse.swt.internal.win32.OS;
 import org.eclipse.swt.widgets.Display;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
-
-import com.swtdesigner.SWTResourceManager;
 
 /**
  * @author corvi42
@@ -190,9 +187,6 @@ public class PasswordSafeMacOSX extends PasswordSafeJFace
     } catch( Exception e ) {
       log.error( "Error Starting PasswordSafe", e );
     } finally { //try to clean up in any case
-		try {
-			SWTResourceManager.dispose();
-		} catch (Exception anEx) {}// ok
 		try {
 			Display.getCurrent().dispose();
 		} catch (Exception anEx1) {}// ok
