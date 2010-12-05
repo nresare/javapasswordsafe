@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/opencsv-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.5.1.R35x_v20090807-1100.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jface_3.5.1.M20090826-0800.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.5.1.R35x_v20090827.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PasswordSafeLib"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
-	<classpathentry kind="lib" path="lib/bcprov-jdk15-143.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.5.0.I20090525-2000.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.5.0.v20090525.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.equinox.preferences_3.2.300.v20090520-1800.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk15-145.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.6.0.I20100512-1500.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.6.0.v20100505.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.6.0.v20100503.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.preferences_3.3.0.v20100503.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jface_3.6.1.M20100825-0800.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.6.1.R36x_v20100806.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
+	<classpathentry kind="lib" path="platform/macosx/swt.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

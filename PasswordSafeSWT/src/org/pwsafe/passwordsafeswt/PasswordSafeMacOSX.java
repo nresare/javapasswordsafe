@@ -10,7 +10,8 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.internal.Callback;
-import org.eclipse.swt.internal.win32.OS;
+import org.eclipse.swt.internal.carbon.HICommand;
+import org.eclipse.swt.internal.carbon.OS;
 import org.eclipse.swt.widgets.Display;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
@@ -68,8 +69,8 @@ public class PasswordSafeMacOSX extends PasswordSafeJFace
     // register ourselves as a handler for Application Menu Commands
     // Install event handler for commands
     final Callback commandCallback = new Callback( this, "commandProc", 3 );
-    int commandProc = commandCallback.getAddress();
-    if( commandProc == 0 ) {
+    int commandProc = (int) commandCallback.getAddress();
+    if ( commandProc == 0 ) {
       commandCallback.dispose();
       return; // give up
     }
