@@ -11,8 +11,10 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -77,18 +79,25 @@ public class AboutDialog extends org.eclipse.jface.dialogs.Dialog {
 		lblLogo.setAlignment(SWT.CENTER);
 		lblLogo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
 		lblLogo.setImage(IOUtils.getImage(AboutDialog.class, "/org/pwsafe/passwordsafeswt/images/psafetxtNew.gif")); //$NON-NLS-1$
-
-		final Text lblAuthor = new Text(group, SWT.CENTER | SWT.READ_ONLY);
-		//lblAuthor.
-		lblAuthor.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		lblAuthor.setText(Messages.getString("AboutDialog.Copyright")); //$NON-NLS-1$
-
-		final Text lblVersion = new Text(group, SWT.CENTER | SWT.READ_ONLY);
-		//lblVersion.setAlignment(SWT.CENTER);
-		lblVersion.setEnabled(true);
-
-		lblVersion.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END));
-		lblVersion.setText(NLS.bind(Messages.getString("AboutDialog.Version"), VersionInfo.getVersion())); //$NON-NLS-1$
+		
+		Color bbCol = Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		
+		// use styled text widgets to make them selectable
+		final StyledText author = new StyledText(group, SWT.SINGLE | SWT.READ_ONLY);
+		author.setCaret(null);
+		author.setBackground(bbCol);
+		author.setAlignment(SWT.CENTER);
+		author.setText(Messages.getString("AboutDialog.Copyright")); //$NON-NLS-1$
+		author.setLineAlignment(0, 1, SWT.CENTER);
+		author.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		
+		final StyledText version = new StyledText(group, SWT.SINGLE | SWT.READ_ONLY);
+		version.setCaret(null);
+		version.setBackground(bbCol);
+		version.setAlignment(SWT.CENTER);
+		version.setLineAlignment(0, 1, SWT.CENTER);
+		version.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		version.setText(NLS.bind(Messages.getString("AboutDialog.Version"), VersionInfo.getVersion())); //$NON-NLS-1$
 
 		final Label lblWebsite = new Label(group, SWT.CENTER);
 		lblWebsite.addMouseListener(new MouseAdapter() {

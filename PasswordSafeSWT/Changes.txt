@@ -1,7 +1,11 @@
 Changes:
 
 - fixed import from plain text and xml problem (Bug #3025261) 
+- fix for null pointer exception switching to tree view (Patch # 3076329)
 - Safe Combination Setup dialog width maximum set (Bug #2980874)
+- Make About version info selectable
+- Update to SWT and eclipse libs to 3.6.1
+- Update bouncy castle and common logging libs
 
 changes in swt 0.8 beta 4 (15.02.2010)
 - Disable systray on MacOSX Carbon (preference is overriden/ignored)
