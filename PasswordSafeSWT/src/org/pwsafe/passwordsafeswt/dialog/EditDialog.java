@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2010 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -26,6 +26,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -58,6 +59,8 @@ public class EditDialog extends Dialog implements Observer {
 
 	private static final Log log = LogFactory.getLog(EditDialog.class);
 
+	private static final int PERCENT_NOTES_WIDTH = 68;
+
 	private Text txtNotes;
 	private Text txtPassword;
 	private Text txtUsername;
@@ -65,6 +68,7 @@ public class EditDialog extends Dialog implements Observer {
 	private Text txtGroup;
 	private Text txtUrl;
 	private Text txtAutotype;
+	private Composite timesGroup;
 	private CLabel passwordChange;
 	private CLabel changed;
 	private CLabel lastAccess;
@@ -122,12 +126,13 @@ public class EditDialog extends Dialog implements Observer {
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.RESIZE | SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		shell.setImage(JFaceResources.getImage(PasswordSafeJFace.JPW_ICON));
-		shell.setSize(590, 603);
+		shell.setSize(600, 603);
 		shell.setText(Messages.getString("EditDialog.Title")); //$NON-NLS-1$
 		final GridLayout gridLayout_2 = new GridLayout();
-		gridLayout_2.marginWidth = 10;
-		gridLayout_2.marginHeight = 10;
+		gridLayout_2.marginWidth = 5;
+		gridLayout_2.marginHeight = 5;
 		shell.setLayout(gridLayout_2);
+		shell.setMinimumSize(300, 400);
 
 		// Setup adapter to catch any keypress and mark dialog dirty
 		KeyAdapter dirtyKeypress = new KeyAdapter() {
@@ -169,13 +174,15 @@ public class EditDialog extends Dialog implements Observer {
 		final FormData formData = new FormData();
 		formData.top = new FormAttachment(0, 10);
 		formData.left = new FormAttachment(0, 17);
+		
 		lblGroup.setLayoutData(formData);
 		lblGroup.setText(Messages.getString("EditDialog.Group")); //$NON-NLS-1$
 
 		txtGroup = new Text(compositeFields, SWT.BORDER);
 		txtGroup.addKeyListener(dirtyKeypress);
 		final FormData formData_1 = new FormData();
-		formData_1.left = new FormAttachment(lblGroup, 30);
+		// this sets the effective width of the labels column
+		formData_1.left = new FormAttachment(lblGroup, 40, SWT.RIGHT);
 		formData_1.top = new FormAttachment(lblGroup, 0, SWT.TOP);
 		formData_1.right = new FormAttachment(43, 0);
 		txtGroup.setLayoutData(formData_1);
@@ -253,7 +260,7 @@ public class EditDialog extends Dialog implements Observer {
 		final FormData formData_8 = new FormData();
 		formData_8.left = new FormAttachment(txtPassword, 10);
 		formData_8.top = new FormAttachment(txtUsername, 10, SWT.BOTTOM);
-		formData_8.right = new FormAttachment(70, 0);
+		formData_8.right = new FormAttachment(PERCENT_NOTES_WIDTH, 0);
 		btnShowPassword.setLayoutData(formData_8);
 		if (UserPreferences.getInstance().getBoolean(JpwPreferenceConstants.SHOW_PASSWORD_IN_EDIT_MODE)) {
 			btnShowPassword.setText(Messages.getString("EditDialog.HidePasswordButton")); //$NON-NLS-1$
@@ -270,6 +277,7 @@ public class EditDialog extends Dialog implements Observer {
 
 		txtNotes = new Text(compositeFields, SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.WRAP);
 		final FormData formData_10 = new FormData(SWT.DEFAULT, 100);
+		txtNotes.setSize(100, 100);
 		formData_10.bottom = new FormAttachment(100, -112);
 		formData_10.top = new FormAttachment(txtPassword, 5, SWT.BOTTOM);
 		formData_10.right = new FormAttachment(btnShowPassword, 0, SWT.RIGHT);
@@ -310,7 +318,6 @@ public class EditDialog extends Dialog implements Observer {
 		formDataTemp.top = new FormAttachment(txtUrl, 10, SWT.BOTTOM);
 		formDataTemp.left = new FormAttachment(txtUrl, 0, SWT.LEFT);
 		formDataTemp.right = new FormAttachment(txtPassword, 0 , SWT.RIGHT);
-//		formDataTemp.bottom = new FormAttachment(100, -5);
 		txtAutotype.setLayoutData(formDataTemp);
 		txtAutotype.addKeyListener(dirtyKeypress);
         if (entryToEdit.getAutotype() != null)
@@ -329,14 +336,41 @@ public class EditDialog extends Dialog implements Observer {
 		fd_txtPasswordExpire.right = new FormAttachment(txtAutotype, 0, SWT.RIGHT);
 		fd_txtPasswordExpire.top = new FormAttachment(txtAutotype, 10, SWT.BOTTOM);
 		txtPasswordExpire.setLayoutData(fd_txtPasswordExpire);
+		txtPasswordExpire.addModifyListener(new ModifyListener() {
+			Color red = null;
+			Color normal = null;
+			final Date now = new Date();
+			public void modifyText(final ModifyEvent e) {
+				final Text widget = ((Text)e.widget);
+				final String dateText = widget.getText();
+				if (dateText != null && dateText.length() > 0) {
+					if (red == null) {
+						red = shell.getDisplay().getSystemColor(SWT.COLOR_RED);
+						normal = shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+					}
+					try {
+						Date date = convertTextToDate(dateText);
+						if (now.after(date)) {
+							widget.setForeground(red);
+						} else {
+							widget.setForeground(normal);
+						}
+					} catch (ParseException e1) { // no prob
+					}
+				}
+
+				
+			}
+		});
 		txtPasswordExpire.setText(format(entryToEdit.getExpires()));
 		txtPasswordExpire.addKeyListener(dirtyKeypress);
-
         addDateChooser (compositeFields);
 
         shell.setDefaultButton(createButtons(compositeFields, btnShowPassword));
 
-		createTimesComposite(shell);
+        if (entryToEdit.getTitle() != null && entryToEdit.getTitle().length() > 0) {
+        	createTimesComposite(shell);
+        }
 	}
 
 	private void addDateChooser(Composite compositeFields) {
@@ -387,18 +421,7 @@ public class EditDialog extends Dialog implements Observer {
                     String fieldText = txtPasswordExpire.getText();
                     if (fieldText != null && (! fieldText.trim().equals(""))) { //$NON-NLS-1$
                     	try {
-							Date expireDate = DateFormat.getDateInstance().parse(fieldText);
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(expireDate);
-							int year = cal.get(Calendar.YEAR);
-							if (year < 2000) {
-								if (year < 100)
-									year += 2000; // avoid years like 07 passing as 0007 (Linux / DE)
-								else
-									year += 100; // avoid years like 07 passing as 1907 (Win / US)
-								cal.set(Calendar.YEAR, year);
-								expireDate = cal.getTime();
-							}
+							Date expireDate = convertTextToDate(fieldText);
 
 							entryToEdit.setExpires(expireDate);
 						} catch (ParseException e1) {
@@ -423,6 +446,8 @@ public class EditDialog extends Dialog implements Observer {
                 }
                 shell.dispose();
 			}
+
+
 		});
 		final FormData formData_11 = new FormData();
 		formData_11.top = new FormAttachment(txtGroup, 0, SWT.TOP);
@@ -459,7 +484,8 @@ public class EditDialog extends Dialog implements Observer {
 		group.setText(Messages.getString("EditDialog.RandomPassword")); //$NON-NLS-1$
 		final FormData formData_14 = new FormData();
 //		formData_14.left = new FormAttachment(txtNotes, 10, SWT.RIGHT);
-		formData_14.left = new FormAttachment(100, -170);
+		formData_14.left = new FormAttachment(100, -160);
+//		formData_14.left = new FormAttachment(PERCENT_NOTES_WIDTH + 2, 0);
 		formData_14.top = new FormAttachment(btnShowPassword, 5, SWT.TOP);
 		formData_14.right = new FormAttachment(100, -10);
 		group.setLayoutData(formData_14);
@@ -488,7 +514,7 @@ public class EditDialog extends Dialog implements Observer {
 	 */
 	private void createTimesComposite(final Shell aShell) {
 		final GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		final Composite timesGroup = new Composite(aShell, SWT.NONE);
+		timesGroup = new Composite(aShell, SWT.NONE);
 		timesGroup.setRedraw(true);
 		final GridData timesGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gridData.widthHint = 550;
@@ -601,6 +627,23 @@ public class EditDialog extends Dialog implements Observer {
 			return ""; //$NON-NLS-1$
 	}
 
+	private Date convertTextToDate(String fieldText) throws ParseException {
+		Date expireDate = DateFormat.getDateInstance().parse(fieldText);
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(expireDate);
+		int year = cal.get(Calendar.YEAR);
+		if (year < 2000) {
+			if (year < 100)
+				year += 2000; // avoid years like 07 passing as 0007 (Linux /
+								// DE)
+			else
+				year += 100; // avoid years like 07 passing as 1907 (Win / US)
+			cal.set(Calendar.YEAR, year);
+			expireDate = cal.getTime();
+		}
+		return expireDate;
+	}
+	
     /**
      * This method is called whenever the lock state of the application changes.
      *
