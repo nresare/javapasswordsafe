@@ -1,6 +1,9 @@
 Changes:
 
+- Sow expired password entries (Trac Ticket 23)
 - fixed import from plain text and xml problem (Bug #3025261) 
+- fix Filename selection not preserved after invalid passphrase (Bug #3094287)
+- fix Layout problems with Edit/View entry (Bug #3025273)
 - fix for null pointer exception switching to tree view (Patch # 3076329)
 - Safe Combination Setup dialog width maximum set (Bug #2980874)
 - Make About version info selectable

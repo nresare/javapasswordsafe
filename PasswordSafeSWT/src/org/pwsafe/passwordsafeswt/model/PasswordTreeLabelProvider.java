@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2010 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -7,9 +7,9 @@
  */
 package org.pwsafe.passwordsafeswt.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.file.PwsFieldTypeV2;
@@ -23,8 +23,10 @@ import org.pwsafe.lib.file.PwsRecordV3;
  *
  * @author Glen Smith
  */
-public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelProvider {
+public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implements ILabelProvider {
 
+	private static final Log log = LogFactory.getLog(PasswordTreeLabelProvider.class);
+    
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
@@ -32,69 +34,9 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
-	public String getText(Object node) {
-        String result = "<unknown node type>";
-		if (node instanceof String) {
-			result = node.toString();
-		} else if (node instanceof PwsEntryBean) {
-			PwsEntryBean theEntry = (PwsEntryBean) node;
-			result = theEntry.getTitle();
-		} else if (node instanceof PasswordTreeContentProvider.TreeGroup) {
-		    result = node.toString();
-		} else if (node instanceof PwsRecord) { // deprecated
-		    PwsRecord record = (PwsRecord) node;
-        	if (record instanceof PwsRecordV3) {
-        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV3.TITLE);
-        	} else {
-        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV2.TITLE);	
-        	}
-		} 
-        return result;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
-	public void addListener(ILabelProviderListener arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
-	public void dispose() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-	 */
-	public boolean isLabelProperty(Object arg0, String arg1) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
-	public void removeListener(ILabelProviderListener arg0) {
-		// TODO Auto-generated method stub
-
-	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-     */
-    public Image getColumnImage(Object element, int columnIndex) {
-        return null;
-    }
-
-    /* (non-Javadoc)
+     * TODO: Merge this with the getColumnText method from {@link PasswordTableLabelProvider}.
      * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
      */
     public String getColumnText(Object element, int columnIndex) {
@@ -160,5 +102,29 @@ public class PasswordTreeLabelProvider implements ILabelProvider, ITableLabelPro
         }
         return result;
     }
+
+
+	/**
+	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+	 */
+	public String getText(Object node) {
+        String result = "<unknown node type>";
+		if (node instanceof String) {
+			result = node.toString();
+		} else if (node instanceof PwsEntryBean) {
+			PwsEntryBean theEntry = (PwsEntryBean) node;
+			result = theEntry.getTitle();
+		} else if (node instanceof PasswordTreeContentProvider.TreeGroup) {
+		    result = node.toString();
+		} else if (node instanceof PwsRecord) { // deprecated
+		    PwsRecord record = (PwsRecord) node;
+        	if (record instanceof PwsRecordV3) {
+        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV3.TITLE);
+        	} else {
+        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV2.TITLE);	
+        	}
+		} 
+        return result;
+	}
 
 }

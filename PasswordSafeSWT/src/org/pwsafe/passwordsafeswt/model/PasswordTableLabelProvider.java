@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2010 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -9,9 +9,6 @@ package org.pwsafe.passwordsafeswt.model;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.swt.graphics.Image;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.file.PwsFieldTypeV1;
 import org.pwsafe.lib.file.PwsFieldTypeV2;
@@ -25,18 +22,12 @@ import org.pwsafe.lib.file.PwsRecordV3;
  *
  * @author Glen Smith
  */
-public class PasswordTableLabelProvider implements ITableLabelProvider {
+public class PasswordTableLabelProvider extends AbstractTableLabelProvider {
 	
 	private static final Log log = LogFactory.getLog(PasswordTableLabelProvider.class);
-
+	
 	/**
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-	 */
-	public Image getColumnImage(Object element, int columnIndex) {
-		return null;
-	}
-
-	/**
+	 * TODO: Merge this with the getColumnText method from {@link PasswordTreeTableLabelProvider}.
 	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 	 */
 	public String getColumnText(Object element, int columnIndex) {
@@ -109,38 +100,6 @@ public class PasswordTableLabelProvider implements ITableLabelProvider {
 		if (log.isDebugEnabled())
 			log.debug("Setting column index " + columnIndex + " to [" + columnString + "]");
 		return columnString;  // unknown column
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
-	public void addListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
-	 */
-	public void dispose() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
-	 */
-	public boolean isLabelProperty(Object element, String property) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
-	 */
-	public void removeListener(ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
