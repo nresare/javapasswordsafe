@@ -7,6 +7,8 @@
  */
 package org.pwsafe.passwordsafeswt.dialog;
 
+import java.util.List;
+
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -37,7 +39,7 @@ public class StartupDialog extends Dialog {
 	private Text txtPassword;
 	protected String result;
 	protected Shell shell;
-	private String[] mruList;
+	private List<String> mruList;
 	
 	private boolean readOnly;
 	private String selectedFile;
@@ -52,7 +54,7 @@ public class StartupDialog extends Dialog {
 		super(parent, style);
 	}
 	
-	public StartupDialog(final Shell parent, final String[] mru, final boolean forReadOnly) {
+	public StartupDialog(final Shell parent, final List<String> mru, final boolean forReadOnly) {
 		this(parent, SWT.NONE);
 		this.mruList = mru;
 		this.readOnly = forReadOnly;
@@ -64,11 +66,11 @@ public class StartupDialog extends Dialog {
 		ShellHelpers.centreShell(getParent(), shell);
 		shell.open();
 		shell.layout();
-		if (mruList != null && mruList.length > 0) {
-			for (int i=0; i < mruList.length; i++) {
-				cboFilename.add(mruList[i]);
+		if (mruList != null && mruList.size() > 0) {
+			for (String filename : mruList) {
+				cboFilename.add(filename);
 			}
-			cboFilename.setText(mruList[0]);
+			cboFilename.setText(mruList.get(0));
 		}
 		Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {
@@ -187,6 +189,12 @@ public class StartupDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				selectedFile = cboFilename.getText();
+				// set selected as first
+				if (selectedFile != null) {
+					mruList.remove(selectedFile);
+					mruList.add(0, selectedFile);
+				}
+				
 				selectedPassword.setLength(0);
 				selectedPassword.append(txtPassword.getText());
 				result = StartupDialog.OPEN_FILE;
