@@ -9,10 +9,10 @@ package org.pwsafe.passwordsafeswt.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -132,15 +132,18 @@ public class UserPreferences {
 		} catch (IOException ioe) {
 			log.error("Couldn't load preferences", ioe);
 		} 
-		Set newMRU = new LinkedHashSet();
+		Set<String> newMRU = new LinkedHashSet<String>(13);
         newMRU.add(fileName);
-        newMRU.addAll(Arrays.asList(getMRUFiles()));		
+        newMRU.addAll(getMRUFiles());		
+		writeOutMruList(newMRU);
+	}
+
+	private void writeOutMruList(Collection<String> newMRU) {
 		int mruCounter = 0;
-		for (Iterator iter = newMRU.iterator(); iter.hasNext()
+		for (Iterator<String> iter = newMRU.iterator(); iter.hasNext()
 				&& mruCounter <= MAX_MRU;) {
-			mruCounter++;
-			String nextFilename = (String) iter.next();
-			prefStore.setValue(MRU + mruCounter, nextFilename);
+			final String nextFilename = iter.next();
+			prefStore.setValue(MRU + ++mruCounter, nextFilename);
 		}
         try {
 			savePreferences();
@@ -152,18 +155,17 @@ public class UserPreferences {
     /**
      * Returns an array of recently opened filename (most recent to oldest).
      * 
-     * @return an array of recently opened filename
+     * @return an array of recently opened filename, not null
      */
-	public String[] getMRUFiles() {
+	public List<String> getMRUFiles() {
 
-		List allFiles = new ArrayList();
+		List<String> allFiles = new LinkedList<String>();
 		for (int i = 0; i <= MAX_MRU; i++) {
-//			String nextFile = props.getProperty(MRU + i);
 			String nextFile = prefStore.getString(MRU + i);
 			if (nextFile != null && nextFile.length() > 0)
 				allFiles.add(nextFile);
 		}
-		return (String[]) allFiles.toArray(new String[0]);
+		return allFiles;
 
 	}
     
@@ -174,9 +176,9 @@ public class UserPreferences {
      */
     public String getMRUFile() {
         
-        String[] allMRU = getMRUFiles();
-        if (allMRU.length > 0) {
-        	return allMRU[0];
+    	List<String> allMRU = getMRUFiles();
+        if (allMRU.size() > 0) {
+        	return allMRU.get(0);
         } else {
         	return null;
         }
@@ -213,6 +215,19 @@ public class UserPreferences {
 
 	public static synchronized void reload() {
 		prefs = null;
+	}
+
+	/**
+	 * Removes a file from the most recently used list.
+	 * 
+	 * @param fileName
+	 */
+	public void removeMRUFile(final String fileName) {
+		List<String> files =  getMRUFiles();
+		if (files.contains(fileName)) {
+			files.remove(files.indexOf(fileName));
+			writeOutMruList(files);
+		}
 	}
 	
 }

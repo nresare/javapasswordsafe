@@ -218,9 +218,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				} catch (FileNotFoundException anEx) {
 					log.warn("File + " + sd.getFilename() + " not found." );//$NON-NLS-1$
 					displayErrorDialog(Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.NoFileFoundMessage") + sd.getFilename() + "]", anEx); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					UserPreferences.getInstance().removeMRUFile(sd.getFilename());
 					allDone = false;					
 				} catch (Exception anEx) {
 					log.error("Exception on opening file + " + sd.getFilename(), anEx);//$NON-NLS-1$
+					UserPreferences.getInstance().setMostRecentFilename(sd.getFilename());
 					displayErrorDialog(Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
 					allDone = false;
 				}
@@ -331,10 +333,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		menuManagerFile.add(openFileAction);
 		menuManagerFile.add(new Separator());
 
-		String[] mruFiles = UserPreferences.getInstance().getMRUFiles();
-		if (mruFiles != null && mruFiles.length > 0) {
-			for (int i = 0; i < mruFiles.length; i++) {
-				String fileName = mruFiles[i];
+		List<String> mruFiles = UserPreferences.getInstance().getMRUFiles();
+		
+		if (mruFiles != null && mruFiles.size() > 0) {
+			for (int i = 0; i < mruFiles.size(); i++) {
+				String fileName = mruFiles.get(i);
 				String menuItem = "&" + (i + 1) + " " + new File(fileName).getName(); //$NON-NLS-1$ //$NON-NLS-2$
 				IAction nextMRUAction = new MRUFileAction(fileName, menuItem);
 				menuManagerFile.add(nextMRUAction);
@@ -1004,6 +1007,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
             columns[i].setMoveable(true);
         }
 //        treeViewer.setExpandedState(arg0, arg1)
+        
+
 
 	}
 
