@@ -31,7 +31,7 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 	private final static Log LOGGER = Log.getInstance(PwsEntryStoreImpl.class);
 	private static final EnumSet<PwsFieldTypeV1> DEFAULT_V1_SPARSE_FIELDS = EnumSet.of(PwsFieldTypeV1.TITLE, PwsFieldTypeV1.USERNAME);
 	private static final EnumSet<PwsFieldTypeV2> DEFAULT_V2_SPARSE_FIELDS = EnumSet.of(PwsFieldTypeV2.TITLE, PwsFieldTypeV2.GROUP, PwsFieldTypeV2.USERNAME, PwsFieldTypeV2.NOTES);
-	private static final EnumSet<PwsFieldTypeV3> DEFAULT_V3_SPARSE_FIELDS = EnumSet.of(PwsFieldTypeV3.TITLE, PwsFieldTypeV3.GROUP, PwsFieldTypeV3.USERNAME, PwsFieldTypeV3.NOTES, PwsFieldTypeV3.URL);
+	private static final EnumSet<PwsFieldTypeV3> DEFAULT_V3_SPARSE_FIELDS = EnumSet.of(PwsFieldTypeV3.TITLE, PwsFieldTypeV3.GROUP, PwsFieldTypeV3.USERNAME, PwsFieldTypeV3.NOTES, PwsFieldTypeV3.URL, PwsFieldTypeV3.PASSWORD_LIFETIME);
 	
 	PwsFile pwsFile;
 

@@ -16,7 +16,7 @@ import java.util.Arrays;
 import org.pwsafe.lib.Log;
 
 /**
- * Tries to hide create a key which is hidden from an occasional onlooker.
+ * Tries to create a key which is hidden from an occasional onlooker.
  * Uses direct allocated memory to distribute the key data.
  * <p>
  * It's unchecked whether this makes any difference for swapped out memory.

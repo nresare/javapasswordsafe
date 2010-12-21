@@ -31,25 +31,25 @@ import org.pwsafe.lib.file.PwsTimeField;
 import org.pwsafe.lib.file.PwsUUIDField;
 
 /**
- * Convenience class for transferring password info around in a 
- * version-independent manner and in java bean style. 
- * 
+ * Convenience class for transferring password info around in a
+ * version-independent manner and in java bean style.
+ *
  * @author roxon
  */
 public class PwsEntryBean implements Cloneable {
 	private static final Log log = LogFactory.getLog(PwsEntryBean.class);
 
 	/**
-	 * the index with which the backing PwsRecord may be retrieved. 
+	 * the index with which the backing PwsRecord may be retrieved.
 	 */
 	int storeIndex;
-	
+
 	/**
 	 * whether this Wrapper is only partly filled from it's backing PwsRecord.
 	 * Default is true, so empty records can't be added to a PwsFile.
 	 */
 	boolean sparse = true;
-	
+
 	UUID id;
     String group;
     String title;
@@ -59,15 +59,15 @@ public class PwsEntryBean implements Cloneable {
     String notes;
     String url;
     String autotype;
-    
+
     String version;
-    
+
     Date lastAccess;
     Date created;
     Date lastPwChange;
     Date lastChange;
     Date expires;
-    
+
     /**
      * Default constructor.
      *
@@ -75,8 +75,8 @@ public class PwsEntryBean implements Cloneable {
     public PwsEntryBean() {
         super();
     }
-    
-    
+
+
     public PwsEntryBean(String group, String username, StringBuilder password, String notes) {
     	this();
         this.group = group;
@@ -91,31 +91,31 @@ public class PwsEntryBean implements Cloneable {
     public int getStoreIndex() {
     	return storeIndex;
     }
-    
-    
+
+
     /**
      * @param storeIndex the storeIndex to set
      */
     public void setStoreIndex(int storeIndex) {
     	this.storeIndex = storeIndex;
     }
-    
-    
+
+
     /**
      * @return the sparse
      */
     public boolean isSparse() {
     	return sparse;
     }
-    
-    
+
+
     /**
      * @param sparse the sparse to set
      */
     public void setSparse(boolean sparse) {
     	this.sparse = sparse;
     }
-    
+
 
     public UUID getId() {
 		return id;
@@ -164,7 +164,7 @@ public class PwsEntryBean implements Cloneable {
 	/**
 	 * For backward compatibility.
 	 * @param password The password to set.
-	 * 
+	 *
 	 * @deprecated don't pass around passwords as String!
 	 */
 	@Deprecated
@@ -183,7 +183,7 @@ public class PwsEntryBean implements Cloneable {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-    
+
     /**
      * @return Returns the title.
      */
@@ -253,7 +253,7 @@ public class PwsEntryBean implements Cloneable {
 	public void setExpires(Date expires) {
 		this.expires = expires;
 	}
-    
+
     /**
      * @return Returns the version.
      */
@@ -280,7 +280,7 @@ public class PwsEntryBean implements Cloneable {
 		}
 	}
 
-    
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -388,7 +388,7 @@ public class PwsEntryBean implements Cloneable {
 		StringBuffer all = new StringBuffer (200);
 		all.append("PwsEntryBean ").append(version).append(": ID ");
 		all.append(id != null ? id.toString() : null);
-		all.append(", Group ").append(group); 
+		all.append(", Group ").append(group);
 		all.append(", Title ").append(title);
 		all.append(", User ").append(username);
 		all.append(", Notes ").append(notes);
@@ -402,7 +402,7 @@ public class PwsEntryBean implements Cloneable {
 
 	/**
      * A safer version of field retrieval that is null-safe.
-     * 
+     *
      * @param record the record to retrieve the field from
      * @param aType the type of the field
      * @return the value of the field or an empty string if the field is null
@@ -412,30 +412,30 @@ public class PwsEntryBean implements Cloneable {
     	PwsField field = record.getField(aType);
     	if (field != null && field.getValue() != null) {
     		fieldValue = field.getValue().toString();
-    	} 
+    	}
     	return fieldValue;
     }
 
     /**
      * A safer version of date retrieval that is null-safe.
-     * 
+     *
      * @param v3
-     * @param type
+     * @param aType
      * @return the Field as Date
      */
 	public static Date getSafeDate(final PwsRecordV3 v3, final PwsFieldType aType) {
 		final PwsTimeField field = (PwsTimeField) v3.getField(aType);
 
-		return field != null ? (Date) field.getValue() : null; 
+		return field != null ? (Date) field.getValue() : null;
 	}
 
-    
+
     /**
-     * Only set a date into a PwsTimeField if the date != null.  
+     * Only set a date into a PwsTimeField if the date != null.
      * @param v3
      * @param aType
      * @param aDate
-     * @return true if the date != null, else false 
+     * @return true if the date != null, else false
      */
 	private boolean setSafeDate(final PwsRecordV3 v3, final int aType, final Date aDate) {
 		if (aDate == null)
@@ -455,7 +455,7 @@ public class PwsEntryBean implements Cloneable {
      */
 	private boolean setSafeString(final PwsRecordV3 v3, final int aType, final String aString) {
 		if (aString == null || aString.equals("")) {
-			
+
 			// Remove not possible yet, need to extend PwsRecord first 
 			// If a String wont't be set and is not a mandatory field, 
 		    // check to see if there is an entry of that type in the PwsRecord and 
@@ -474,13 +474,13 @@ public class PwsEntryBean implements Cloneable {
     
 	/**
      * Moves the contents of the PwsEntryBean into the supplied PwsRecord.
-     * 
+     *
 	 * @param nextRecord the record to place the data into
 	 */
 	public void toPwsRecord(PwsRecord nextRecord) {
-		
+
 		if (nextRecord instanceof PwsRecordV3) {
-			
+
             PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
             setSafeString(v3, PwsRecordV3.GROUP , getGroup());// + '\u0000'));
             setSafeString(v3, PwsRecordV3.TITLE , getTitle());
@@ -489,7 +489,7 @@ public class PwsEntryBean implements Cloneable {
             setSafeString(v3, PwsRecordV3.NOTES , getNotes());
             setSafeString(v3, PwsRecordV3.URL , getUrl());
             setSafeString(v3, PwsRecordV3.AUTOTYPE , getAutotype());
-            
+
             setSafeDate(v3,PwsRecordV3.LAST_ACCESS_TIME, getLastAccess());
             setSafeDate(v3,PwsRecordV3.LAST_MOD_TIME, getLastChange());
             setSafeDate(v3,PwsRecordV3.PASSWORD_MOD_TIME, getLastPwChange());
@@ -499,49 +499,49 @@ public class PwsEntryBean implements Cloneable {
 //          v3.setField(new PwsTimeField(PwsRecordV3.CREATION_TIME, getCreated()));
 
 		} else if (nextRecord instanceof PwsRecordV2) {
-            
+
             PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
             v2.setField(new PwsStringField(PwsRecordV2.GROUP , getGroup()));
             v2.setField(new PwsStringField(PwsRecordV2.TITLE , getTitle()));
             v2.setField(new PwsStringField(PwsRecordV2.USERNAME , getUsername()));
             v2.setField(new PwsStringField(PwsRecordV2.PASSWORD , getPassword().toString()));
             v2.setField(new PwsStringField(PwsRecordV2.NOTES , getNotes()));
-            
+
         } else {
-            
+
             PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
             v1.setField(new PwsStringField(PwsRecordV1.TITLE , getTitle()));
             v1.setField(new PwsStringField(PwsRecordV1.USERNAME , getUsername()));
             v1.setField(new PwsStringField(PwsRecordV1.PASSWORD , getPassword().toString()));
-            v1.setField(new PwsStringField(PwsRecordV1.NOTES , getNotes()));  
-            
+            v1.setField(new PwsStringField(PwsRecordV1.NOTES , getNotes()));
+
         }
 	}
 
-    
+
     public static PwsEntryBean fromPwsRecord(PwsRecord nextRecord) {
     	PwsEntryBean newEntry = new PwsEntryBean();
-        
+
         if (nextRecord instanceof PwsRecordV3) {
-        	
+
         	PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
 
             PwsUUIDField idField = (PwsUUIDField) v3.getField(PwsFieldTypeV3.UUID);
             if (idField != null)
             	newEntry.setId((UUID) idField.getValue());
-            
+
             String groupName = getSafeValue(v3, PwsFieldTypeV3.GROUP);
             newEntry.setGroup(groupName);
-            
+
             String title = getSafeValue(v3,PwsFieldTypeV3.TITLE);
             newEntry.setTitle(title);
-            
+
             String user = getSafeValue(v3, PwsFieldTypeV3.USERNAME);
             newEntry.setUsername(user);
-            
+
             String password = getSafeValue(v3,PwsFieldTypeV3.PASSWORD);
             newEntry.setPassword(new StringBuilder(password)); // TODO: change PwsRecord to StringBuilder as well?
-            
+
             String notes = getSafeValue(v3,PwsFieldTypeV3.NOTES);
             newEntry.setNotes(notes);
 
@@ -552,56 +552,56 @@ public class PwsEntryBean implements Cloneable {
             newEntry.setAutotype(autotype);
 
             newEntry.setLastChange(getSafeDate(v3, PwsFieldTypeV3.LAST_MOD_TIME));
-            
+
             newEntry.setCreated(getSafeDate(v3, PwsFieldTypeV3.CREATION_TIME));
- 
+
             newEntry.setLastAccess(getSafeDate(v3, PwsFieldTypeV3.LAST_ACCESS_TIME));
-            
+
             newEntry.setLastPwChange(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_MOD_TIME));
-            
+
            	newEntry.setExpires(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_LIFETIME));
-            
+
             newEntry.setVersion("3");
-            
+
             if (log.isDebugEnabled())
             	log.debug("PwsEntryBean created " + newEntry.toString());
-        	
+
         } else if (nextRecord instanceof PwsRecordV2) {
-            
+
             PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
-            
+
             String groupName = getSafeValue(v2, PwsFieldTypeV2.GROUP);
             newEntry.setGroup(groupName);
-            
+
             String title = getSafeValue(v2,PwsFieldTypeV2.TITLE);
             newEntry.setTitle(title);
-            
+
             String user = getSafeValue(v2, PwsFieldTypeV2.USERNAME);
             newEntry.setUsername(user);
-            
+
             String password = getSafeValue(v2,PwsFieldTypeV2.PASSWORD);
             newEntry.setPassword(new StringBuilder(password));
-            
+
             String notes = getSafeValue(v2,PwsFieldTypeV2.NOTES);
             newEntry.setNotes(notes);
-            
+
             newEntry.setVersion("2");
-            
+
         } else {
             PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
-            
+
             String title = getSafeValue(v1,PwsFieldTypeV1.TITLE);
             newEntry.setTitle(title);
-            
+
             String user = getSafeValue(v1,PwsFieldTypeV1.USERNAME);
             newEntry.setUsername(user);
-            
+
             String password = getSafeValue(v1,PwsFieldTypeV1.PASSWORD);
             newEntry.setPassword(new StringBuilder(password));
-            
+
             String notes = getSafeValue(v1,PwsFieldTypeV1.NOTES);
             newEntry.setNotes(notes);
-            
+
             newEntry.setVersion("1");
         }
         return newEntry;
@@ -634,6 +634,9 @@ public class PwsEntryBean implements Cloneable {
         			case URL:
         	            newEntry.setUrl(theField);
         				break;
+        			case PASSWORD_LIFETIME:
+        	           	newEntry.setExpires(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_LIFETIME));
+        	           	break;
         			default:
         				log.warn("Ignored Sparse field type " + theType);
         		}
@@ -663,7 +666,7 @@ public class PwsEntryBean implements Cloneable {
         			default:
         				log.warn("Ignored Sparse field type " + theType);
         		}
-        	}            
+        	}
         } else {
             PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
         	for (Iterator<? extends PwsFieldType> it = sparseFields.iterator(); it.hasNext();) {
@@ -686,7 +689,7 @@ public class PwsEntryBean implements Cloneable {
         			default:
         				log.warn("Ignored Sparse field type " + theType);
         		}
-        	}            
+        	}
         }
         return newEntry;
     }
