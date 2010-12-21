@@ -1,7 +1,7 @@
 #PasswordSafeSWT Build Properties File.
 #Thu Nov 14 23:55:53 EST 2008
-build.number=452
+build.number=475
 build.release.major=0
 build.user=roxon
-build.date=2010-02-15 13\:00
-build.release.minor=8-beta4
+build.date=2010-12-21 13\:00
+build.release.minor=8-beta5
