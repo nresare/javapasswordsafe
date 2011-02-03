@@ -48,8 +48,8 @@ public class OpenFileAction extends Action {
                 StringBuilder password = pd.open();
                 if (password != null) {
                     try {
-                        //TODO: change Password dialog to include a readonly flag; then set readonly here
-                        app.openFile(fileName, password, false);
+                        //TODO: change Password dialog to include a readonly flag; then include readonly here
+                        app.openFile(fileName, password);
                     } catch (Exception e) {
                         app.displayErrorDialog(Messages.getString("OpenFileAction.ErrorDialog.Label"), Messages.getString("OpenFileAction.ErrorDialog.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
                     }

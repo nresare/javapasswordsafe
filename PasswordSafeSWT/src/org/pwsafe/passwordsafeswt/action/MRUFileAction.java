@@ -63,8 +63,8 @@ public class MRUFileAction extends Action {
         StringBuilder password = pd.open();
         if (password != null) {
             try {
-            	//TODO: change Passworddialog to include a readonly flag; then set readonly here
-                app.openFile(fileName, password, true);
+            	//TODO: change Passworddialog to include a readonly flag; then include readonly here
+                app.openFile(fileName, password);
             } catch (Exception e) {
                 app.displayErrorDialog(Messages.getString("MRUFileAction.OpenError.Title"), Messages.getString("MRUFileAction.OpenError.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
