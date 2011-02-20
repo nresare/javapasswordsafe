@@ -107,13 +107,15 @@ public class UserPreferences {
      */
 	public void savePreferences() throws IOException {
 
-		String userFile = getPreferencesFilename();
-		if (log.isDebugEnabled())
-			log.debug("Saving to [" + userFile + "]");
-		prefStore.save();
-		if (log.isDebugEnabled())
-			log.debug("Saved " + prefStore
-					+ " preference settings from file");
+		if (prefStore.needsSaving()) {
+			String userFile = getPreferencesFilename();
+			if (log.isDebugEnabled())
+				log.debug("Saving to [" + userFile + "]");
+			prefStore.save();
+			if (log.isDebugEnabled())
+				log.debug("Saved " + prefStore
+						+ " preference settings to file");
+		}
 	}
 
 
@@ -143,7 +145,15 @@ public class UserPreferences {
 		for (Iterator<String> iter = newMRU.iterator(); iter.hasNext()
 				&& mruCounter <= MAX_MRU;) {
 			final String nextFilename = iter.next();
-			prefStore.setValue(MRU + ++mruCounter, nextFilename);
+			final String mruKey = MRU + ++mruCounter;
+			//log.debug("Write MRU List key: " + mruKey + ", file: " + nextFilename);
+			prefStore.setValue(mruKey, nextFilename);
+		}
+		// remove old values
+		for (int i = MAX_MRU; i < MAX_MRU * 2; i++ ) {
+			if (prefStore.contains(MRU + i)) {
+				prefStore.setValue(MRU + i, "");
+			}
 		}
         try {
 			savePreferences();
@@ -225,7 +235,12 @@ public class UserPreferences {
 	public void removeMRUFile(final String fileName) {
 		List<String> files =  getMRUFiles();
 		if (files.contains(fileName)) {
-			files.remove(files.indexOf(fileName));
+			int index = files.indexOf(fileName);
+			files.remove(index);
+			// set last MRU entry to empty:
+			if (prefStore.contains(MRU + (MAX_MRU - 1))) {
+				prefStore.setValue(MRU + (MAX_MRU - 1), "");
+			}
 			writeOutMruList(files);
 		}
 	}
