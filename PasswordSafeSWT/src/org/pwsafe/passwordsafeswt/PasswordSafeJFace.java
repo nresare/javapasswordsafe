@@ -98,6 +98,7 @@ import org.pwsafe.passwordsafeswt.action.LockDbAction;
 import org.pwsafe.passwordsafeswt.action.MRUFileAction;
 import org.pwsafe.passwordsafeswt.action.NewFileAction;
 import org.pwsafe.passwordsafeswt.action.OpenFileAction;
+import org.pwsafe.passwordsafeswt.action.OpenFileReadWriteToggleAction;
 import org.pwsafe.passwordsafeswt.action.OpenUrlAction;
 import org.pwsafe.passwordsafeswt.action.OptionsAction;
 import org.pwsafe.passwordsafeswt.action.SaveFileAction;
@@ -155,6 +156,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private SaveFileAsAction saveFileAsAction;
 	private SaveFileAction saveFileAction;
 	private OpenFileAction openFileAction;
+	private OpenFileReadWriteToggleAction openFileReadWriteToggleAction;
 	private OpenUrlAction openUrlAction;
 	private ViewAsListAction viewAsListAction;
 	private ViewAsTreeAction viewAsTreeAction;
@@ -293,6 +295,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		newFileAction = new NewFileAction();
 		openFileAction = new OpenFileAction();
+		openFileReadWriteToggleAction = new OpenFileReadWriteToggleAction();
 		saveFileAction = new SaveFileAction();
 		saveFileAsAction = new SaveFileAsAction();
 		exportToTextAction = new ExportToTextAction();
@@ -331,6 +334,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		menuManagerFile.add(newFileAction);
 		menuManagerFile.add(openFileAction);
+		menuManagerFile.add(openFileReadWriteToggleAction);
 		menuManagerFile.add(new Separator());
 
 		List<String> mruFiles = UserPreferences.getInstance().getMRUFiles();
