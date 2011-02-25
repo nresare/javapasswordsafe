@@ -71,7 +71,9 @@ public class StartupDialog extends Dialog {
 				cboFilename.add(filename);
 			}
 			cboFilename.setText(mruList.get(0));
+			txtPassword.setFocus();
 		}
+		
 		Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
