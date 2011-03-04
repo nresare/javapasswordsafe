@@ -1070,10 +1070,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	private void setEditMenusEnabled(final boolean enabled) {
 		addRecordAction.setEnabled(enabled);
+		// TODO: maybe add a new action viewRecord, possibly with a dedicated (read-only) dialog ?
+		// for now edit is also needed to VIEW the records
 //		editRecordAction.setEnabled(enabled);
 		deleteRecordAction.setEnabled(enabled);
 		saveFileAction.setEnabled(enabled);
 		saveFileAsAction.setEnabled(enabled);
+		
+		openFileReadWriteToggleAction.setOpenReadOnlyMode(enabled);
 	}
 
 	/**

@@ -1,6 +1,8 @@
 Changes:
 
-- Sow expired password entries (Trac Ticket 23)
+- finished Read-only Support (Trac Ticket 22 & 24)
+- Show expired password entries (Trac Ticket 23)
+- fixed edit dialogue open after lock (Bug # )
 - fixed import from plain text and xml problem (Bug #3025261) 
 - fix Filename selection not preserved after invalid passphrase (Bug #3094287)
 - fix Layout problems with Edit/View entry (Bug #3025273)

@@ -15,15 +15,16 @@ import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 
 /**
- * Open command.
+ * Open command that opens a new safe with the opposite read-write mode than the one opened at the moment.
+ * The label and tooltip is set according to the current read-only mode.
  *
- * @author Glen Smith
+ * @author roxon
  */
 public class OpenFileReadWriteToggleAction extends Action {
 
     public OpenFileReadWriteToggleAction() {
+    	// set Labels to descriptive default first
         super(Messages.getString("OpenFileReadWriteToggleAction.Label")); //$NON-NLS-1$
-//        setAccelerator( SWT.MOD1 | 'O'  );
         setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_open.gif"))); //$NON-NLS-1$
         setToolTipText(Messages.getString("OpenFileReadWriteToggleAction.Tooltip")); //$NON-NLS-1$
     }
@@ -57,5 +58,22 @@ public class OpenFileReadWriteToggleAction extends Action {
             }
         }
     }
+
+	public void setOpenReadOnlyMode(boolean enabled) {
+		String label = null;
+		String tooltip = null;
+		if (enabled) {
+			label = Messages.getString("OpenFileReadWriteToggleAction.ReadOnlyLabel"); //$NON-NLS-1$)
+			tooltip = Messages.getString("OpenFileReadWriteToggleAction.ReadOnlyTooltip"); //$NON-NLS-1$)			
+		} else {
+			label = Messages.getString("OpenFileReadWriteToggleAction.ReadWriteLabel"); //$NON-NLS-1$)
+			tooltip = Messages.getString("OpenFileReadWriteToggleAction.ReadWriteTooltip"); //$NON-NLS-1$)
+		}
+		
+		setText(label); 
+		setToolTipText(tooltip); 
+
+		
+	}
 
 }
