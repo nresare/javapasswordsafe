@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2011 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -66,7 +66,7 @@ public class JpwPreferenceInitializer extends AbstractPreferenceInitializer {
 		theStore.setDefault(SHOW_NOTES_IN_LIST, true);
 		theStore.setDefault(SHOW_NOTES_IN_EDIT_MODE, true);
 		theStore.setDefault(SHOW_PASSWORD_IN_EDIT_MODE, false);
-		theStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, true);
+		theStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, false);
 		theStore.setDefault(TREE_COLUMN_SIZE, 150); 
 		theStore.setDefault(TABLE_COLUMN_SIZE, 150);
 		

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2011 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -95,7 +95,7 @@ public class PassphraseUtils
 
 		char			allChars [][];
 		boolean			typesSeen[];
-		StringBuffer	password;
+		StringBuilder	password;
 		int				typeCount;
 
 		if ( !policy.isValid() )
@@ -104,13 +104,13 @@ public class PassphraseUtils
 			throw new InvalidPassphrasePolicy();
 		}
 
-		password	= new StringBuffer( policy.Length );
+		password	= new StringBuilder( policy.length );
 		typeCount	= 0;
 
-		if ( policy.DigitChars )	++typeCount;
-		if ( policy.LowercaseChars)	++typeCount;
-		if ( policy.UppercaseChars)	++typeCount;
-		if ( policy.SymbolChars)	++typeCount;
+		if ( policy.digitChars )	++typeCount;
+		if ( policy.lowercaseChars)	++typeCount;
+		if ( policy.uppercaseChars)	++typeCount;
+		if ( policy.symbolChars)	++typeCount;
 
 		allChars	= new char[ typeCount ][];
 		typesSeen	= new boolean[ 4 ];
@@ -120,30 +120,30 @@ public class PassphraseUtils
 			typesSeen[ ii ] = true;
 		}
 
-		if ( policy.Easyview )
+		if ( policy.easyview )
 		{
 			int	ii	= 0;
 
-			if ( policy.DigitChars )	allChars[ ii++ ] = EASYVISION_DIGIT_CHARS;
-			if ( policy.LowercaseChars)	allChars[ ii++ ] = EASYVISION_LC_CHARS;
-			if ( policy.UppercaseChars)	allChars[ ii++ ] = EASYVISION_UC_CHARS;
-			if ( policy.SymbolChars)	allChars[ ii++ ] = EASYVISION_SYMBOL_CHARS;
+			if ( policy.digitChars )	allChars[ ii++ ] = EASYVISION_DIGIT_CHARS;
+			if ( policy.lowercaseChars)	allChars[ ii++ ] = EASYVISION_LC_CHARS;
+			if ( policy.uppercaseChars)	allChars[ ii++ ] = EASYVISION_UC_CHARS;
+			if ( policy.symbolChars)	allChars[ ii++ ] = EASYVISION_SYMBOL_CHARS;
 		}
 		else
 		{
 			int	ii	= 0;
 
-			if ( policy.DigitChars )	allChars[ ii++ ] = DIGIT_CHARS;
-			if ( policy.LowercaseChars)	allChars[ ii++ ] = LOWERCASE_CHARS;
-			if ( policy.UppercaseChars)	allChars[ ii++ ] = UPPERCASE_CHARS;
-			if ( policy.SymbolChars)	allChars[ ii++ ] = SYMBOL_CHARS;
+			if ( policy.digitChars )	allChars[ ii++ ] = DIGIT_CHARS;
+			if ( policy.lowercaseChars)	allChars[ ii++ ] = LOWERCASE_CHARS;
+			if ( policy.uppercaseChars)	allChars[ ii++ ] = UPPERCASE_CHARS;
+			if ( policy.symbolChars)	allChars[ ii++ ] = SYMBOL_CHARS;
 		}
 
 		do
 		{
 			password.delete( 0, password.length() );
 
-			for ( int ii = 0; ii < policy.Length; ++ii )
+			for ( int ii = 0; ii < policy.length; ++ii )
 			{
 				int	type;
 	

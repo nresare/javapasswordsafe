@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2011 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -37,7 +37,7 @@ public class PassphraseUtilsTest extends TestCase
 
 		policy = new PassphrasePolicy();
 
-		policy.Length	= 17;
+		policy.length	= 17;
 
 		makePassword( policy );
 	}
@@ -51,10 +51,10 @@ public class PassphraseUtilsTest extends TestCase
 
 		policy = new PassphrasePolicy();
 
-		policy.Length			= 64;
-		policy.LowercaseChars	= false;
-		policy.DigitChars		= false;
-		policy.SymbolChars		= false;
+		policy.length			= 64;
+		policy.lowercaseChars	= false;
+		policy.digitChars		= false;
+		policy.symbolChars		= false;
 
 		makePassword( policy );
 	}
@@ -68,10 +68,10 @@ public class PassphraseUtilsTest extends TestCase
 
 		policy = new PassphrasePolicy();
 
-		policy.Length			= 1;
-		policy.LowercaseChars	= false;
-		policy.DigitChars		= false;
-		policy.SymbolChars		= false;
+		policy.length			= 1;
+		policy.lowercaseChars	= false;
+		policy.digitChars		= false;
+		policy.symbolChars		= false;
 
 		makePassword( policy );
 	}
@@ -129,7 +129,7 @@ public class PassphraseUtilsTest extends TestCase
 			lcCharSeen	= false;
 			symbolSeen	= false;
 
-			assertEquals( "Generated password is the wrong length", passphrase.length(), policy.Length );
+			assertEquals( "Generated password is the wrong length", passphrase.length(), policy.length );
 
 			for ( int ii = 0; ii < passphrase.length(); ++ii )
 			{
@@ -145,7 +145,7 @@ public class PassphraseUtilsTest extends TestCase
 			
 			assertTrue(
 				"Password doesn\'t contain at least one character from each required category",
-				!( (ucCharSeen ^ policy.UppercaseChars) | (lcCharSeen ^ policy.LowercaseChars) | (digitSeen ^ policy.DigitChars) | (symbolSeen ^ policy.SymbolChars) ) );
+				!( (ucCharSeen ^ policy.uppercaseChars) | (lcCharSeen ^ policy.lowercaseChars) | (digitSeen ^ policy.digitChars) | (symbolSeen ^ policy.symbolChars) ) );
 		}
 		catch ( InvalidPassphrasePolicy e )
 		{

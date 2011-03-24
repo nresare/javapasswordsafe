@@ -183,9 +183,10 @@
         <copy todir="${dist.linux.dir}/${zip.dir.name}">
            <fileset dir="${linux.dir}">
                 <include name="pwsafe.sh" />
+           		<include name="*.xpm" />
             </fileset>
             <fileset dir="${deploy.dir}" includes="*.jar" />
-        	<fileset dir="${basedir}" includes="LICENSE"/>
+        	<fileset dir="${basedir}" includes="LICENSE" />
         </copy>
 
         <copy todir="${dist.linux.dir}/${zip.dir.name}/lib">
@@ -222,9 +223,10 @@
         <copy todir="${dist.linux-x86_64.dir}/${zip.dir.name}">
             <fileset dir="${linux-x86_64.dir}">
                 <include name="pwsafe.sh" />
+           		<include name="*.xpm" />
             </fileset>
             <fileset dir="${deploy.dir}" includes="*.jar" />
-        	<fileset dir="${basedir}" includes="LICENSE"/>
+        	<fileset dir="${basedir}" includes="LICENSE" />
         </copy>
 
         <copy todir="${dist.linux-x86_64.dir}/${zip.dir.name}/lib">
