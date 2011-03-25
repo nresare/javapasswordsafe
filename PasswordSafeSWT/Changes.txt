@@ -1,0 +1,90 @@
+Changes:
+
+changes in swt 0.8 final (24.03.2011)
+- Changed system tray icon preference default to false because of possible problems on Ubuntu Netbook Edition
+- New menu item for opening a safe in opposite read/write mode (Trac Ticket 22)
+- finished Read-only Support (Trac Ticket 22 & 24)
+- Remove not found safes from most recentrly used files list (Trac Ticket 25)
+
+changes in swt 0.8 beta 5 (21.12.2010)
+- Show expired password entries (Trac Ticket 23)
+- fixed edit dialogue open after lock (Bug # )
+- fixed import from plain text and xml problem (Bug #3025261) 
+- fix Filename selection not preserved after invalid passphrase (Bug #3094287)
+- fix Layout problems with Edit/View entry (Bug #3025273)
+- fix for null pointer exception switching to tree view (Patch # 3076329)
+- Safe Combination Setup dialog width maximum set (Bug #2980874)
+- Make About version info selectable
+- Update to SWT and eclipse libs to 3.6.1
+- Update bouncy castle and common logging libs
+
+changes in swt 0.8 beta 4 (15.02.2010)
+- Disable systray on MacOSX Carbon (preference is overriden/ignored)
+- fixed unlocking minimized window: Enter passphrase once (Trac Ticket 18)
+- PasswordsafeSWT is now minimized when locked (fixes Trac Ticket 14 when working without tray icon)
+- added hide notes column display preference (Feature 2710943)
+- removed show password column display preference
+- changed accelerator key for Open and Copy URL actions to CTRL-L and CTRL-ALT-L, respectively 
+- avoid screen updates when updating an entries access time
+- enabled 64bit version on Mac OSX 10.6.2 (Bug #2908145)
+
+changes in swt 0.8 beta 3 (27.11.2009)
+- added open url action to menu toolbar and context menu
+- open jpwsafe website should now work in Linux KDE desktop (Java 6)
+- added record access time saving preference (default is false)
+- fixed unlocking with open edit dialoge (Trac Ticket 14)
+- fixed "open safe" in first time startup dialogue
+- close on doubleclick on tray icon (Bug #2790970)
+- do not open several passphrase entry dialogs on restore
+- replace tabs and other whitespace with space in notes column for tree and table view
+- fixed excessive object allocation with SHA256 digest (Trac Ticket 10) 
+- update jface/eclipse libs to 3.5.1
+
+changes in swt 0.8 beta 2 (30.09.2009)
+- fix for asymmetric passphrase corruption in 0.8 beta 1
+- unknown V3 fields are handled (Bug #2462736)
+- expand/collapse tree on doubleclick
+- added copy URL action (Patch #2813457 by timmydog)
+- reopen when doubleclicking on tray icon (Bug #2790970)
+- passwordsafe lib Unit test coverage
+- upgrade to swt and jface 3.5.1 / 3.5.0
+- initial read only support (in startup screen, with a preference)
+- added licence dialogue
+- maintain tree expansion on delete item (Patch #2783428 by timmydog) 
+
+changes in swt 0.8 beta 1 (26.04.2009)
+- Amazon S3 support (contrib by mtiller)
+- in-memory encryption of password safe records (Trac Ticket 6)
+- localisation in german (Trac Ticket 3)
+- check for changed passwordsafe file before saving
+- fix change safe combination (contrib by M.Panero)
+- check safe combination before export (Trac Ticket 5)
+- Default Preferences (Trac Ticket 2) 
+- fixed File->Export To->Plain Text (tab separated) does not work (Bug #2557998) 
+
+changes in swt 0.7 final (14.01.2009)
+- Fix for win passwordsafe (U3) files (Bug #2424785) 
+- win32 build changed from exe4j to launch4j (Bug #2327605)
+- linux start script log includes user name (Bug #2507288)
+- required java version now only java 5 (Bug #2412881)
+
+changes in swt 0.7 beta 3 (03.12.2008)
+- fixed icon in build (Bug #2320920)
+- fixed V2 PasswordSafe incompatibility (Bug #2279526)
+- correct accelerators on mac (Bug #2320636)
+- fixed tray Icon on Linux (Bug #2352415)
+- first build for Linux x86_64 (Bug #2352497) 
+- upgrade to swt and jface v 3.4.x
+
+changes in swt 0.7 beta 2 (01.10.2008)
+- date field bug fixed
+- updated bouncy castle to version 141
+- now requires Java version 5 (1.5 in old) 
+- updated build scripts
+
+changes in swt 0.7 beta 1
+- support for v3 fields like last change, valid until
+- tree and table columns now resizable
+- table columns can now be reordered and are sortable
+- upgrade to swt and jface v 3.3
+
