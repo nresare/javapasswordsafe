@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +42,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IElementComparer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -91,6 +94,7 @@ import org.pwsafe.passwordsafeswt.action.EditRecordAction;
 import org.pwsafe.passwordsafeswt.action.ExitAppAction;
 import org.pwsafe.passwordsafeswt.action.ExportToTextAction;
 import org.pwsafe.passwordsafeswt.action.ExportToXMLAction;
+import org.pwsafe.passwordsafeswt.action.FindRecordAction;
 import org.pwsafe.passwordsafeswt.action.HelpAction;
 import org.pwsafe.passwordsafeswt.action.ImportFromTextAction;
 import org.pwsafe.passwordsafeswt.action.ImportFromXMLAction;
@@ -148,6 +152,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private NewFileAction newFileAction;
 	private DeleteRecordAction deleteRecordAction;
 	private EditRecordAction editRecordAction;
+	private FindRecordAction findRecordAction;
 	private AddRecordAction addRecordAction;
 	private ClearClipboardAction clearClipboardAction;
 	private CopyPasswordAction copyPasswordAction;
@@ -307,6 +312,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		clearClipboardAction = new ClearClipboardAction();
 		addRecordAction = new AddRecordAction();
 		editRecordAction = new EditRecordAction();
+		findRecordAction = new FindRecordAction();
 		deleteRecordAction = new DeleteRecordAction();
 		viewAsListAction = new ViewAsListAction();
 		viewAsTreeAction = new ViewAsTreeAction();
@@ -373,6 +379,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		menuManagerEdit.add(addRecordAction);
 		menuManagerEdit.add(editRecordAction);
+		menuManagerEdit.add(findRecordAction);		
 		menuManagerEdit.add(deleteRecordAction);
 		menuManagerEdit.add(new Separator());
 		menuManagerEdit.add(copyPasswordAction);
@@ -1045,6 +1052,49 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		return theGroupPath.toString();
 	}
 
+ public void highlightEntry( final PwsEntryBean entry ) {
+         if( isTreeViewShowing() ) {
+ //           todo: save previous state? treeViewer.getExpandedElements()
+ 
+             String parent = (String)((PasswordTreeContentProvider)treeViewer.getContentProvider()).getParent( entry );
+             List<TreeItem> allItemsList = new ArrayList();
+             allItemsList.addAll(Arrays.asList(tree.getItems()));
+ 
+             for( String group : parent.split( "\\." ) ) {
+                 for( TreeItem tmpTI : allItemsList ) {
+                     // TreeItem.getData can be a String or a TreeGroup
+                     if( group.equals(tmpTI.getData().toString() ) ){
+                         tmpTI.setExpanded(true);
+                         treeViewer.refresh();
+                         allItemsList.clear();
+                         allItemsList.addAll(Arrays.asList( tmpTI.getItems() ));
+                         break;
+                     }
+                 }
+             }
+ 
+             StructuredSelection ss = new StructuredSelection(entry);
+             treeViewer.setSelection(ss, true);
+             treeViewer.refresh(false);
+         }
+         else {
+             tableViewer.setSelection(new StructuredSelection(entry), true);
+             tableViewer.refresh(entry, false);
+         }
+     }
+ 
+     private void expandToRoot(final TreeItem ti) {
+         log.info( "expandToRoot; ti=" + ti.toString());
+         TreeItem tmpTI = ti.getParentItem();
+        treeViewer.setExpandedState(ti, true);
+         while ( tmpTI.getParentItem() != null ) {
+             log.info( "expanding; tmpTI=" + tmpTI.toString());
+             tmpTI.setExpanded(true);
+             treeViewer.refresh(tmpTI, false);
+             tmpTI = tmpTI.getParentItem();
+         }
+     }
+		 
 	/**
 	 * Refresh the tree and table.
 	 * 
@@ -1074,6 +1124,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		// for now edit is also needed to VIEW the records
 //		editRecordAction.setEnabled(enabled);
 		deleteRecordAction.setEnabled(enabled);
+		findRecordAction.setEnabled(enabled);
 		saveFileAction.setEnabled(enabled);
 		saveFileAsAction.setEnabled(enabled);
 		
@@ -1510,4 +1561,19 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			table.clearAll();		
 	}
 
+	public Comparator getSorter() {
+		if (isTreeViewShowing()) {
+			return new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return treeViewer.getSorter().compare(treeViewer, o1, o2);
+				}
+			};
+		} else {
+			return new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return tableViewer.getSorter().compare(tableViewer, o1, o2);
+				}
+			};
+		}
+	}
 }

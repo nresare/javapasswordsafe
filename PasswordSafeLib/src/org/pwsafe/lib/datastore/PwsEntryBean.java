@@ -10,7 +10,9 @@
 package org.pwsafe.lib.datastore;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -399,6 +401,26 @@ public class PwsEntryBean implements Cloneable {
 		return all.toString();
 	}
 
+	/** 
+	 * TODO: only used by search, we could use a Stringbuffer
+	 * here and directly lowercase the values without field names.
+	 * Then a better name would be getNormalizedSearchText()
+	 * @return
+	 */
+	public Map<String, String> getFields() {
+	        Map<String, String> fields = new HashMap<String, String>();
+	 
+	        fields.put("ID", id != null ? id.toString() : null);
+	        fields.put("Group", group);
+	        fields.put("Title", title);
+	        fields.put("User", username);
+	        fields.put("Notes", notes);
+	        fields.put("Url", url);
+	
+			return fields;
+		}
+	
+		
 
 	/**
      * A safer version of field retrieval that is null-safe.
