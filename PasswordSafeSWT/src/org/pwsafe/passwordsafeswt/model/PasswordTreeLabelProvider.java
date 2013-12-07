@@ -12,10 +12,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.pwsafe.lib.datastore.PwsEntryBean;
-import org.pwsafe.lib.file.PwsFieldTypeV2;
-import org.pwsafe.lib.file.PwsFieldTypeV3;
-import org.pwsafe.lib.file.PwsRecord;
-import org.pwsafe.lib.file.PwsRecordV3;
 
 /**
  * Label provider for tree viewer.
@@ -26,105 +22,73 @@ import org.pwsafe.lib.file.PwsRecordV3;
 public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implements ILabelProvider {
 
 	private static final Log log = LogFactory.getLog(PasswordTreeLabelProvider.class);
-    
+
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
-	public Image getImage(Object node) {
+	public Image getImage(final Object node) {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * TODO: Merge this with the getColumnText method from {@link PasswordTableLabelProvider}.
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	 */
+	public String getColumnText(final Object element, final int columnIndex) {
+		String result = "";
 
-    /* (non-Javadoc)
-     * TODO: Merge this with the getColumnText method from {@link PasswordTableLabelProvider}.
-     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-     */
-    public String getColumnText(Object element, int columnIndex) {
-        String result = "";
-        switch (columnIndex) {
-        case 0:
-            result = "<unknown node type>";
-            if (element instanceof String) {
-                result = element.toString();
-            } else if (element instanceof PwsEntryBean) {
-            	PwsEntryBean theEntry = (PwsEntryBean) element;
-                result = theEntry.getTitle();
-              } else if (element instanceof PwsRecord) { // deprecated
-                PwsRecord record = (PwsRecord) element;
-                if (record instanceof PwsRecordV3) {
-                	result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV3.TITLE);
-                } else {
-                	result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV2.TITLE);
-                }
-            } else if (element instanceof PasswordTreeContentProvider.TreeGroup) {
-                result = element.toString();
-            }
-            break;
-        case 1:
-        	if (element instanceof PwsEntryBean) {
-            	PwsEntryBean theEntry = (PwsEntryBean) element;
-                result = theEntry.getUsername();
-        	} else if (element instanceof PwsRecord) {// deprecated
-            	if (element instanceof PwsRecordV3) {
-            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV3.USERNAME);
-            	} else {
-            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV2.USERNAME);	
-            	}
-            }
-            break;
-        case 2:
-        	if (element instanceof PwsEntryBean) {
-            	PwsEntryBean theEntry = (PwsEntryBean) element;
-                result = theEntry.getNotes();
-        	} else if (element instanceof PwsRecord) {// deprecated
-            	if (element instanceof PwsRecordV3) {
-            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV3.NOTES);
-            	} else {
-            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV2.NOTES);	
-            	}
-            }
-        	if (result != null) {
-            	result = result.replace('\t',' ').replace('\r', ' ');//.replace('\n',' ')
-        	}
-            break;
-        case 3:
-        	if (element instanceof PwsEntryBean) {
-            	PwsEntryBean theEntry = (PwsEntryBean) element;
-                result = theEntry.getPassword() != null ? theEntry.getPassword().toString() : null;
-        	} else if (element instanceof PwsRecord) {// deprecated
-            	if (element instanceof PwsRecordV3) {
-            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV3.PASSWORD);
-            	} else {
-            		result = PwsEntryBean.getSafeValue((PwsRecord) element, PwsFieldTypeV2.PASSWORD);	
-            	}
-            }
-            break;
-        }
-        return result;
-    }
+		if (columnIndex == 0) {
+			result = "<unknown node type>";
+			if (element instanceof String) {
+				result = element.toString();
+			} else if (element instanceof PwsEntryBean) {
+				final PwsEntryBean theEntry = (PwsEntryBean) element;
+				result = theEntry.getTitle();
+			} else if (element instanceof PasswordTreeContentProvider.TreeGroup) {
+				result = element.toString();
+			}
+			return result;
+		}
+
+		if (element instanceof PwsEntryBean) {
+			final PwsEntryBean theEntry = (PwsEntryBean) element;
+
+			switch (columnIndex) {
+			case 0:
+				result = theEntry.getTitle();
+				break;
+			case 1:
+				result = theEntry.getUsername();
+				break;
+			case 2:
+				result = theEntry.getNotes();
+				if (result != null) {
+					result = result.replace('\t',' ').replace('\r', ' ');//.replace('\n',' ')
+				}
+				break;
+			case 3:
+				result = theEntry.getPassword() != null ? theEntry.getPassword().toString() : null;
+				break;
+			}
+		}
+		return result;
+	}
 
 
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
-	public String getText(Object node) {
-        String result = "<unknown node type>";
+	public String getText(final Object node) {
+		String result = "<unknown node type>";
 		if (node instanceof String) {
 			result = node.toString();
 		} else if (node instanceof PwsEntryBean) {
-			PwsEntryBean theEntry = (PwsEntryBean) node;
+			final PwsEntryBean theEntry = (PwsEntryBean) node;
 			result = theEntry.getTitle();
 		} else if (node instanceof PasswordTreeContentProvider.TreeGroup) {
-		    result = node.toString();
-		} else if (node instanceof PwsRecord) { // deprecated
-		    PwsRecord record = (PwsRecord) node;
-        	if (record instanceof PwsRecordV3) {
-        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV3.TITLE);
-        	} else {
-        		result = PwsEntryBean.getSafeValue(record, PwsFieldTypeV2.TITLE);	
-        	}
-		} 
-        return result;
+			result = node.toString();
+		}
+		return result;
 	}
 
 }
