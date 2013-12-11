@@ -20,7 +20,7 @@ public class PasswordPolicyTest extends TestCase {
 		assertTrue(pol.symbolChars);
 		assertTrue(pol.easyview);
 		assertEquals(Integer.parseInt("FFF", 16), pol.length);
-		
+
 		pol = PassphrasePolicy.valueOf("0000000FFF000FFF000");
 		assertFalse(pol.digitChars);
 		assertFalse(pol.lowercaseChars);
@@ -28,9 +28,9 @@ public class PasswordPolicyTest extends TestCase {
 		assertFalse(pol.symbolChars);
 		assertFalse(pol.easyview);
 		assertEquals(0, pol.length);
-		
-//		String krims = Integer.toBinaryString(Integer.parseInt("80C0",16));
-//		String krams = Integer.toBinaryString(Integer.parseInt("8888",16));
+
+		// String krims = Integer.toBinaryString(Integer.parseInt("80C0",16));
+		// String krams = Integer.toBinaryString(Integer.parseInt("8888",16));
 		pol = PassphrasePolicy.valueOf("0800008FFF000FFF000");
 		assertFalse(pol.digitChars);
 		assertFalse(pol.lowercaseChars);
@@ -38,6 +38,6 @@ public class PasswordPolicyTest extends TestCase {
 		assertFalse(pol.symbolChars);
 		assertFalse(pol.easyview);
 		assertEquals(8, pol.length);
-		
+
 	}
 }

@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -17,83 +17,81 @@ import java.util.ResourceBundle;
 /**
  *
  */
-public class I18nHelperBase
-{
+public class I18nHelperBase {
 	/**
 	 * Log4j logger
 	 */
-	private static final Log		LOG	= Log.getInstance( I18nHelperBase.class.getPackage().getName() );
+	private static final Log LOG = Log.getInstance(I18nHelperBase.class.getPackage().getName());
 
 	/**
 	 * The localised message store.
 	 */
-	private static ResourceBundle	TheBundle	= null;
+	private static ResourceBundle bundle = null;
 
 	/**
-	 * The users preferred locale or the default locale if no preference was given.
+	 * The users preferred locale or the default locale if no preference was
+	 * given.
 	 */
-	private static Locale			TheLocale	= Locale.getDefault();
+	private static Locale locale = Locale.getDefault();
 
 	/**
 	 * 
 	 */
-	protected I18nHelperBase()
-	{
+	protected I18nHelperBase() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	static
-	{
-		LOG.debug1( "I18nHelper class loaded" );
+	static {
+		LOG.debug1("I18nHelper class loaded");
 	}
 
 	/**
-	 * Returns the message with the given key from the <code>ResourceBundle</code>.  Where
-	 * paramaters are specified in the message they are replaced with the appropriate entry
-	 * from <code>args</code>.
+	 * Returns the message with the given key from the
+	 * <code>ResourceBundle</code>. Where paramaters are specified in the
+	 * message they are replaced with the appropriate entry from
+	 * <code>args</code>.
 	 * 
-	 * @param key  the message ID
+	 * @param key the message ID
 	 * @param args arguments for paramater substitutions.
 	 * 
 	 * @return The message with parameters substituted.
 	 */
-	public String formatError( String key, Object [] args )
-	{
-		String	msg;
+	public String formatError(String key, Object[] args) {
+		String msg;
 
 		msg = getString(key);
-		return (args == null) ? msg : key + " - " + MessageFormat.format( msg, args );
+		return (args == null) ? msg : key + " - " + MessageFormat.format(msg, args);
 	}
 
 	/**
-	 * Returns the message with the given key from the <code>ResourceBundle</code>.
+	 * Returns the message with the given key from the
+	 * <code>ResourceBundle</code>.
 	 * 
 	 * @param key the ID of the message to retrieve.
 	 * 
 	 * @return The message with the kiven key.
 	 */
-	public String formatMessage( String key )
-	{
-		return formatMessage( key, null );
+	public String formatMessage(String key) {
+		return formatMessage(key, null);
 	}
 
 	/**
-	 * Returns the message with the given key from the <code>ResourceBundle</code>.  Where
-	 * paramaters are specified in the message they are replaced with the appropriate entry
-	 * from <code>args</code>.
+	 * Returns the message with the given key from the
+	 * <code>ResourceBundle</code>. Where paramaters are specified in the
+	 * message they are replaced with the appropriate entry from
+	 * <code>args</code>.
 	 * 
-	 * @param key  the message ID
+	 * @param key the message ID
 	 * @param args arguments for paramater substitutions.
 	 * 
 	 * @return The message with parameters substituted.
 	 */
-	public String formatMessage( String key, Object [] args )
-	{
-		String	msg;
+	public String formatMessage(String key, Object[] args) {
+		String msg;
 
 		msg = getString(key);
-		return (args == null) ? msg : MessageFormat.format( msg, args );
+		return (args == null) ? msg : MessageFormat.format(msg, args);
 	}
 
 	/**
@@ -101,21 +99,19 @@ public class I18nHelperBase
 	 * 
 	 * @return The localised <code>ResourceBundle</code>.
 	 */
-	private synchronized ResourceBundle getBundle()
-	{
-		LOG.enterMethod( "getBundle" );
+	private synchronized ResourceBundle getBundle() {
+		LOG.enterMethod("getBundle");
 
-		if ( TheBundle == null )
-		{
-			LOG.debug1( "Loading resource bundle for locale " + TheLocale.toString() );
-			TheBundle = ResourceBundle.getBundle( getFilename(), TheLocale );
+		if (bundle == null) {
+			LOG.debug1("Loading resource bundle for locale " + locale.toString());
+			bundle = ResourceBundle.getBundle(getFilename(), locale);
 			// TODO handle the case where the file cannot be found
 			// catch MissingResourceException
 		}
 
-		LOG.leaveMethod( "getBundle" );
+		LOG.leaveMethod("getBundle");
 
-		return TheBundle;
+		return bundle;
 	}
 
 	/**
@@ -124,39 +120,35 @@ public class I18nHelperBase
 	 * 
 	 * @return
 	 */
-	public String getFilename()
-	{
+	public String getFilename() {
 		return "CorelibStrings";
 	}
 
-	private String getString( String key )
-	{
-		try
-		{
-			return getBundle().getString( key );
-		}
-		catch ( MissingResourceException e )
-		{
-			// N.B. Special case - this message is not loaded from the resource file.
-			LOG.error( getFilename() + ".properties : Missing Resource - \"" + key + "\"" );
+	private String getString(String key) {
+		try {
+			return getBundle().getString(key);
+		} catch (final MissingResourceException e) {
+			// N.B. Special case - this message is not loaded from the resource
+			// file.
+			LOG.error(getFilename() + ".properties : Missing Resource - \"" + key + "\"");
 		}
 		return key + " (value not found)";
 	}
 
 	/**
-	 * Sets the locale and forces the <code>ResourceBundle</code> to be reloaded.
+	 * Sets the locale and forces the <code>ResourceBundle</code> to be
+	 * reloaded.
 	 * 
-	 * @param locale the locale.
+	 * @param aLocale the locale.
 	 */
-	public synchronized void setLocale( Locale locale )
-	{
-		LOG.enterMethod( "setLocale" );
+	public synchronized void setLocale(Locale aLocale) {
+		LOG.enterMethod("setLocale");
 
-		TheLocale	= locale;
-		TheBundle	= null;
+		locale = aLocale;
+		bundle = null;
 
-		LOG.debug1( "Locale set to " + locale.toString() );
+		LOG.debug1("Locale set to " + aLocale.toString());
 
-		LOG.leaveMethod( "setLocale" );
+		LOG.leaveMethod("setLocale");
 	}
 }

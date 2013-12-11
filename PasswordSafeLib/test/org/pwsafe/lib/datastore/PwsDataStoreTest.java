@@ -1,6 +1,6 @@
 /*
  * $Id: TestSparseRecords.java 404 2009-09-21 19:19:25Z roxon $
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -26,10 +26,10 @@ public class PwsDataStoreTest extends TestCase {
 
 	private String filename;
 	private StringBuilder password;
-	
+
 	private PwsFileV3 pwsFile;
 	private PwsEntryStoreImpl entryStore;
-	
+
 	@Override
 	public void setUp() {
 		filename = System.getProperty("user.dir") + File.separator + "sample3.psafe3";
@@ -45,16 +45,15 @@ public class PwsDataStoreTest extends TestCase {
 	public void tearDown() {
 		deletePwsFile(filename);
 	}
-	
+
 	private static void deletePwsFile(String filename) {
-		File file = new File(filename);
+		final File file = new File(filename);
 		file.delete();
 	}
 
-	
-	public void testNewV3Entry () throws Exception {
+	public void testNewV3Entry() throws Exception {
 		PwsRecordV3 aRecord = (PwsRecordV3) pwsFile.newRecord();
-		
+
 		PwsEntryBean entry = PwsEntryBean.fromPwsRecord(aRecord);
 		assertEquals("", entry.getTitle());
 		assertNotNull(entry.getId());
@@ -69,20 +68,19 @@ public class PwsDataStoreTest extends TestCase {
 		assertNull(aRecord.getField(PwsFieldTypeV3.URL));
 		assertNull(aRecord.getField(PwsFieldTypeV3.AUTOTYPE));
 
-		
 		entry = PwsEntryBean.fromPwsRecord(aRecord);
 		assertEquals("fromTitle", entry.getTitle());
 		assertEquals("fromName", entry.getUsername());
 		assertEquals(entry, PwsEntryBean.fromPwsRecord(aRecord));
-	
+
 		entry = new PwsEntryBean();
 		entry.setTitle("fromTitle");
 		entry.setPassword(new StringBuilder("fromPassword"));
-		Date changeDate = new Date();
+		final Date changeDate = new Date();
 		entry.setLastChange(changeDate);
 		aRecord = (PwsRecordV3) pwsFile.newRecord();
 		entry.toPwsRecord(aRecord);
-		
+
 		assertEquals("fromPassword", aRecord.getField(PwsFieldTypeV3.PASSWORD).toString());
 		assertEquals(changeDate, aRecord.getField(PwsFieldTypeV3.LAST_MOD_TIME).getValue());
 		assertNull(aRecord.getField(PwsFieldTypeV3.GROUP));
@@ -90,13 +88,13 @@ public class PwsDataStoreTest extends TestCase {
 		assertNull(aRecord.getField(PwsFieldTypeV3.NOTES));
 		assertNull(aRecord.getField(PwsFieldTypeV3.URL));
 		assertNull(aRecord.getField(PwsFieldTypeV3.AUTOTYPE));
-	}		
-	
-	public void testNewV2Entry () throws Exception {
-		PwsFileV2	file = new PwsFileV2();
+	}
 
-		PwsRecordV2 aRecord = (PwsRecordV2) file.newRecord() ;
-		
+	public void testNewV2Entry() throws Exception {
+		final PwsFileV2 file = new PwsFileV2();
+
+		PwsRecordV2 aRecord = (PwsRecordV2) file.newRecord();
+
 		PwsEntryBean entry = PwsEntryBean.fromPwsRecord(aRecord);
 		entry.setTitle("fromTitle");
 		entry.setUsername("fromName");
@@ -105,28 +103,27 @@ public class PwsDataStoreTest extends TestCase {
 		assertEquals("fromTitle", aRecord.getField(PwsFieldTypeV3.TITLE).toString());
 		assertEquals("fromName", aRecord.getField(PwsFieldTypeV3.USERNAME).toString());
 		assertEquals(entry, PwsEntryBean.fromPwsRecord(aRecord));
-		
+
 		entry = PwsEntryBean.fromPwsRecord(aRecord);
 		assertEquals("fromTitle", entry.getTitle());
 		assertEquals("fromName", entry.getUsername());
 
-//		assertEquals(aRecord, actual)
-	
+		// assertEquals(aRecord, actual)
+
 		entry = new PwsEntryBean();
 		entry.setTitle("fromTitle");
 		entry.setPassword(new StringBuilder("fromPassword"));
 		aRecord = (PwsRecordV2) file.newRecord();
 		entry.toPwsRecord(aRecord);
-		
+
 		assertEquals("fromPassword", aRecord.getField(PwsFieldTypeV3.PASSWORD).toString());
-	}		
+	}
 
-	
-	public void testNewV1Entry () throws Exception {
-		PwsFileV1	file = new PwsFileV1();
+	public void testNewV1Entry() throws Exception {
+		final PwsFileV1 file = new PwsFileV1();
 
-		PwsRecordV1 aRecord = (PwsRecordV1) file.newRecord() ;
-		
+		PwsRecordV1 aRecord = (PwsRecordV1) file.newRecord();
+
 		PwsEntryBean entry = PwsEntryBean.fromPwsRecord(aRecord);
 		entry.setTitle("fromTitle");
 		entry.setUsername("fromName");
@@ -139,15 +136,14 @@ public class PwsDataStoreTest extends TestCase {
 		entry = PwsEntryBean.fromPwsRecord(aRecord);
 		assertEquals("fromTitle", entry.getTitle());
 		assertEquals("fromName", entry.getUsername());
-	
+
 		entry = new PwsEntryBean();
 		entry.setTitle("fromTitle");
 		entry.setPassword(new StringBuilder("fromPassword"));
 		aRecord = (PwsRecordV1) file.newRecord();
 		entry.toPwsRecord(aRecord);
-		
-		assertEquals("fromPassword", aRecord.getField(PwsFieldTypeV3.PASSWORD).toString());
-	}		
 
+		assertEquals("fromPassword", aRecord.getField(PwsFieldTypeV3.PASSWORD).toString());
+	}
 
 }

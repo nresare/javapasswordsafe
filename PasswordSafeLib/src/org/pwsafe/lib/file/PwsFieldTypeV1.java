@@ -1,7 +1,7 @@
 /*
- * $Id:$
+ * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -11,11 +11,7 @@ package org.pwsafe.lib.file;
 
 public enum PwsFieldTypeV1 implements PwsFieldType {
 
-	DEFAULT	(0),
-	TITLE	(3),
-	USERNAME (4),
-	NOTES	(5),
-	PASSWORD (6);
+	DEFAULT(0), TITLE(3), USERNAME(4), NOTES(5), PASSWORD(6);
 
 	private int id;
 	private String name;
@@ -29,7 +25,7 @@ public enum PwsFieldTypeV1 implements PwsFieldType {
 		id = anId;
 		name = aName;
 	}
-	
+
 	public int getId() {
 		return id;
 	}

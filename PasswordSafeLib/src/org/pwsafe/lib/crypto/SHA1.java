@@ -20,146 +20,107 @@ package org.pwsafe.lib.crypto;
  * SHA-1 message digest implementation, translated from C source code (the
  * origin is unknown).
  */
-public class SHA1
-{
+public class SHA1 {
 	/**
 	 * size of a SHA-1 digest in octets
 	 */
 	public final static int DIGEST_SIZE = 20;
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
-	private int[] m_state;
+	private final int[] m_state;
 	private long m_lCount;
-	private byte[] m_digestBits;
-	private int[] m_block;
+	private final byte[] m_digestBits;
+	private final int[] m_block;
 	private int m_nBlockIndex;
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Default constructor.
 	 */
-	public SHA1()
-	{
+	public SHA1() {
 		m_state = new int[5];
 		m_block = new int[16];
 		m_digestBits = new byte[DIGEST_SIZE];
 		reset();
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Clears all data, use reset() to start again.
 	 */
-	public void clear()
-	{
+	public void clear() {
 		int nI;
 
-		for (nI = 0; nI < m_state.length; nI++)
-		{
+		for (nI = 0; nI < m_state.length; nI++) {
 			m_state[nI] = 0;
 		}
-		for (nI = 0; nI < m_digestBits.length; nI++)
-		{
+		for (nI = 0; nI < m_digestBits.length; nI++) {
 			m_digestBits[nI] = 0;
 		}
-		for (nI = 0; nI < m_block.length; nI++)
-		{
+		for (nI = 0; nI < m_block.length; nI++) {
 			m_block[nI] = 0;
 		}
 		m_lCount = 0;
 		m_nBlockIndex = 0;
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
-	final static int rol(int nValue, int nBits)
-	{
+	final static int rol(int nValue, int nBits) {
 		return ((nValue << nBits) | (nValue >>> (32 - nBits)));
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
-	final int blk0(
-		int nI)
-	{
-		return
-			m_block[nI] =
-			   ((rol(m_block[nI], 24) & 0xff00ff00) |
-			    (rol(m_block[nI],  8) & 0x00ff00ff));
+	final int blk0(int nI) {
+		return m_block[nI] = ((rol(m_block[nI], 24) & 0xff00ff00) | (rol(m_block[nI], 8) & 0x00ff00ff));
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
-	final int blk(
-		int nI)
-	{
-		return (
-			m_block[nI & 15] =
-				rol(
-					m_block[(nI + 13) & 15] ^
-				    m_block[(nI +  8) & 15] ^
-				    m_block[(nI +  2) & 15]	^
-				    m_block[ nI		& 15],
-					1));
+	final int blk(int nI) {
+		return (m_block[nI & 15] = rol(m_block[(nI + 13) & 15] ^ m_block[(nI + 8) & 15]
+				^ m_block[(nI + 2) & 15] ^ m_block[nI & 15], 1));
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
-	final void r0(int data[], int nV, int nW, int nX, int nY, int nZ, int nI)
-	{
-		data[nZ] += ((data[nW] & (data[nX] ^ data[nY])) ^ data[nY])
-			+ blk0(nI)
-			+ 0x5a827999
-			+ rol(data[nV], 5);
+	final void r0(int data[], int nV, int nW, int nX, int nY, int nZ, int nI) {
+		data[nZ] += ((data[nW] & (data[nX] ^ data[nY])) ^ data[nY]) + blk0(nI) + 0x5a827999
+				+ rol(data[nV], 5);
 		data[nW] = rol(data[nW], 30);
 	}
 
-	final void r1(int data[], int nV, int nW, int nX, int nY, int nZ, int nI)
-	{
-		data[nZ] += ((data[nW] & (data[nX] ^ data[nY])) ^ data[nY])
-			+ blk(nI)
-			+ 0x5a827999
-			+ rol(data[nV], 5);
+	final void r1(int data[], int nV, int nW, int nX, int nY, int nZ, int nI) {
+		data[nZ] += ((data[nW] & (data[nX] ^ data[nY])) ^ data[nY]) + blk(nI) + 0x5a827999
+				+ rol(data[nV], 5);
 		data[nW] = rol(data[nW], 30);
 	}
 
-	final void r2(int data[], int nV, int nW, int nX, int nY, int nZ, int nI)
-	{
-		data[nZ] += (data[nW] ^ data[nX] ^ data[nY])
-			+ blk(nI)
-			+ 0x6eD9eba1
-			+ rol(data[nV], 5);
+	final void r2(int data[], int nV, int nW, int nX, int nY, int nZ, int nI) {
+		data[nZ] += (data[nW] ^ data[nX] ^ data[nY]) + blk(nI) + 0x6eD9eba1 + rol(data[nV], 5);
 		data[nW] = rol(data[nW], 30);
 	}
 
-	final void r3(int data[], int nV, int nW, int nX, int nY, int nZ, int nI)
-	{
-		data[nZ]
-			+= (((data[nW] | data[nX]) & data[nY]) | (data[nW] & data[nX]))
-			+ blk(nI)
-			+ 0x8f1bbcdc
-			+ rol(data[nV], 5);
+	final void r3(int data[], int nV, int nW, int nX, int nY, int nZ, int nI) {
+		data[nZ] += (((data[nW] | data[nX]) & data[nY]) | (data[nW] & data[nX])) + blk(nI)
+				+ 0x8f1bbcdc + rol(data[nV], 5);
 		data[nW] = rol(data[nW], 30);
 	}
 
-	final void r4(int data[], int nV, int nW, int nX, int nY, int nZ, int nI)
-	{
-		data[nZ] += (data[nW] ^ data[nX] ^ data[nY])
-			+ blk(nI)
-			+ 0xca62c1d6
-			+ rol(data[nV], 5);
+	final void r4(int data[], int nV, int nW, int nX, int nY, int nZ, int nI) {
+		data[nZ] += (data[nW] ^ data[nX] ^ data[nY]) + blk(nI) + 0xca62c1d6 + rol(data[nV], 5);
 		data[nW] = rol(data[nW], 30);
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
-	void transform()
-	{
+	void transform() {
 
-		int[] dd = new int[5];
+		final int[] dd = new int[5];
 		dd[0] = m_state[0];
 		dd[1] = m_state[1];
 		dd[2] = m_state[2];
@@ -252,13 +213,12 @@ public class SHA1
 		m_state[4] += dd[4];
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
-	  * Initializes (or resets) the hasher for a new session.
-	  */
-	public void reset()
-	{
+	 * Initializes (or resets) the hasher for a new session.
+	 */
+	public void reset() {
 
 		m_state[0] = 0x67452301;
 		m_state[1] = 0xefcdab89;
@@ -269,191 +229,170 @@ public class SHA1
 		m_nBlockIndex = 0;
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Adds a single byte to the digest.
+	 * 
 	 * @param bB the byte to add
 	 */
-	public void update(
-		byte bB)
-	{
+	public void update(byte bB) {
 
-		int nMask = (m_nBlockIndex & 3) << 3;
+		final int nMask = (m_nBlockIndex & 3) << 3;
 
 		m_lCount += 8;
 		m_block[m_nBlockIndex >> 2] &= ~(0xff << nMask);
 		m_block[m_nBlockIndex >> 2] |= (bB & 0xff) << nMask;
 		m_nBlockIndex++;
-		if (m_nBlockIndex == 64)
-		{
+		if (m_nBlockIndex == 64) {
 			transform();
 			m_nBlockIndex = 0;
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Adds a byte array to the digest.
+	 * 
 	 * @param data the data to add
 	 * @deprecated use update(byte[], int, int) instead
 	 */
-	public void update(
-		byte[] data)
-	{
+	@Deprecated
+	public void update(byte[] data) {
 		update(data, 0, data.length);
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Adds a portion of a byte array to the digest.
+	 * 
 	 * @param data the data to add
 	 */
-	public void update(
-		byte[] data,
-		int nOfs,
-		int nLen)
-	{
-		for (int nEnd = nOfs + nLen; nOfs < nEnd; nOfs++)
-		{
+	public void update(byte[] data, int nOfs, int nLen) {
+		for (final int nEnd = nOfs + nLen; nOfs < nEnd; nOfs++) {
 			update(data[nOfs]);
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Adds an ASCII string (8bit) to the digest.
+	 * 
 	 * @param sData the string to add
 	 * @deprecated don't use this method anymore (it's not clean), you might
-	 * want to try update(sData.getBytes()) instead
+	 *             want to try update(sData.getBytes()) instead
 	 */
-	public void update(
-		String sData)
-	{
-		for (int nI = 0, nC = sData.length(); nI < nC; nI++)
-		{
-			update((byte)(sData.charAt(nI) & 0x0ff));
+	@Deprecated
+	public void update(String sData) {
+		for (int nI = 0, nC = sData.length(); nI < nC; nI++) {
+			update((byte) (sData.charAt(nI) & 0x0ff));
 		}
 
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Finalizes the digest.
 	 */
-	public void finalize()
-	{
+	@Override
+	public void finalize() {
 		int nI;
-		byte bits[] = new byte[8];
+		final byte bits[] = new byte[8];
 
-
-		for (nI = 0; nI < 8; nI++)
-		{
-			bits[nI] = (byte)((m_lCount >>> (((7 - nI) << 3))) & 0xff);
+		for (nI = 0; nI < 8; nI++) {
+			bits[nI] = (byte) ((m_lCount >>> (((7 - nI) << 3))) & 0xff);
 		}
 
-		update((byte)128);
-		while (m_nBlockIndex != 56)
-		{
+		update((byte) 128);
+		while (m_nBlockIndex != 56) {
 			update((byte) 0);
 		}
 
-		for (nI = 0; nI < bits.length; nI++)
-		{
+		for (nI = 0; nI < bits.length; nI++) {
 			update(bits[nI]);
 		}
 
-		for (nI = 0; nI < 20; nI++)
-		{
-			m_digestBits[nI] =
-				(byte) ((m_state[nI >> 2] >> ((3 - (nI & 3)) << 3)) & 0xff);
+		for (nI = 0; nI < 20; nI++) {
+			m_digestBits[nI] = (byte) ((m_state[nI >> 2] >> ((3 - (nI & 3)) << 3)) & 0xff);
 		}
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Retrieves the digest.
+	 * 
 	 * @return the digst bytes as an array if DIGEST_SIZE bytes
 	 */
-	public byte[] getDigest()
-	{
-		byte[] result = new byte[DIGEST_SIZE];
+	public byte[] getDigest() {
+		final byte[] result = new byte[DIGEST_SIZE];
 		System.arraycopy(m_digestBits, 0, result, 0, DIGEST_SIZE);
 		return result;
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * Retrieves the digest into an existing buffer.
+	 * 
 	 * @param buf buffer to store the digst into
 	 * @param nOfs where to write to
 	 * @return number of bytes written
 	 */
-	public int getDigest(
-		byte[] buf,
-		int nOfs)
-	{
+	public int getDigest(byte[] buf, int nOfs) {
 		System.arraycopy(m_digestBits, 0, buf, nOfs, DIGEST_SIZE);
 		return DIGEST_SIZE;
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	// we need this table for the following method
 	private final static String HEXTAB = "0123456789abcdef";
 
 	/**
 	 * makes a binhex string representation of the current digest
+	 * 
 	 * @return the string representation
 	 */
-	public String toString()
-	{
+	@Override
+	public String toString() {
 		int nI;
 		StringBuffer sbuf;
 
-
 		sbuf = new StringBuffer(DIGEST_SIZE << 1);
 
-		for (nI = 0; nI < DIGEST_SIZE; nI++)
-		{
+		for (nI = 0; nI < DIGEST_SIZE; nI++) {
 			sbuf.append(HEXTAB.charAt((m_digestBits[nI] >>> 4) & 0x0f));
-			sbuf.append(HEXTAB.charAt( m_digestBits[nI]        & 0x0f));
+			sbuf.append(HEXTAB.charAt(m_digestBits[nI] & 0x0f));
 		}
 
 		return sbuf.toString();
 	}
 
-	///////////////////////////////////////////////////////////////////////////
+	// /////////////////////////////////////////////////////////////////////////
 
 	// references for the selftest
 
-	private final static String SELFTEST_MESSAGE =
-		"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
+	private final static String SELFTEST_MESSAGE = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
 
-	private final static byte[] SELFTEST_DIGEST =
-	{
-		(byte)0x84, (byte)0x98, (byte)0x3e, (byte)0x44, (byte)0x1c,
-		(byte)0x3b, (byte)0xd2, (byte)0x6e, (byte)0xba, (byte)0xae,
-		(byte)0x4a, (byte)0xa1, (byte)0xf9, (byte)0x51, (byte)0x29,
-		(byte)0xe5, (byte)0xe5, (byte)0x46, (byte)0x70, (byte)0xf1
-	};
+	private final static byte[] SELFTEST_DIGEST = { (byte) 0x84, (byte) 0x98, (byte) 0x3e,
+			(byte) 0x44, (byte) 0x1c, (byte) 0x3b, (byte) 0xd2, (byte) 0x6e, (byte) 0xba,
+			(byte) 0xae, (byte) 0x4a, (byte) 0xa1, (byte) 0xf9, (byte) 0x51, (byte) 0x29,
+			(byte) 0xe5, (byte) 0xe5, (byte) 0x46, (byte) 0x70, (byte) 0xf1 };
 
 	/**
 	 * Runs an integrity test.
+	 * 
 	 * @return true: selftest passed / false: selftest failed
 	 */
-	public boolean selfTest()
-	{
+	public boolean selfTest() {
 		int nI;
 		SHA1 tester;
 		byte[] digest;
-
 
 		tester = new SHA1();
 
@@ -462,10 +401,8 @@ public class SHA1
 
 		digest = tester.getDigest();
 
-		for (nI = 0; nI < DIGEST_SIZE; nI++)
-		{
-			if (digest[nI] != SELFTEST_DIGEST[nI])
-			{
+		for (nI = 0; nI < DIGEST_SIZE; nI++) {
+			if (digest[nI] != SELFTEST_DIGEST[nI]) {
 				return false;
 			}
 		}

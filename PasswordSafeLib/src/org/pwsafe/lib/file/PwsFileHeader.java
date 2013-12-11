@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -17,8 +17,9 @@ import org.pwsafe.lib.Util;
 import org.pwsafe.lib.exception.EndOfFileException;
 
 /**
- * This class encapsulates the header fields of a PasswordSafe database.  The header comprises:
- * </p><p>
+ * This class encapsulates the header fields of a PasswordSafe database. The
+ * header comprises: </p>
+ * <p>
  * <tt>
  * <pre> +--------+-----------+-----------------------------------------------+
  * | Length | Name      | Description                                   |
@@ -33,37 +34,35 @@ import org.pwsafe.lib.exception.EndOfFileException;
  * 
  * @author Kevin Preece
  */
-public class PwsFileHeader
-{
+public class PwsFileHeader {
 	private static final Log LOG = Log.getInstance(PwsFileHeader.class.getPackage().getName());
 
-	private final byte []	RandStuff	= new byte[8];
-	private byte []	RandHash	= new byte[20];
-	private final byte [] Salt		= new byte[20];
-	private final byte [] IpThing		= new byte[8];
+	private final byte[] RandStuff = new byte[8];
+	private byte[] RandHash = new byte[20];
+	private final byte[] Salt = new byte[20];
+	private final byte[] IpThing = new byte[8];
 
 	/**
 	 * Creates an empty file header.
 	 */
-	PwsFileHeader()
-	{
+	PwsFileHeader() {
 	}
 
 	/**
-	 * Constructs the PasswordSafe file header by reading the header data from <code>file</code>.
+	 * Constructs the PasswordSafe file header by reading the header data from
+	 * <code>file</code>.
 	 * 
 	 * @param file the file to read the header from.
 	 * 
-	 * @throws IOException        If an error occurs whilst reading from the file.
-	 * @throws EndOfFileException If end of file is reached before reading all the data.
+	 * @throws IOException If an error occurs whilst reading from the file.
+	 * @throws EndOfFileException If end of file is reached before reading all
+	 *         the data.
 	 */
-	public PwsFileHeader( PwsFile file )
-	throws IOException, EndOfFileException
-	{
-		file.readBytes( RandStuff );
-		file.readBytes( RandHash );
-		file.readBytes( Salt );
-		file.readBytes( IpThing );
+	public PwsFileHeader(PwsFile file) throws IOException, EndOfFileException {
+		file.readBytes(RandStuff);
+		file.readBytes(RandHash);
+		file.readBytes(Salt);
+		file.readBytes(IpThing);
 	}
 
 	/**
@@ -71,9 +70,8 @@ public class PwsFileHeader
 	 * 
 	 * @return A copy of IpThing
 	 */
-	public byte [] getIpThing()
-	{
-		return Util.cloneByteArray( IpThing );
+	public byte[] getIpThing() {
+		return Util.cloneByteArray(IpThing);
 	}
 
 	/**
@@ -81,9 +79,8 @@ public class PwsFileHeader
 	 * 
 	 * @return A copy of RandHash
 	 */
-	public byte [] getRandHash()
-	{
-		return Util.cloneByteArray( RandHash );
+	public byte[] getRandHash() {
+		return Util.cloneByteArray(RandHash);
 	}
 
 	/**
@@ -91,9 +88,8 @@ public class PwsFileHeader
 	 * 
 	 * @return A copy of RandStuff
 	 */
-	public byte [] getRandStuff()
-	{
-		return Util.cloneByteArray( RandStuff );
+	public byte[] getRandStuff() {
+		return Util.cloneByteArray(RandStuff);
 	}
 
 	/**
@@ -101,9 +97,8 @@ public class PwsFileHeader
 	 * 
 	 * @return a copy of Salt.
 	 */
-	public byte [] getSalt()
-	{
-		return Util.cloneByteArray( Salt );
+	public byte[] getSalt() {
+		return Util.cloneByteArray(Salt);
 	}
 
 	/**
@@ -114,19 +109,17 @@ public class PwsFileHeader
 	 * @throws IOException
 	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
-	public void save( PwsFile file )
-	throws IOException, NoSuchAlgorithmException
-	{
-		LOG.enterMethod( "PwsFileHeader.save" );
+	public void save(PwsFile file) throws IOException, NoSuchAlgorithmException {
+		LOG.enterMethod("PwsFileHeader.save");
 
-		update( file.getPassphrase() );
+		update(file.getPassphrase());
 
-		file.writeBytes( RandStuff );
-		file.writeBytes( RandHash );
-		file.writeBytes( Salt );
-		file.writeBytes( IpThing );
+		file.writeBytes(RandStuff);
+		file.writeBytes(RandHash);
+		file.writeBytes(Salt);
+		file.writeBytes(IpThing);
 
-		LOG.leaveMethod( "PwsFileHeader.save" );
+		LOG.leaveMethod("PwsFileHeader.save");
 	}
 
 	/**
@@ -135,32 +128,31 @@ public class PwsFileHeader
 	 * @param passphrase the passphrase to be used to encrypt the database.
 	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
-	private void update( String passphrase ) throws NoSuchAlgorithmException
-	{
-		LOG.enterMethod( "PwsFileHeader.update" );
+	private void update(String passphrase) throws NoSuchAlgorithmException {
+		LOG.enterMethod("PwsFileHeader.update");
 
-		byte	temp[];
+		byte temp[];
 
-//		for ( int ii = 0; ii < RandStuff.length; ++ii )
-//		{
-//			RandStuff[ii] = Util.newRand();
-//		}
+		// for ( int ii = 0; ii < RandStuff.length; ++ii )
+		// {
+		// RandStuff[ii] = Util.newRand();
+		// }
 		Util.newRandBytes(RandStuff);
-		temp		= Util.cloneByteArray( RandStuff, 10 );
-		RandHash	= PwsFileFactory.genRandHash( passphrase, temp );
-		
-//		for ( int ii = 0; ii < Salt.length; ++ii )
-//		{
-//			Salt[ii] = Util.newRand();
-//		}
+		temp = Util.cloneByteArray(RandStuff, 10);
+		RandHash = PwsFileFactory.genRandHash(passphrase, temp);
+
+		// for ( int ii = 0; ii < Salt.length; ++ii )
+		// {
+		// Salt[ii] = Util.newRand();
+		// }
 		Util.newRandBytes(Salt);
-		
-//		for ( int ii = 0; ii < IpThing.length; ++ii )
-//		{
-//			IpThing[ii] = Util.newRand();
-//		}
+
+		// for ( int ii = 0; ii < IpThing.length; ++ii )
+		// {
+		// IpThing[ii] = Util.newRand();
+		// }
 		Util.newRandBytes(IpThing);
 
-		LOG.leaveMethod( "PwsFileHeader.update" );
+		LOG.leaveMethod("PwsFileHeader.update");
 	}
 }

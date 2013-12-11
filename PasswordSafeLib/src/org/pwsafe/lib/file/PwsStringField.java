@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -14,30 +14,26 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author Kevin Preece
  */
-public class PwsStringField extends PwsField
-{
+public class PwsStringField extends PwsField {
 	/**
 	 * Constructor
 	 * 
-	 * @param type  the field's type.
+	 * @param type the field's type.
 	 * @param value the field's value.
 	 */
-	public PwsStringField( int type, String value )
-	{
-		super( type, value );
+	public PwsStringField(int type, String value) {
+		super(type, value);
 	}
 
 	/**
 	 * Constructor
 	 * 
-	 * @param type  the field's type.
+	 * @param type the field's type.
 	 * @param value the field's value.
 	 */
-	public PwsStringField( PwsFieldType type, String value )
-	{
-		super( type, value );
+	public PwsStringField(PwsFieldType type, String value) {
+		super(type, value);
 	}
-
 
 	/**
 	 * Returns the field's value as a byte array.
@@ -47,51 +43,48 @@ public class PwsStringField extends PwsField
 	 * @see org.pwsafe.lib.file.PwsField#getBytes()
 	 */
 	@Override
-	public byte[] getBytes()
-	{
+	public byte[] getBytes() {
 		byte[] bytes = null;
 		try {
 			bytes = ((String) super.getValue()).getBytes("ISO-8859-1");
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
 		return bytes;
 	}
 
 	/**
-	 * Compares this <code>PwsStringField</code> to another returning a value less than zero if
-	 * <code>this</code> is "less than" <code>that</code>, zero if they're equal and greater
-	 * than zero if <code>this</code> is "greater than" <code>that</code>.
+	 * Compares this <code>PwsStringField</code> to another returning a value
+	 * less than zero if <code>this</code> is "less than" <code>that</code>,
+	 * zero if they're equal and greater than zero if <code>this</code> is
+	 * "greater than" <code>that</code>.
 	 * 
-	 * @param that the other field to compare to. 
+	 * @param that the other field to compare to.
 	 * 
-	 * @return A value less than zero if <code>this</code> is "less than" <code>that</code>,
-	 *         zero if they're equal and greater than zero if <code>this</code> is "greater
-	 *         than" <code>that</code>.
+	 * @return A value less than zero if <code>this</code> is "less than"
+	 *         <code>that</code>, zero if they're equal and greater than zero if
+	 *         <code>this</code> is "greater than" <code>that</code>.
 	 */
-	public int compareTo( Object that )
-	{
-		return ((String) this.getValue()).compareTo((String) ((PwsStringField) that).getValue());
+	public int compareTo(Object that) {
+		return ((String) getValue()).compareTo((String) ((PwsStringField) that).getValue());
 	}
 
 	/**
-	 * Compares this object to another <code>PwsStringField</code> or <code>String</code> returning
-	 * <code>true</code> if they're equal or <code>false</code> otherwise.
+	 * Compares this object to another <code>PwsStringField</code> or
+	 * <code>String</code> returning <code>true</code> if they're equal or
+	 * <code>false</code> otherwise.
 	 * 
 	 * @param arg0 the other object to compare to.
 	 * 
-	 * @return <code>true</code> if they're equal or <code>false</code> otherwise.
+	 * @return <code>true</code> if they're equal or <code>false</code>
+	 *         otherwise.
 	 */
 	@Override
-	public boolean equals( Object arg0 )
-	{
-		if ( arg0 instanceof PwsStringField )
-		{
-			return equals( (PwsStringField) arg0 );
-		}
-		else if ( arg0 instanceof String )
-		{
-			return equals( (String) arg0 );
+	public boolean equals(Object arg0) {
+		if (arg0 instanceof PwsStringField) {
+			return equals((PwsStringField) arg0);
+		} else if (arg0 instanceof String) {
+			return equals((String) arg0);
 		}
 		throw new ClassCastException();
 	}
@@ -102,23 +95,23 @@ public class PwsStringField extends PwsField
 	 * 
 	 * @param arg0 the other object to compare to.
 	 * 
-	 * @return <code>true</code> if they're equal or <code>false</code> otherwise.
+	 * @return <code>true</code> if they're equal or <code>false</code>
+	 *         otherwise.
 	 */
-	public boolean equals( PwsStringField arg0 )
-	{
+	public boolean equals(PwsStringField arg0) {
 		return ((String) super.getValue()).equals(arg0.getValue());
 	}
 
 	/**
-	 * Compares this object to a <code>String</code> returning <code>true</code> if they're equal
-	 * or <code>false</code> otherwise.
+	 * Compares this object to a <code>String</code> returning <code>true</code>
+	 * if they're equal or <code>false</code> otherwise.
 	 * 
 	 * @param arg0 the other object to compare to.
 	 * 
-	 * @return <code>true</code> if they're equal or <code>false</code> otherwise.
+	 * @return <code>true</code> if they're equal or <code>false</code>
+	 *         otherwise.
 	 */
-	public boolean equals( String arg0 )
-	{
+	public boolean equals(String arg0) {
 		return ((String) super.getValue()).equals(arg0);
 	}
 }

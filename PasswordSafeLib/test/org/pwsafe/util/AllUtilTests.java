@@ -14,10 +14,10 @@ import junit.framework.TestSuite;
 public class AllUtilTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Tests for org.pwsafe");
-		//$JUnit-BEGIN$
+		final TestSuite suite = new TestSuite("Tests for org.pwsafe");
+		// $JUnit-BEGIN$
 		suite.addTestSuite(PasswordPolicyTest.class);
-		//$JUnit-END$
+		// $JUnit-END$
 		return suite;
 	}
 

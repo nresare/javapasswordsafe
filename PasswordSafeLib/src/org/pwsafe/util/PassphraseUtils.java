@@ -17,8 +17,7 @@ import org.pwsafe.lib.exception.InvalidPassphrasePolicy;
 /**
  *
  */
-public class PassphraseUtils
-{
+public class PassphraseUtils {
 	/**
 	 * Log4j logger
 	 */
@@ -27,53 +26,52 @@ public class PassphraseUtils
 	/**
 	 * Standard lowercase characters.
 	 */
-	public static final char []	LOWERCASE_CHARS			= "abcdefghijklmnopqrstuvwxyz".toCharArray();
+	public static final char[] LOWERCASE_CHARS = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
 	/**
 	 * Standard uppercase characters.
 	 */
-	public static final char []	UPPERCASE_CHARS			= "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+	public static final char[] UPPERCASE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
 	/**
 	 * Standard digit characters.
 	 */
-	public static final char []	DIGIT_CHARS				= "1234567890".toCharArray();
+	public static final char[] DIGIT_CHARS = "1234567890".toCharArray();
 
 	/**
 	 * Standard symbol characters.
 	 */
-	public static final char []	SYMBOL_CHARS			= "+-=_@#$%^&;:,.<>/~\\[](){}?!|".toCharArray();
+	public static final char[] SYMBOL_CHARS = "+-=_@#$%^&;:,.<>/~\\[](){}?!|".toCharArray();
 
 	/**
 	 * Lowercase characters with confusable characters removed.
 	 */
-	public static final char []	EASYVISION_LC_CHARS		= "abcdefghijkmnopqrstuvwxyz".toCharArray();
+	public static final char[] EASYVISION_LC_CHARS = "abcdefghijkmnopqrstuvwxyz".toCharArray();
 
 	/**
 	 * Uppercase characters with confusable characters removed.
 	 */
-	public static final char []	EASYVISION_UC_CHARS		= "ABCDEFGHJKLMNPQRTUVWXY".toCharArray();
+	public static final char[] EASYVISION_UC_CHARS = "ABCDEFGHJKLMNPQRTUVWXY".toCharArray();
 
 	/**
 	 * Digit characters with confusable characters removed.
 	 */
-	public static final char []	EASYVISION_DIGIT_CHARS	= "346789".toCharArray();
+	public static final char[] EASYVISION_DIGIT_CHARS = "346789".toCharArray();
 
 	/**
 	 * Symbol characters with confusable characters removed.
 	 */
-	public static final char []	EASYVISION_SYMBOL_CHARS	= "+-=_@#$%^&<>/~\\?".toCharArray();
+	public static final char[] EASYVISION_SYMBOL_CHARS = "+-=_@#$%^&<>/~\\?".toCharArray();
 
 	/**
 	 * The minimum length that a password must be to be not weak.
 	 */
-	public static final int		MIN_PASSWORD_LEN		= 4;
+	public static final int MIN_PASSWORD_LEN = 4;
 
 	/**
 	 * Private for singleton pattern
 	 */
-	private PassphraseUtils()
-	{
+	private PassphraseUtils() {
 		super();
 	}
 
@@ -86,91 +84,106 @@ public class PassphraseUtils
 	 * 
 	 * @throws InvalidPassphrasePolicy
 	 */
-	public static String makePassword( PassphrasePolicy policy )
-	throws InvalidPassphrasePolicy
-	{
-		LOG.enterMethod( "makePassword" );
+	public static String makePassword(PassphrasePolicy policy) throws InvalidPassphrasePolicy {
+		LOG.enterMethod("makePassword");
 
-		LOG.debug2( policy.toString() );
+		LOG.debug2(policy.toString());
 
-		char			allChars [][];
-		boolean			typesSeen[];
-		StringBuilder	password;
-		int				typeCount;
+		char allChars[][];
+		boolean typesSeen[];
+		StringBuilder password;
+		int typeCount;
 
-		if ( !policy.isValid() )
-		{
-			LOG.info( I18nHelper.getInstance().formatMessage("I0004", new Object [] { policy.toString() } ) );
+		if (!policy.isValid()) {
+			LOG.info(I18nHelper.getInstance().formatMessage("I0004",
+					new Object[] { policy.toString() }));
 			throw new InvalidPassphrasePolicy();
 		}
 
-		password	= new StringBuilder( policy.length );
-		typeCount	= 0;
+		password = new StringBuilder(policy.length);
+		typeCount = 0;
 
-		if ( policy.digitChars )	++typeCount;
-		if ( policy.lowercaseChars)	++typeCount;
-		if ( policy.uppercaseChars)	++typeCount;
-		if ( policy.symbolChars)	++typeCount;
-
-		allChars	= new char[ typeCount ][];
-		typesSeen	= new boolean[ 4 ];
-
-		for ( int ii = 0; ii < typeCount; ++ii )
-		{
-			typesSeen[ ii ] = true;
+		if (policy.digitChars) {
+			++typeCount;
+		}
+		if (policy.lowercaseChars) {
+			++typeCount;
+		}
+		if (policy.uppercaseChars) {
+			++typeCount;
+		}
+		if (policy.symbolChars) {
+			++typeCount;
 		}
 
-		if ( policy.easyview )
-		{
-			int	ii	= 0;
+		allChars = new char[typeCount][];
+		typesSeen = new boolean[4];
 
-			if ( policy.digitChars )	allChars[ ii++ ] = EASYVISION_DIGIT_CHARS;
-			if ( policy.lowercaseChars)	allChars[ ii++ ] = EASYVISION_LC_CHARS;
-			if ( policy.uppercaseChars)	allChars[ ii++ ] = EASYVISION_UC_CHARS;
-			if ( policy.symbolChars)	allChars[ ii++ ] = EASYVISION_SYMBOL_CHARS;
-		}
-		else
-		{
-			int	ii	= 0;
-
-			if ( policy.digitChars )	allChars[ ii++ ] = DIGIT_CHARS;
-			if ( policy.lowercaseChars)	allChars[ ii++ ] = LOWERCASE_CHARS;
-			if ( policy.uppercaseChars)	allChars[ ii++ ] = UPPERCASE_CHARS;
-			if ( policy.symbolChars)	allChars[ ii++ ] = SYMBOL_CHARS;
+		for (int ii = 0; ii < typeCount; ++ii) {
+			typesSeen[ii] = true;
 		}
 
-		do
-		{
-			password.delete( 0, password.length() );
+		if (policy.easyview) {
+			int ii = 0;
 
-			for ( int ii = 0; ii < policy.length; ++ii )
-			{
-				int	type;
-	
-				type				= Util.positiveRand() % typeCount;
-				typesSeen[ type ]	= false;
-	
-				password.append( allChars[type][ Util.positiveRand() % allChars[type].length ] );
+			if (policy.digitChars) {
+				allChars[ii++] = EASYVISION_DIGIT_CHARS;
+			}
+			if (policy.lowercaseChars) {
+				allChars[ii++] = EASYVISION_LC_CHARS;
+			}
+			if (policy.uppercaseChars) {
+				allChars[ii++] = EASYVISION_UC_CHARS;
+			}
+			if (policy.symbolChars) {
+				allChars[ii++] = EASYVISION_SYMBOL_CHARS;
+			}
+		} else {
+			int ii = 0;
+
+			if (policy.digitChars) {
+				allChars[ii++] = DIGIT_CHARS;
+			}
+			if (policy.lowercaseChars) {
+				allChars[ii++] = LOWERCASE_CHARS;
+			}
+			if (policy.uppercaseChars) {
+				allChars[ii++] = UPPERCASE_CHARS;
+			}
+			if (policy.symbolChars) {
+				allChars[ii++] = SYMBOL_CHARS;
 			}
 		}
-		while ( typesSeen[0] || typesSeen[1] || typesSeen[2] || typesSeen[3] );
 
-		LOG.debug2( "Generated password is " + password.toString() );
+		do {
+			password.delete(0, password.length());
 
-		LOG.leaveMethod( "makePassword" );
+			for (int ii = 0; ii < policy.length; ++ii) {
+				int type;
+
+				type = Util.positiveRand() % typeCount;
+				typesSeen[type] = false;
+
+				password.append(allChars[type][Util.positiveRand() % allChars[type].length]);
+			}
+		} while (typesSeen[0] || typesSeen[1] || typesSeen[2] || typesSeen[3]);
+
+		LOG.debug2("Generated password is " + password.toString());
+
+		LOG.leaveMethod("makePassword");
 
 		return password.toString();
 	}
 
 	/**
 	 * Checks the password against a set of rules to determine whether it is
-	 * considered weak.  The rules are:
-	 * </p><p>
+	 * considered weak. The rules are: </p>
+	 * <p>
 	 * <ul>
-	 *   <li>It is at least <code>MIN_PASSWORD_LEN</code> characters long.
-	 *   <li>At least one lowercase character.
-	 *   <li>At least one uppercase character.
-	 *   <li>At least one digit or symbol character.
+	 * <li>It is at least <code>MIN_PASSWORD_LEN</code> characters long.
+	 * <li>At least one lowercase character.
+	 * <li>At least one uppercase character.
+	 * <li>At least one digit or symbol character.
 	 * </ul>
 	 * 
 	 * @param password the password to check.
@@ -178,32 +191,33 @@ public class PassphraseUtils
 	 * @return <code>true</code> if the password is considered to be weak,
 	 *         <code>false</code> otherwise.
 	 */
-	public static boolean isWeakPassword( String password )
-	{
-		boolean	hasUC		= false;
-		boolean	hasLC		= false;
-		boolean	hasDigit	= false;
-		boolean	hasSymbol	= false;
+	public static boolean isWeakPassword(String password) {
+		boolean hasUC = false;
+		boolean hasLC = false;
+		boolean hasDigit = false;
+		boolean hasSymbol = false;
 
-		if ( password.length() < MIN_PASSWORD_LEN )
-		{
+		if (password.length() < MIN_PASSWORD_LEN) {
 			return true;
 		}
 
-		for ( int ii = 0; ii < password.length(); ++ii )
-		{
-			char	c;
+		for (int ii = 0; ii < password.length(); ++ii) {
+			char c;
 
-			c = password.charAt( ii );
+			c = password.charAt(ii);
 
-			if ( Character.isDigit(c) )				hasDigit	= true;
-			else if ( Character.isUpperCase(c) )	hasUC		= true;
-			else if ( Character.isLowerCase(c) )	hasLC		= true;
-			else 									hasSymbol	= true;
+			if (Character.isDigit(c)) {
+				hasDigit = true;
+			} else if (Character.isUpperCase(c)) {
+				hasUC = true;
+			} else if (Character.isLowerCase(c)) {
+				hasLC = true;
+			} else {
+				hasSymbol = true;
+			}
 		}
 
-		if ( hasUC && hasLC && (hasDigit || hasSymbol) )
-		{
+		if (hasUC && hasLC && (hasDigit || hasSymbol)) {
 			return false;
 		}
 		return true;

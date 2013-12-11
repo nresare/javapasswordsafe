@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -18,19 +18,18 @@ public class PwsFileV2Test extends TestCase {
 
 	private final static String testV2Filename = "password_file_2.dat";
 	private final static String groupName = "bank.online";
-	
-	public void testFile() throws PasswordSafeException
-	{
-		PwsFileV2	file;
-		PwsRecordV2	rec;
+
+	public void testFile() throws PasswordSafeException {
+		PwsFileV2 file;
+		PwsRecordV2 rec;
 
 		final int i = 5;
-		file	= new PwsFileV2();
+		file = new PwsFileV2();
 		TestUtils.addDummyRecords(file, i);
-		
 
 		assertEquals(i, file.getRecordCount());
-		for (Iterator<PwsRecordV2> theFiles = (Iterator<PwsRecordV2>) file.getRecords(); theFiles.hasNext(); ) {
+		for (final Iterator<PwsRecordV2> theFiles = (Iterator<PwsRecordV2>) file.getRecords(); theFiles
+				.hasNext();) {
 			rec = theFiles.next();
 			assertNotNull(rec.getField(PwsRecordV2.USERNAME));
 			assertNotNull(rec.getField(PwsFieldTypeV2.USERNAME));
@@ -55,8 +54,8 @@ public class PwsFileV2Test extends TestCase {
 	}
 
 	public void testFileStorage() throws Exception {
-		PwsFileStorage pfs = new PwsFileStorage(testV2Filename);
-		byte[] data = pfs.load();
+		final PwsFileStorage pfs = new PwsFileStorage(testV2Filename);
+		final byte[] data = pfs.load();
 		assertNotNull(data);
 		assertTrue(data.length > 0);
 	}

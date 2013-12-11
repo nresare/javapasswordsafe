@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -10,35 +10,31 @@
 package org.pwsafe.lib.exception;
 
 /**
- * An exception thrown to indicate that the file is in a format that is not supported
- * by this software.
+ * An exception thrown to indicate that the file is in a format that is not
+ * supported by this software.
  * 
  * @author Kevin Preece
  */
-public class UnsupportedFileVersionException extends Exception
-{
+public class UnsupportedFileVersionException extends Exception {
 
 	/**
 	 * 
 	 */
-	public UnsupportedFileVersionException()
-	{
+	public UnsupportedFileVersionException() {
 		super();
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public UnsupportedFileVersionException(String arg0)
-	{
+	public UnsupportedFileVersionException(String arg0) {
 		super(arg0);
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public UnsupportedFileVersionException(Throwable arg0)
-	{
+	public UnsupportedFileVersionException(Throwable arg0) {
 		super(arg0);
 	}
 
@@ -46,8 +42,7 @@ public class UnsupportedFileVersionException extends Exception
 	 * @param arg0
 	 * @param arg1
 	 */
-	public UnsupportedFileVersionException(String arg0, Throwable arg1)
-	{
+	public UnsupportedFileVersionException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 }

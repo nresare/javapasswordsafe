@@ -1,7 +1,7 @@
 /*
- *  * $Id:$
- * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ *  * $Id$
+ *
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -22,18 +22,18 @@ import org.pwsafe.lib.file.PwsFieldType;
  * @see PwsEntryBean
  */
 public interface PwsEntryStore {
-	
-	void setSparseFields (Set<PwsFieldType> fieldTypes);
-	
-	List<PwsEntryBean> getSparseEntries (); 
-	
-	PwsEntryBean getEntry (int anIndex);
-	
-	boolean addEntry (PwsEntryBean anEntry) throws PasswordSafeException;
-	
-	boolean updateEntry (PwsEntryBean anEntry);
-	
-	boolean removeEntry (PwsEntryBean anEntry);
-	
-	void clear ();
+
+	void setSparseFields(final Set<PwsFieldType> fieldTypes);
+
+	List<PwsEntryBean> getSparseEntries();
+
+	PwsEntryBean getEntry(final int anIndex);
+
+	boolean addEntry(final PwsEntryBean anEntry) throws PasswordSafeException;
+
+	boolean updateEntry(final PwsEntryBean anEntry);
+
+	boolean removeEntry(final PwsEntryBean anEntry);
+
+	void clear();
 }

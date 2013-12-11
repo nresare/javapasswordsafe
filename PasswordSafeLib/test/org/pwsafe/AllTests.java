@@ -20,14 +20,14 @@ import org.pwsafe.util.AllUtilTests;
 public class AllTests {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Tests for org.pwsafe");
-		//$JUnit-BEGIN$
+		final TestSuite suite = new TestSuite("Tests for org.pwsafe");
+		// $JUnit-BEGIN$
 		suite.addTest(AllLibTests.suite());
 		suite.addTest(AllCryptoTests.suite());
 		suite.addTest(AllFileTests.suite());
 		suite.addTest(AllDataStoreTests.suite());
 		suite.addTest(AllUtilTests.suite());
-		//$JUnit-END$
+		// $JUnit-END$
 		return suite;
 	}
 

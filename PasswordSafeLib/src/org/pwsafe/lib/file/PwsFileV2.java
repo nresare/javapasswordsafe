@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -21,7 +21,7 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * @author Kevin Preece
  */
 public class PwsFileV2 extends PwsFileV1V2 {
-	
+
 	/**
 	 * File extension of the V2 password safe files.
 	 */
@@ -30,40 +30,41 @@ public class PwsFileV2 extends PwsFileV1V2 {
 	/**
 	 * The PasswordSafe database version number that this class supports.
 	 */
-	public static final int		VERSION		= 2;
+	public static final int VERSION = 2;
 
 	/**
 	 * The string that identifies a database as V2 rather than V1
 	 */
-	public static final String	ID_STRING	= " !!!Version 2 File Format!!! Please upgrade to PasswordSafe 2.0 or later";
+	public static final String ID_STRING = " !!!Version 2 File Format!!! Please upgrade to PasswordSafe 2.0 or later";
 
 	/**
-	 * Constructs and initialises a new, empty version 2 PasswordSafe database in memory.
+	 * Constructs and initialises a new, empty version 2 PasswordSafe database
+	 * in memory.
 	 */
-	public PwsFileV2()
-	{
+	public PwsFileV2() {
 		super();
 	}
 
 	/**
-	 * Use of this constructor to load a PasswordSafe database is STRONGLY discouraged
-	 * since it's use ties the caller to a particular file version.  Use {@link
-	 * PwsFileFactory#loadFile(String, String)} instead.
-	 * </p><p>
-	 * <b>N.B. </b>this constructor's visibility may be reduced in future releases.
+	 * Use of this constructor to load a PasswordSafe database is STRONGLY
+	 * discouraged since it's use ties the caller to a particular file version.
+	 * Use {@link PwsFileFactory#loadFile(String, String)} instead. </p>
+	 * <p>
+	 * <b>N.B. </b>this constructor's visibility may be reduced in future
+	 * releases.
 	 * </p>
-	 * @param filename   the name of the database to open.
+	 * 
+	 * @param filename the name of the database to open.
 	 * @param passphrase the passphrase for the database.
 	 * 
 	 * @throws EndOfFileException
 	 * @throws IOException
 	 * @throws UnsupportedFileVersionException
-	 * @throws NoSuchAlgorithmException 
+	 * @throws NoSuchAlgorithmException
 	 */
-	public PwsFileV2( PwsStorage storage, String passphrase ) 
-	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
-	{
-		super( storage, passphrase );
+	public PwsFileV2(PwsStorage storage, String passphrase) throws EndOfFileException, IOException,
+			UnsupportedFileVersionException, NoSuchAlgorithmException {
+		super(storage, passphrase);
 	}
 
 	/**
@@ -72,13 +73,12 @@ public class PwsFileV2 extends PwsFileV1V2 {
 	 * @return The major version number for the file.
 	 */
 	@Override
-	public int getFileVersionMajor()
-	{
+	public int getFileVersionMajor() {
 		return VERSION;
 	}
 
 	/**
-	 * Allocates a new, empty record unowned by any file.  The record type is
+	 * Allocates a new, empty record unowned by any file. The record type is
 	 * {@link PwsRecordV2}.
 	 * 
 	 * @return A new empty record
@@ -86,31 +86,29 @@ public class PwsFileV2 extends PwsFileV1V2 {
 	 * @see org.pwsafe.lib.file.PwsFile#newRecord()
 	 */
 	@Override
-	public PwsRecord newRecord()
-	{
+	public PwsRecord newRecord() {
 		return new PwsRecordV2();
 	}
-	
+
 	/**
 	 * Reads the extra header present in version 2 files.
 	 * 
 	 * @param file the file to read the header from.
 	 * 
 	 * @throws EndOfFileException If end of file is reached.
-	 * @throws IOException If an error occurs whilst reading. 
-	 * @throws UnsupportedFileVersionException If the header is not a valid V2 header.
+	 * @throws IOException If an error occurs whilst reading.
+	 * @throws UnsupportedFileVersionException If the header is not a valid V2
+	 *         header.
 	 */
 	@Override
-	protected void readExtraHeader( PwsFile file )
-	throws EndOfFileException, IOException, UnsupportedFileVersionException
-	{
-		PwsRecordV1	hdr;
+	protected void readExtraHeader(PwsFile file) throws EndOfFileException, IOException,
+			UnsupportedFileVersionException {
+		PwsRecordV1 hdr;
 
 		hdr = new PwsRecordV1();
-		hdr.loadRecord( file );
+		hdr.loadRecord(file);
 
-		if ( !hdr.getField(PwsRecordV1.TITLE).equals(ID_STRING) )
-		{
+		if (!hdr.getField(PwsRecordV1.TITLE).equals(ID_STRING)) {
 			throw new UnsupportedFileVersionException();
 		}
 	}
@@ -120,20 +118,18 @@ public class PwsFileV2 extends PwsFileV1V2 {
 	 * 
 	 * @param file the file to write the header to.
 	 * 
-	 * @throws IOException if an error occurs whilst writing the header. 
+	 * @throws IOException if an error occurs whilst writing the header.
 	 */
 	@Override
-	protected void writeExtraHeader( PwsFile file )
-	throws IOException
-	{
-		PwsRecordV1	hdr;
+	protected void writeExtraHeader(PwsFile file) throws IOException {
+		PwsRecordV1 hdr;
 
 		hdr = new PwsRecordV1();
 
-		hdr.setField( new PwsStringField( PwsRecordV1.TITLE, PwsFileV2.ID_STRING ) );
-		hdr.setField( new PwsStringField( PwsRecordV1.PASSWORD, "2.0" ) );
+		hdr.setField(new PwsStringField(PwsRecordV1.TITLE, PwsFileV2.ID_STRING));
+		hdr.setField(new PwsStringField(PwsRecordV1.PASSWORD, "2.0"));
 
-		hdr.saveRecord( file );
+		hdr.saveRecord(file);
 	}
 
 	/**

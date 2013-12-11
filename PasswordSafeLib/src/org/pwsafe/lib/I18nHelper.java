@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -10,32 +10,29 @@
 package org.pwsafe.lib;
 
 /**
- * A singleton class to help provide messages in the users preferred language.  Messages
- * are stored in a file called CorelibStrings.properties and, where translations have
- * been provided, the appropriate localised version, CorelibStrings_en_US.properties
- * for example.
+ * A singleton class to help provide messages in the users preferred language.
+ * Messages are stored in a file called CorelibStrings.properties and, where
+ * translations have been provided, the appropriate localised version,
+ * CorelibStrings_en_US.properties for example.
  * 
  * @author Kevin Preece
  */
-public class I18nHelper extends I18nHelperBase
-{
+public class I18nHelper extends I18nHelperBase {
 	/**
 	 * Log4j logger
 	 */
-	private static final Log		LOG			= Log.getInstance(I18nHelper.class.getPackage().getName());
+	private static final Log LOG = Log.getInstance(I18nHelper.class.getPackage().getName());
 
-	private static final I18nHelper	TheInstance	= new I18nHelper();
+	private static final I18nHelper instance = new I18nHelper();
 
-	static
-	{
-		LOG.debug1( "I18nHelper class loaded" );
+	static {
+		LOG.debug1("I18nHelper class loaded");
 	}
 
 	/**
-	 * Private for the singleton pattern. 
+	 * Private for the singleton pattern.
 	 */
-	private I18nHelper()
-	{
+	private I18nHelper() {
 	}
 
 	/**
@@ -43,8 +40,7 @@ public class I18nHelper extends I18nHelperBase
 	 * 
 	 * @return An instance of I18nHelper.
 	 */
-	public static I18nHelper getInstance()
-	{
-		return TheInstance;
+	public static I18nHelper getInstance() {
+		return instance;
 	}
 }

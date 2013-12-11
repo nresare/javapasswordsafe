@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -14,21 +14,18 @@ package org.pwsafe.lib.exception;
  * 
  * @author Kevin Preece
  */
-public class InvalidPassphraseException extends Exception
-{
+public class InvalidPassphraseException extends Exception {
 	/**
 	 * 
 	 */
-	public InvalidPassphraseException()
-	{
+	public InvalidPassphraseException() {
 		super();
 	}
 
 	/**
 	 * @param message
 	 */
-	public InvalidPassphraseException(String message)
-	{
+	public InvalidPassphraseException(String message) {
 		super(message);
 	}
 
@@ -36,16 +33,14 @@ public class InvalidPassphraseException extends Exception
 	 * @param message
 	 * @param cause
 	 */
-	public InvalidPassphraseException(String message, Throwable cause)
-	{
+	public InvalidPassphraseException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
 	/**
 	 * @param cause
 	 */
-	public InvalidPassphraseException(Throwable cause)
-	{
+	public InvalidPassphraseException(Throwable cause) {
 		super(cause);
 	}
 }

@@ -1,7 +1,7 @@
 /*
  *  * $Id$
- * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ *
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -11,7 +11,6 @@ package org.pwsafe.lib.datastore;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +34,7 @@ import org.pwsafe.lib.file.PwsUUIDField;
 /**
  * Convenience class for transferring password info around in a
  * version-independent manner and in java bean style.
- *
+ * 
  * @author roxon
  */
 public class PwsEntryBean implements Cloneable {
@@ -53,77 +52,73 @@ public class PwsEntryBean implements Cloneable {
 	boolean sparse = true;
 
 	UUID id;
-    String group;
-    String title;
+	String group;
+	String title;
 
-    String username;
-    StringBuilder password;
-    String notes;
-    String url;
-    String autotype;
+	String username;
+	StringBuilder password;
+	String notes;
+	String url;
+	String autotype;
 
-    String version;
+	String version;
 
-    Date lastAccess;
-    Date created;
-    Date lastPwChange;
-    Date lastChange;
-    Date expires;
+	Date lastAccess;
+	Date created;
+	Date lastPwChange;
+	Date lastChange;
+	Date expires;
 
-    /**
-     * Default constructor.
-     *
-     */
-    public PwsEntryBean() {
-        super();
-    }
+	/**
+	 * Default constructor.
+	 * 
+	 */
+	public PwsEntryBean() {
+		super();
+	}
 
+	public PwsEntryBean(final String group, final String username, final StringBuilder password,
+			final String notes) {
+		this();
+		this.group = group;
+		this.username = username;
+		this.password = password;
+		this.notes = notes;
+	}
 
-    public PwsEntryBean(String group, String username, StringBuilder password, String notes) {
-    	this();
-        this.group = group;
-        this.username = username;
-        this.password = password;
-        this.notes = notes;
-    }
+	/**
+	 * @return the storeIndex
+	 */
+	public int getStoreIndex() {
+		return storeIndex;
+	}
 
-    /**
-     * @return the storeIndex
-     */
-    public int getStoreIndex() {
-    	return storeIndex;
-    }
+	/**
+	 * @param storeIndex the storeIndex to set
+	 */
+	public void setStoreIndex(final int storeIndex) {
+		this.storeIndex = storeIndex;
+	}
 
+	/**
+	 * @return the sparse
+	 */
+	public boolean isSparse() {
+		return sparse;
+	}
 
-    /**
-     * @param storeIndex the storeIndex to set
-     */
-    public void setStoreIndex(int storeIndex) {
-    	this.storeIndex = storeIndex;
-    }
+	/**
+	 * @param sparse the sparse to set
+	 */
+	public void setSparse(final boolean sparse) {
+		this.sparse = sparse;
+	}
 
-
-    /**
-     * @return the sparse
-     */
-    public boolean isSparse() {
-    	return sparse;
-    }
-
-
-    /**
-     * @param sparse the sparse to set
-     */
-    public void setSparse(boolean sparse) {
-    	this.sparse = sparse;
-    }
-
-
-    public UUID getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
+	public void setId(final UUID id) {
 		this.id = id;
 	}
 
@@ -133,77 +128,87 @@ public class PwsEntryBean implements Cloneable {
 	public String getGroup() {
 		return group;
 	}
+
 	/**
 	 * @param group The group to set.
 	 */
-	public void setGroup(String group) {
+	public void setGroup(final String group) {
 		this.group = group;
 	}
+
 	/**
 	 * @return Returns the notes.
 	 */
 	public String getNotes() {
 		return notes;
 	}
+
 	/**
 	 * @param notes The notes to set.
 	 */
-	public void setNotes(String notes) {
+	public void setNotes(final String notes) {
 		this.notes = notes;
 	}
+
 	/**
 	 * @return Returns the password.
 	 */
 	public StringBuilder getPassword() {
 		return password;
 	}
+
 	/**
 	 * @param password The password to set.
 	 */
-	public void setPassword(StringBuilder password) {
+	public void setPassword(final StringBuilder password) {
 		this.password = password;
 	}
+
 	/**
 	 * For backward compatibility.
+	 * 
 	 * @param password The password to set.
-	 *
+	 * 
 	 * @deprecated don't pass around passwords as String!
 	 */
 	@Deprecated
-	public void setPassword(String password) {
+	public void setPassword(final String password) {
 		this.password = new StringBuilder(password);
 	}
+
 	/**
 	 * @return Returns the username.
 	 */
 	public String getUsername() {
 		return username;
 	}
+
 	/**
 	 * @param username The username to set.
 	 */
-	public void setUsername(String username) {
+	public void setUsername(final String username) {
 		this.username = username;
 	}
 
-    /**
-     * @return Returns the title.
-     */
-    public String getTitle() {
-        return title;
-    }
-    /**
-     * @param title The title to set.
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	/**
+	 * @return Returns the title.
+	 */
+	public String getTitle() {
+		return title;
+	}
 
-    public String getUrl() {
+	/**
+	 * @param title The title to set.
+	 */
+	public void setTitle(final String title) {
+		this.title = title;
+	}
+
+	public String getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
+	public void setUrl(final String url) {
 		this.url = url;
 	}
 
@@ -211,8 +216,7 @@ public class PwsEntryBean implements Cloneable {
 		return autotype;
 	}
 
-
-	public void setAutotype(String autotype) {
+	public void setAutotype(final String autotype) {
 		this.autotype = autotype;
 	}
 
@@ -220,7 +224,7 @@ public class PwsEntryBean implements Cloneable {
 		return created;
 	}
 
-	public void setCreated(Date created) {
+	public void setCreated(final Date created) {
 		this.created = created;
 	}
 
@@ -228,7 +232,7 @@ public class PwsEntryBean implements Cloneable {
 		return lastAccess;
 	}
 
-	public void setLastAccess(Date lastAccess) {
+	public void setLastAccess(final Date lastAccess) {
 		this.lastAccess = lastAccess;
 	}
 
@@ -236,7 +240,7 @@ public class PwsEntryBean implements Cloneable {
 		return lastChange;
 	}
 
-	public void setLastChange(Date lastChange) {
+	public void setLastChange(final Date lastChange) {
 		this.lastChange = lastChange;
 	}
 
@@ -244,7 +248,7 @@ public class PwsEntryBean implements Cloneable {
 		return lastPwChange;
 	}
 
-	public void setLastPwChange(Date lastPwChange) {
+	public void setLastPwChange(final Date lastPwChange) {
 		this.lastPwChange = lastPwChange;
 	}
 
@@ -252,38 +256,42 @@ public class PwsEntryBean implements Cloneable {
 		return expires;
 	}
 
-	public void setExpires(Date expires) {
+	public void setExpires(final Date expires) {
 		this.expires = expires;
 	}
 
-    /**
-     * @return Returns the version.
-     */
-    public String getVersion() {
-        return version;
-    }
-    /**
-     * @param version The version to set.
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
+	/**
+	 * @return Returns the version.
+	 */
+	public String getVersion() {
+		return version;
+	}
 
+	/**
+	 * @param version The version to set.
+	 */
+	public void setVersion(final String version) {
+		this.version = version;
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	protected PwsEntryBean clone() {
 		try {
 			return (PwsEntryBean) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new Error (e);// should never happen, otherwise there is a serious problem
+		} catch (final CloneNotSupportedException e) {
+			throw new Error(e);// should never happen, otherwise there is a
+								// serious problem
 		}
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -299,95 +307,124 @@ public class PwsEntryBean implements Cloneable {
 		return result;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(final Object obj) {
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
-		PwsEntryBean other = (PwsEntryBean) obj;
-		if (storeIndex != other.storeIndex)
+		}
+		final PwsEntryBean other = (PwsEntryBean) obj;
+		if (storeIndex != other.storeIndex) {
 			return false;
+		}
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		if (group == null) {
-			if (other.group != null)
+			if (other.group != null) {
 				return false;
-		} else if (!group.equals(other.group))
+			}
+		} else if (!group.equals(other.group)) {
 			return false;
+		}
 		if (title == null) {
-			if (other.title != null)
+			if (other.title != null) {
 				return false;
-		} else if (!title.equals(other.title))
+			}
+		} else if (!title.equals(other.title)) {
 			return false;
+		}
 		if (username == null) {
-			if (other.username != null)
+			if (other.username != null) {
 				return false;
-		} else if (!username.equals(other.username))
+			}
+		} else if (!username.equals(other.username)) {
 			return false;
+		}
 		if (version == null) {
-			if (other.version != null)
+			if (other.version != null) {
 				return false;
-		} else if (!version.equals(other.version))
+			}
+		} else if (!version.equals(other.version)) {
 			return false;
+		}
 		if (autotype == null) {
-			if (other.autotype != null)
+			if (other.autotype != null) {
 				return false;
-		} else if (!autotype.equals(other.autotype))
+			}
+		} else if (!autotype.equals(other.autotype)) {
 			return false;
+		}
 		if (created == null) {
-			if (other.created != null)
+			if (other.created != null) {
 				return false;
-		} else if (!created.equals(other.created))
+			}
+		} else if (!created.equals(other.created)) {
 			return false;
+		}
 		if (expires == null) {
-			if (other.expires != null)
+			if (other.expires != null) {
 				return false;
-		} else if (!expires.equals(other.expires))
+			}
+		} else if (!expires.equals(other.expires)) {
 			return false;
+		}
 		if (lastChange == null) {
-			if (other.lastChange != null)
+			if (other.lastChange != null) {
 				return false;
-		} else if (!lastChange.equals(other.lastChange))
+			}
+		} else if (!lastChange.equals(other.lastChange)) {
 			return false;
+		}
 		if (lastPwChange == null) {
-			if (other.lastPwChange != null)
+			if (other.lastPwChange != null) {
 				return false;
-		} else if (!lastPwChange.equals(other.lastPwChange))
+			}
+		} else if (!lastPwChange.equals(other.lastPwChange)) {
 			return false;
+		}
 		if (notes == null) {
-			if (other.notes != null)
+			if (other.notes != null) {
 				return false;
-		} else if (!notes.equals(other.notes))
+			}
+		} else if (!notes.equals(other.notes)) {
 			return false;
-//		if (password == null) {
-//			if (other.password != null)
-//				return false;
-//		} else if (!password.equals(other.password))
-//			return false;
-		if (sparse != other.sparse)
+		}
+		// if (password == null) {
+		// if (other.password != null)
+		// return false;
+		// } else if (!password.equals(other.password))
+		// return false;
+		if (sparse != other.sparse) {
 			return false;
+		}
 		if (url == null) {
-			if (other.url != null)
+			if (other.url != null) {
 				return false;
-		} else if (!url.equals(other.url))
+			}
+		} else if (!url.equals(other.url)) {
 			return false;
+		}
 		return true;
 	}
 
-
 	@Override
 	public String toString() {
-		StringBuffer all = new StringBuffer (200);
+		final StringBuffer all = new StringBuffer(200);
 		all.append("PwsEntryBean ").append(version).append(": ID ");
 		all.append(id != null ? id.toString() : null);
 		all.append(", Group ").append(group);
@@ -401,319 +438,328 @@ public class PwsEntryBean implements Cloneable {
 		return all.toString();
 	}
 
-	/** 
-	 * TODO: only used by search, we could use a Stringbuffer
-	 * here and directly lowercase the values without field names.
-	 * Then a better name would be getNormalizedSearchText()
+	/**
+	 * TODO: only used by search, we could use a Stringbuffer here and directly
+	 * lowercase the values without field names. Then a better name would be
+	 * getNormalizedSearchText()
+	 * 
 	 * @return
 	 */
 	public Map<String, String> getFields() {
-	        Map<String, String> fields = new HashMap<String, String>();
-	 
-	        fields.put("ID", id != null ? id.toString() : null);
-	        fields.put("Group", group);
-	        fields.put("Title", title);
-	        fields.put("User", username);
-	        fields.put("Notes", notes);
-	        fields.put("Url", url);
-	
-			return fields;
-		}
-	
-		
+		final Map<String, String> fields = new HashMap<String, String>();
+
+		fields.put("ID", id != null ? id.toString() : null);
+		fields.put("Group", group);
+		fields.put("Title", title);
+		fields.put("User", username);
+		fields.put("Notes", notes);
+		fields.put("Url", url);
+
+		return fields;
+	}
 
 	/**
-     * A safer version of field retrieval that is null-safe.
-     *
-     * @param record the record to retrieve the field from
-     * @param aType the type of the field
-     * @return the value of the field or an empty string if the field is null
-     */
-    public static String getSafeValue(PwsRecord record, PwsFieldType aType) {
-    	String fieldValue = "";
-    	PwsField field = record.getField(aType);
-    	if (field != null && field.getValue() != null) {
-    		fieldValue = field.getValue().toString();
-    	}
-    	return fieldValue;
-    }
+	 * A safer version of field retrieval that is null-safe.
+	 * 
+	 * @param record the record to retrieve the field from
+	 * @param aType the type of the field
+	 * @return the value of the field or an empty string if the field is null
+	 */
+	public static String getSafeValue(final PwsRecord record, final PwsFieldType aType) {
+		String fieldValue = "";
+		final PwsField field = record.getField(aType);
+		if (field != null && field.getValue() != null) {
+			fieldValue = field.getValue().toString();
+		}
+		return fieldValue;
+	}
 
-    /**
-     * A safer version of date retrieval that is null-safe.
-     *
-     * @param v3
-     * @param aType
-     * @return the Field as Date
-     */
+	/**
+	 * A safer version of date retrieval that is null-safe.
+	 * 
+	 * @param v3
+	 * @param aType
+	 * @return the Field as Date
+	 */
 	public static Date getSafeDate(final PwsRecordV3 v3, final PwsFieldType aType) {
 		final PwsTimeField field = (PwsTimeField) v3.getField(aType);
 
 		return field != null ? (Date) field.getValue() : null;
 	}
 
-
-    /**
-     * Only set a date into a PwsTimeField if the date != null.
-     * @param v3
-     * @param aType
-     * @param aDate
-     * @return true if the date != null, else false
-     */
+	/**
+	 * Only set a date into a PwsTimeField if the date != null.
+	 * 
+	 * @param v3
+	 * @param aType
+	 * @param aDate
+	 * @return true if the date != null, else false
+	 */
 	private boolean setSafeDate(final PwsRecordV3 v3, final int aType, final Date aDate) {
-		if (aDate == null)
+		if (aDate == null) {
 			return false;
+		}
 		v3.setField(new PwsTimeField(aType, aDate));
 		return true;
 	}
 
-    /**
-     * Only set a (utf8) String into a PwsTimeField if it is != null and != "".  
-     * 
-     * 
-     * @param v3
-     * @param aType
-     * @param aString
-     * @return true if the string != null && != "", else false 
-     */
+	/**
+	 * Only set a (utf8) String into a PwsTimeField if it is != null and != "".
+	 * 
+	 * 
+	 * @param v3
+	 * @param aType
+	 * @param aString
+	 * @return true if the string != null && != "", else false
+	 */
 	private boolean setSafeString(final PwsRecordV3 v3, final int aType, final String aString) {
 		if (aString == null || aString.equals("")) {
 
-			// Remove not possible yet, need to extend PwsRecord first 
-			// If a String wont't be set and is not a mandatory field, 
-		    // check to see if there is an entry of that type in the PwsRecord and 
-			// remove it. 
-			PwsField field = v3.getField(aType);
+			// Remove not possible yet, need to extend PwsRecord first
+			// If a String wont't be set and is not a mandatory field,
+			// check to see if there is an entry of that type in the PwsRecord
+			// and
+			// remove it.
+			final PwsField field = v3.getField(aType);
 			if (field != null && field instanceof PwsStringUnicodeField) {
-//					! PwsRecordV3.MANDATORY_FIELDS.contains(PwsFieldTypeV3.valueOf(aType))) {
-//				v3.removeField(aType);
-				v3.setField(new PwsStringUnicodeField(aType, ""));	
+				// !
+				// PwsRecordV3.MANDATORY_FIELDS.contains(PwsFieldTypeV3.valueOf(aType)))
+				// {
+				// v3.removeField(aType);
+				v3.setField(new PwsStringUnicodeField(aType, ""));
 			}
 			return false;
 		}
 		v3.setField(new PwsStringUnicodeField(aType, aString));
 		return true;
 	}
-    
+
 	/**
-     * Moves the contents of the PwsEntryBean into the supplied PwsRecord.
-     *
+	 * Moves the contents of the PwsEntryBean into the supplied PwsRecord.
+	 * 
 	 * @param nextRecord the record to place the data into
 	 */
-	public void toPwsRecord(PwsRecord nextRecord) {
+	public void toPwsRecord(final PwsRecord nextRecord) {
 
 		if (nextRecord instanceof PwsRecordV3) {
 
-            PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
-            setSafeString(v3, PwsRecordV3.GROUP , getGroup());// + '\u0000'));
-            setSafeString(v3, PwsRecordV3.TITLE , getTitle());
-            setSafeString(v3, PwsRecordV3.USERNAME , getUsername());
-            v3.setField(new PwsStringUnicodeField(PwsRecordV3.PASSWORD , getPassword()));
-            setSafeString(v3, PwsRecordV3.NOTES , getNotes());
-            setSafeString(v3, PwsRecordV3.URL , getUrl());
-            setSafeString(v3, PwsRecordV3.AUTOTYPE , getAutotype());
+			final PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
+			setSafeString(v3, PwsRecordV3.GROUP, getGroup());// + '\u0000'));
+			setSafeString(v3, PwsRecordV3.TITLE, getTitle());
+			setSafeString(v3, PwsRecordV3.USERNAME, getUsername());
+			v3.setField(new PwsStringUnicodeField(PwsRecordV3.PASSWORD, getPassword()));
+			setSafeString(v3, PwsRecordV3.NOTES, getNotes());
+			setSafeString(v3, PwsRecordV3.URL, getUrl());
+			setSafeString(v3, PwsRecordV3.AUTOTYPE, getAutotype());
 
-            setSafeDate(v3,PwsRecordV3.LAST_ACCESS_TIME, getLastAccess());
-            setSafeDate(v3,PwsRecordV3.LAST_MOD_TIME, getLastChange());
-            setSafeDate(v3,PwsRecordV3.PASSWORD_MOD_TIME, getLastPwChange());
-            setSafeDate(v3,PwsRecordV3.PASSWORD_LIFETIME, getExpires());
-            // never changes, so dont't mess:
-//          v3.setField(new PwsUUIDField(PwsRecordV3.UUID, getId()));
-//          v3.setField(new PwsTimeField(PwsRecordV3.CREATION_TIME, getCreated()));
+			setSafeDate(v3, PwsRecordV3.LAST_ACCESS_TIME, getLastAccess());
+			setSafeDate(v3, PwsRecordV3.LAST_MOD_TIME, getLastChange());
+			setSafeDate(v3, PwsRecordV3.PASSWORD_MOD_TIME, getLastPwChange());
+			setSafeDate(v3, PwsRecordV3.PASSWORD_LIFETIME, getExpires());
+			// never changes, so dont't mess:
+			// v3.setField(new PwsUUIDField(PwsRecordV3.UUID, getId()));
+			// v3.setField(new PwsTimeField(PwsRecordV3.CREATION_TIME,
+			// getCreated()));
 
 		} else if (nextRecord instanceof PwsRecordV2) {
 
-            PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
-            v2.setField(new PwsStringField(PwsRecordV2.GROUP , getGroup()));
-            v2.setField(new PwsStringField(PwsRecordV2.TITLE , getTitle()));
-            v2.setField(new PwsStringField(PwsRecordV2.USERNAME , getUsername()));
-            v2.setField(new PwsStringField(PwsRecordV2.PASSWORD , getPassword().toString()));
-            v2.setField(new PwsStringField(PwsRecordV2.NOTES , getNotes()));
+			final PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
+			v2.setField(new PwsStringField(PwsRecordV2.GROUP, getGroup()));
+			v2.setField(new PwsStringField(PwsRecordV2.TITLE, getTitle()));
+			v2.setField(new PwsStringField(PwsRecordV2.USERNAME, getUsername()));
+			v2.setField(new PwsStringField(PwsRecordV2.PASSWORD, getPassword().toString()));
+			v2.setField(new PwsStringField(PwsRecordV2.NOTES, getNotes()));
 
-        } else {
+		} else {
 
-            PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
-            v1.setField(new PwsStringField(PwsRecordV1.TITLE , getTitle()));
-            v1.setField(new PwsStringField(PwsRecordV1.USERNAME , getUsername()));
-            v1.setField(new PwsStringField(PwsRecordV1.PASSWORD , getPassword().toString()));
-            v1.setField(new PwsStringField(PwsRecordV1.NOTES , getNotes()));
+			final PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
+			v1.setField(new PwsStringField(PwsRecordV1.TITLE, getTitle()));
+			v1.setField(new PwsStringField(PwsRecordV1.USERNAME, getUsername()));
+			v1.setField(new PwsStringField(PwsRecordV1.PASSWORD, getPassword().toString()));
+			v1.setField(new PwsStringField(PwsRecordV1.NOTES, getNotes()));
 
-        }
+		}
 	}
 
+	public static PwsEntryBean fromPwsRecord(final PwsRecord nextRecord) {
+		final PwsEntryBean newEntry = new PwsEntryBean();
 
-    public static PwsEntryBean fromPwsRecord(PwsRecord nextRecord) {
-    	PwsEntryBean newEntry = new PwsEntryBean();
+		if (nextRecord instanceof PwsRecordV3) {
 
-        if (nextRecord instanceof PwsRecordV3) {
+			final PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
 
-        	PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
+			final PwsUUIDField idField = (PwsUUIDField) v3.getField(PwsFieldTypeV3.UUID);
+			if (idField != null) {
+				newEntry.setId((UUID) idField.getValue());
+			}
 
-            PwsUUIDField idField = (PwsUUIDField) v3.getField(PwsFieldTypeV3.UUID);
-            if (idField != null)
-            	newEntry.setId((UUID) idField.getValue());
+			final String groupName = getSafeValue(v3, PwsFieldTypeV3.GROUP);
+			newEntry.setGroup(groupName);
 
-            String groupName = getSafeValue(v3, PwsFieldTypeV3.GROUP);
-            newEntry.setGroup(groupName);
+			final String title = getSafeValue(v3, PwsFieldTypeV3.TITLE);
+			newEntry.setTitle(title);
 
-            String title = getSafeValue(v3,PwsFieldTypeV3.TITLE);
-            newEntry.setTitle(title);
+			final String user = getSafeValue(v3, PwsFieldTypeV3.USERNAME);
+			newEntry.setUsername(user);
 
-            String user = getSafeValue(v3, PwsFieldTypeV3.USERNAME);
-            newEntry.setUsername(user);
+			final String password = getSafeValue(v3, PwsFieldTypeV3.PASSWORD);
+			newEntry.setPassword(new StringBuilder(password)); // TODO: change
+																// PwsRecord to
+																// StringBuilder
+																// as well?
 
-            String password = getSafeValue(v3,PwsFieldTypeV3.PASSWORD);
-            newEntry.setPassword(new StringBuilder(password)); // TODO: change PwsRecord to StringBuilder as well?
+			final String notes = getSafeValue(v3, PwsFieldTypeV3.NOTES);
+			newEntry.setNotes(notes);
 
-            String notes = getSafeValue(v3,PwsFieldTypeV3.NOTES);
-            newEntry.setNotes(notes);
+			final String url = getSafeValue(v3, PwsFieldTypeV3.URL);
+			newEntry.setUrl(url);
 
-            String url = getSafeValue(v3,PwsFieldTypeV3.URL);
-            newEntry.setUrl(url);
+			final String autotype = getSafeValue(v3, PwsFieldTypeV3.AUTOTYPE);
+			newEntry.setAutotype(autotype);
 
-            String autotype = getSafeValue(v3,PwsFieldTypeV3.AUTOTYPE);
-            newEntry.setAutotype(autotype);
+			newEntry.setLastChange(getSafeDate(v3, PwsFieldTypeV3.LAST_MOD_TIME));
 
-            newEntry.setLastChange(getSafeDate(v3, PwsFieldTypeV3.LAST_MOD_TIME));
+			newEntry.setCreated(getSafeDate(v3, PwsFieldTypeV3.CREATION_TIME));
 
-            newEntry.setCreated(getSafeDate(v3, PwsFieldTypeV3.CREATION_TIME));
+			newEntry.setLastAccess(getSafeDate(v3, PwsFieldTypeV3.LAST_ACCESS_TIME));
 
-            newEntry.setLastAccess(getSafeDate(v3, PwsFieldTypeV3.LAST_ACCESS_TIME));
+			newEntry.setLastPwChange(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_MOD_TIME));
 
-            newEntry.setLastPwChange(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_MOD_TIME));
+			newEntry.setExpires(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_LIFETIME));
 
-           	newEntry.setExpires(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_LIFETIME));
+			newEntry.setVersion("3");
 
-            newEntry.setVersion("3");
+			if (log.isDebugEnabled()) {
+				log.debug("PwsEntryBean created " + newEntry.toString());
+			}
 
-            if (log.isDebugEnabled())
-            	log.debug("PwsEntryBean created " + newEntry.toString());
+		} else if (nextRecord instanceof PwsRecordV2) {
 
-        } else if (nextRecord instanceof PwsRecordV2) {
+			final PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
 
-            PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
+			final String groupName = getSafeValue(v2, PwsFieldTypeV2.GROUP);
+			newEntry.setGroup(groupName);
 
-            String groupName = getSafeValue(v2, PwsFieldTypeV2.GROUP);
-            newEntry.setGroup(groupName);
+			final String title = getSafeValue(v2, PwsFieldTypeV2.TITLE);
+			newEntry.setTitle(title);
 
-            String title = getSafeValue(v2,PwsFieldTypeV2.TITLE);
-            newEntry.setTitle(title);
+			final String user = getSafeValue(v2, PwsFieldTypeV2.USERNAME);
+			newEntry.setUsername(user);
 
-            String user = getSafeValue(v2, PwsFieldTypeV2.USERNAME);
-            newEntry.setUsername(user);
+			final String password = getSafeValue(v2, PwsFieldTypeV2.PASSWORD);
+			newEntry.setPassword(new StringBuilder(password));
 
-            String password = getSafeValue(v2,PwsFieldTypeV2.PASSWORD);
-            newEntry.setPassword(new StringBuilder(password));
+			final String notes = getSafeValue(v2, PwsFieldTypeV2.NOTES);
+			newEntry.setNotes(notes);
 
-            String notes = getSafeValue(v2,PwsFieldTypeV2.NOTES);
-            newEntry.setNotes(notes);
+			newEntry.setVersion("2");
 
-            newEntry.setVersion("2");
+		} else {
+			final PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
 
-        } else {
-            PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
+			final String title = getSafeValue(v1, PwsFieldTypeV1.TITLE);
+			newEntry.setTitle(title);
 
-            String title = getSafeValue(v1,PwsFieldTypeV1.TITLE);
-            newEntry.setTitle(title);
+			final String user = getSafeValue(v1, PwsFieldTypeV1.USERNAME);
+			newEntry.setUsername(user);
 
-            String user = getSafeValue(v1,PwsFieldTypeV1.USERNAME);
-            newEntry.setUsername(user);
+			final String password = getSafeValue(v1, PwsFieldTypeV1.PASSWORD);
+			newEntry.setPassword(new StringBuilder(password));
 
-            String password = getSafeValue(v1,PwsFieldTypeV1.PASSWORD);
-            newEntry.setPassword(new StringBuilder(password));
+			final String notes = getSafeValue(v1, PwsFieldTypeV1.NOTES);
+			newEntry.setNotes(notes);
 
-            String notes = getSafeValue(v1,PwsFieldTypeV1.NOTES);
-            newEntry.setNotes(notes);
+			newEntry.setVersion("1");
+		}
+		return newEntry;
+	}
 
-            newEntry.setVersion("1");
-        }
-        return newEntry;
-    }
-
-    public static PwsEntryBean fromPwsRecord(PwsRecord nextRecord, Set<? extends PwsFieldType> sparseFields) {
-    	PwsEntryBean newEntry = new PwsEntryBean();
-        if (nextRecord instanceof PwsRecordV3) {
-        	PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
-        	for (Iterator<? extends PwsFieldType> it = sparseFields.iterator(); it.hasNext();) {
-        		PwsFieldTypeV3 theType = (PwsFieldTypeV3) it.next();
-                String theField = getSafeValue(v3, theType);
-                newEntry.setVersion("3");
-                switch (theType) {
-        			case GROUP:
-        				newEntry.setGroup(theField);
-        				break;
-        			case TITLE:
-        				newEntry.setTitle(theField);
-        				break;
-        			case USERNAME:
-        				newEntry.setUsername(theField);
-        				break;
-        			case PASSWORD:
-        				newEntry.setPassword(new StringBuilder (theField));
-        				break;
-        			case NOTES:
-        	            newEntry.setNotes(theField);
-        				break;
-        			case URL:
-        	            newEntry.setUrl(theField);
-        				break;
-        			case PASSWORD_LIFETIME:
-        	           	newEntry.setExpires(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_LIFETIME));
-        	           	break;
-        			default:
-        				log.warn("Ignored Sparse field type " + theType);
-        		}
-        	}
-        } else if (nextRecord instanceof PwsRecordV2) {
-            PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
-        	for (Iterator<? extends PwsFieldType> it = sparseFields.iterator(); it.hasNext();) {
-        		PwsFieldTypeV2 theType = (PwsFieldTypeV2) it.next();
-                String theField = getSafeValue(v2, theType);
-                newEntry.setVersion("2");
-                switch (theType) {
-        			case GROUP:
-        				newEntry.setGroup(theField);
-        				break;
-        			case TITLE:
-        				newEntry.setTitle(theField);
-        				break;
-        			case USERNAME:
-        				newEntry.setUsername(theField);
-        				break;
-        			case PASSWORD:
-        				newEntry.setPassword(new StringBuilder (theField));
-        				break;
-        			case NOTES:
-        	            newEntry.setNotes(theField);
-        				break;
-        			default:
-        				log.warn("Ignored Sparse field type " + theType);
-        		}
-        	}
-        } else {
-            PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
-        	for (Iterator<? extends PwsFieldType> it = sparseFields.iterator(); it.hasNext();) {
-        		PwsFieldTypeV1 theType = (PwsFieldTypeV1) it.next();
-                String theField = getSafeValue(v1, theType);
-                newEntry.setVersion("1");
-                switch ( theType) {
-        			case TITLE:
-        				newEntry.setTitle(theField);
-        				break;
-        			case USERNAME:
-        				newEntry.setUsername(theField);
-        				break;
-        			case PASSWORD:
-        				newEntry.setPassword(new StringBuilder (theField));
-        				break;
-        			case NOTES:
-        	            newEntry.setNotes(theField);
-        				break;
-        			default:
-        				log.warn("Ignored Sparse field type " + theType);
-        		}
-        	}
-        }
-        return newEntry;
-    }
+	public static PwsEntryBean fromPwsRecord(final PwsRecord nextRecord,
+			final Set<? extends PwsFieldType> sparseFields) {
+		final PwsEntryBean newEntry = new PwsEntryBean();
+		if (nextRecord instanceof PwsRecordV3) {
+			final PwsRecordV3 v3 = (PwsRecordV3) nextRecord;
+			for (final PwsFieldType pwsFieldType : sparseFields) {
+				final PwsFieldTypeV3 theType = (PwsFieldTypeV3) pwsFieldType;
+				final String theField = getSafeValue(v3, theType);
+				newEntry.setVersion("3");
+				switch (theType) {
+				case GROUP:
+					newEntry.setGroup(theField);
+					break;
+				case TITLE:
+					newEntry.setTitle(theField);
+					break;
+				case USERNAME:
+					newEntry.setUsername(theField);
+					break;
+				case PASSWORD:
+					newEntry.setPassword(new StringBuilder(theField));
+					break;
+				case NOTES:
+					newEntry.setNotes(theField);
+					break;
+				case URL:
+					newEntry.setUrl(theField);
+					break;
+				case PASSWORD_LIFETIME:
+					newEntry.setExpires(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_LIFETIME));
+					break;
+				default:
+					log.warn("Ignored Sparse field type " + theType);
+				}
+			}
+		} else if (nextRecord instanceof PwsRecordV2) {
+			final PwsRecordV2 v2 = (PwsRecordV2) nextRecord;
+			for (final PwsFieldType pwsFieldType : sparseFields) {
+				final PwsFieldTypeV2 theType = (PwsFieldTypeV2) pwsFieldType;
+				final String theField = getSafeValue(v2, theType);
+				newEntry.setVersion("2");
+				switch (theType) {
+				case GROUP:
+					newEntry.setGroup(theField);
+					break;
+				case TITLE:
+					newEntry.setTitle(theField);
+					break;
+				case USERNAME:
+					newEntry.setUsername(theField);
+					break;
+				case PASSWORD:
+					newEntry.setPassword(new StringBuilder(theField));
+					break;
+				case NOTES:
+					newEntry.setNotes(theField);
+					break;
+				default:
+					log.warn("Ignored Sparse field type " + theType);
+				}
+			}
+		} else {
+			final PwsRecordV1 v1 = (PwsRecordV1) nextRecord;
+			for (final PwsFieldType pwsFieldType : sparseFields) {
+				final PwsFieldTypeV1 theType = (PwsFieldTypeV1) pwsFieldType;
+				final String theField = getSafeValue(v1, theType);
+				newEntry.setVersion("1");
+				switch (theType) {
+				case TITLE:
+					newEntry.setTitle(theField);
+					break;
+				case USERNAME:
+					newEntry.setUsername(theField);
+					break;
+				case PASSWORD:
+					newEntry.setPassword(new StringBuilder(theField));
+					break;
+				case NOTES:
+					newEntry.setNotes(theField);
+					break;
+				default:
+					log.warn("Ignored Sparse field type " + theType);
+				}
+			}
+		}
+		return newEntry;
+	}
 
 }

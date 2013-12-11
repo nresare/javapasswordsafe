@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -18,22 +18,22 @@ import org.bouncycastle.crypto.params.KeyParameter;
  */
 public class HmacPws {
 
-	private HMac mac;
+	private final HMac mac;
 
 	public HmacPws(byte[] key) {
-		
+
 		mac = new HMac(new SHA256Digest());
-		KeyParameter kp = new KeyParameter(key);
+		final KeyParameter kp = new KeyParameter(key);
 		mac.init(kp);
-		
+
 	}
 
 	public void digest(byte[] incoming) {
-        mac.update(incoming, 0, incoming.length);
-    }
+		mac.update(incoming, 0, incoming.length);
+	}
 
 	public byte[] doFinal() {
-		byte[] output = new byte[mac.getUnderlyingDigest().getDigestSize()];
+		final byte[] output = new byte[mac.getUnderlyingDigest().getDigestSize()];
 		mac.doFinal(output, 0);
 		return output;
 	}

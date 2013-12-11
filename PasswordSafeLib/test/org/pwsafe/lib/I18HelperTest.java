@@ -14,12 +14,10 @@ import junit.framework.TestCase;
 /**
  * 
  */
-public class I18HelperTest extends TestCase
-{
+public class I18HelperTest extends TestCase {
 	/**
 	 *
 	 */
-	public final void testFormatMessage()
-	{
+	public final void testFormatMessage() {
 	}
 }

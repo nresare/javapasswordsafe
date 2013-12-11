@@ -1,7 +1,7 @@
 /*
  * $Id$
  * 
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -53,10 +53,12 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * |            8 | IpThing   | Initial vector for decryption                      |
  * +--------------+-----------+----------------------------------------------------+</pre>
  * </tt>
- * </p><p>
- * The records follow immediately after the header.  Each record has the same
+ * </p>
+ * <p>
+ * The records follow immediately after the header. Each record has the same
  * layout:
- * </p><p>
+ * </p>
+ * <p>
  * <tt>
  * <pre> +--------------+-----------+----------------------------------------------------+
  * |  BLOCK_LENGTH| RecLen    | Actual length of the data that follows (encrypted) |
@@ -66,86 +68,84 @@ import org.pwsafe.lib.exception.UnsupportedFileVersionException;
  * </tt>
  * </p>
  */
-public abstract class PwsFile
-{
+public abstract class PwsFile {
 	private static final Log LOG = Log.getInstance(PwsFile.class.getPackage().getName());
 
 	/**
 	 * Length of RandStuff in bytes.
 	 */
-	public static final int	STUFF_LENGTH	= 8;
+	public static final int STUFF_LENGTH = 8;
 
 	/**
 	 * Length of RandHash in bytes.
 	 */
-	public static final int	HASH_LENGTH		= 20;
+	public static final int HASH_LENGTH = 20;
 
 	/**
-	 * Block length - the minimum size of a data block.  All data written to the database is
-	 * in blocks that are an integer multiple of <code>BLOCK_LENGTH</code> in size. 
-	 * The exception is time field, there the size used is 4.
+	 * Block length - the minimum size of a data block. All data written to the
+	 * database is in blocks that are an integer multiple of
+	 * <code>BLOCK_LENGTH</code> in size. The exception is time field, there the
+	 * size used is 4.
 	 */
-	public static final int BLOCK_LENGTH	= 8; 
-
+	public static final int BLOCK_LENGTH = 8;
 
 	/** The storage implementation associated with this file */
-	protected PwsStorage		storage;
-	
+	protected PwsStorage storage;
+
 	/**
 	 * The passphrase for the file.
 	 */
 	protected SealedObject passphrase;
 
 	/**
-	 * The stream used to read data from the storage.  It is non-null only whilst data
-	 * are being read from the file.
+	 * The stream used to read data from the storage. It is non-null only whilst
+	 * data are being read from the file.
 	 */
-	protected InputStream		inStream;
+	protected InputStream inStream;
 
 	/**
-	 * The stream used to write data to the storage.  It is non-null only whilst data are
-	 * being written to the file. 
+	 * The stream used to write data to the storage. It is non-null only whilst
+	 * data are being written to the file.
 	 */
-	protected OutputStream		outStream;
-	
+	protected OutputStream outStream;
+
 	/**
 	 * The records that are part of the file.
 	 */
-	protected List<SealedObject>	sealedRecords = new ArrayList<SealedObject>();
-	
-	/**
-	 * Flag indicating whether (<code>true</code>) or not (<code>false</code>) the storage
-	 * has been modified in memory and not yet written back to the filesystem.
-	 */
-	protected boolean			modified		= false;
+	protected List<SealedObject> sealedRecords = new ArrayList<SealedObject>();
 
-	
 	/**
-	 * Flag indicating whether the storage may be changed or saved. 
+	 * Flag indicating whether (<code>true</code>) or not (<code>false</code>)
+	 * the storage has been modified in memory and not yet written back to the
+	 * filesystem.
+	 */
+	protected boolean modified = false;
+
+	/**
+	 * Flag indicating whether the storage may be changed or saved.
 	 * 
 	 */
-	protected boolean 			readOnly 		= false;
-	
+	protected boolean readOnly = false;
+
 	/**
 	 * Last modification Date and time of the underlying storage.
 	 */
-	protected Date 				lastStorageChange;
+	protected Date lastStorageChange;
 
-	private InMemoryKey			memoryKey;
-	private byte[] 				memoryIv;
-	
+	private InMemoryKey memoryKey;
+	private byte[] memoryIv;
+
 	/**
 	 * Constructs and initialises a new, empty PasswordSafe database in memory.
 	 */
-	protected PwsFile()
-	{
+	protected PwsFile() {
 		storage = null;
 	}
 
 	/**
 	 * Construct the PasswordSafe file by reading it from the file.
 	 * 
-	 * @param aStorage  the storage of the database to open.
+	 * @param aStorage the storage of the database to open.
 	 * @param aPassphrase the passphrase for the database.
 	 * 
 	 * @throws EndOfFileException
@@ -153,14 +153,13 @@ public abstract class PwsFile
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	protected PwsFile( PwsStorage aStorage, String aPassphrase )
-	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException
-	{
-		LOG.enterMethod( "PwsFile.PwsFile( String )" );
-		this.storage = aStorage;
-		open( aPassphrase );
+	protected PwsFile(PwsStorage aStorage, String aPassphrase) throws EndOfFileException,
+			IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
+		LOG.enterMethod("PwsFile.PwsFile( String )");
+		storage = aStorage;
+		open(aPassphrase);
 
-		LOG.leaveMethod( "PwsFile.PwsFile( String )" );
+		LOG.leaveMethod("PwsFile.PwsFile( String )");
 	}
 
 	/**
@@ -168,83 +167,84 @@ public abstract class PwsFile
 	 * 
 	 * @param rec the record to be added.
 	 * 
-	 * @throws PasswordSafeException if the record has already been added to another file. 
+	 * @throws PasswordSafeException if the record has already been added to
+	 *         another file.
 	 */
-	public void add(final PwsRecord rec ) throws PasswordSafeException {
-		LOG.enterMethod( "PwsFile.add" );
+	public void add(final PwsRecord rec) throws PasswordSafeException {
+		LOG.enterMethod("PwsFile.add");
 
-		if (isReadOnly())
+		if (isReadOnly()) {
 			LOG.error("Illegal add on read only file - saving won't be possible");
+		}
 
 		this.add(rec, getCipher(true));
-		//recordSet.add( rec );
+		// recordSet.add( rec );
 		setModified();
 
-		LOG.leaveMethod( "PwsFile.add" );
+		LOG.leaveMethod("PwsFile.add");
 	}
-	
-	protected void add ( final PwsRecord rec, final Cipher aCipher ) {
+
+	protected void add(final PwsRecord rec, final Cipher aCipher) {
 
 		// TODO validate the record before adding it
 		try {
-			SealedObject sealedRecord = new SealedObject(rec, aCipher);
-	        sealedRecords.add(sealedRecord);
-		} catch (IllegalBlockSizeException e) {
+			final SealedObject sealedRecord = new SealedObject(rec, aCipher);
+			sealedRecords.add(sealedRecord);
+		} catch (final IllegalBlockSizeException e) {
 			throw new MemoryKeyException(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MemoryKeyException(e);
 		}
 	}
 
 	/**
-	 * Allocates a byte array at least <code>length</code> bytes in length and which is an integer multiple
-	 * of <code>BLOCK_LENGTH</code>.
+	 * Allocates a byte array at least <code>length</code> bytes in length and
+	 * which is an integer multiple of <code>BLOCK_LENGTH</code>.
 	 * 
 	 * @param length the number of bytes the array must hold.
 	 * 
 	 * @return A byte array of the correct length.
 	 */
-	static final byte [] allocateBuffer( int length )
-	{
-		LOG.enterMethod( "PwsFile.allocateBuffer" );
+	static final byte[] allocateBuffer(int length) {
+		LOG.enterMethod("PwsFile.allocateBuffer");
 
-		int	bLen;
+		int bLen;
 
-		bLen	= calcBlockLength( length );
+		bLen = calcBlockLength(length);
 
-		LOG.leaveMethod( "PwsFile.allocateBuffer" );
+		LOG.leaveMethod("PwsFile.allocateBuffer");
 
-		return new byte[ bLen ];
+		return new byte[bLen];
 	}
 
 	/**
-	 * Calculates the next integer multiple of <code>BLOCK_LENGTH</code> &gt;= <code>length</code>.
-	 * If <code>length</code> is zero, however, then <code>BLOCK_LENGTH</code> is returned as the
-	 * calculated block length.
+	 * Calculates the next integer multiple of <code>BLOCK_LENGTH</code> &gt;=
+	 * <code>length</code>. If <code>length</code> is zero, however, then
+	 * <code>BLOCK_LENGTH</code> is returned as the calculated block length.
 	 * 
-	 * @param length the minimum block length 
+	 * @param length the minimum block length
 	 * 
-	 * @return <code>length</code> rounded up to the next multiple of <code>BLOCK_LENGTH</code>.
+	 * @return <code>length</code> rounded up to the next multiple of
+	 *         <code>BLOCK_LENGTH</code>.
 	 * 
 	 * @throws IllegalArgumentException if length &lt; zero.
 	 */
-	static final int calcBlockLength( int length )
-	{
-		LOG.enterMethod( "PwsFile.calcBlockLength" );
+	static final int calcBlockLength(int length) {
+		LOG.enterMethod("PwsFile.calcBlockLength");
 
 		int result;
 
-		if ( length < 0 )
-		{
-			LOG.error( I18nHelper.getInstance().formatMessage("E00004") );
-			LOG.leaveMethod( "PwsFile.calcBlockLength" );
-			throw new IllegalArgumentException( I18nHelper.getInstance().formatMessage("E00004") );
+		if (length < 0) {
+			LOG.error(I18nHelper.getInstance().formatMessage("E00004"));
+			LOG.leaveMethod("PwsFile.calcBlockLength");
+			throw new IllegalArgumentException(I18nHelper.getInstance().formatMessage("E00004"));
 		}
-		result = ( length == 0 ) ? BLOCK_LENGTH : ( (length + (BLOCK_LENGTH - 1)) / BLOCK_LENGTH ) * BLOCK_LENGTH;
-		
-		LOG.debug1( "Length = " + length + ", BlockLength = " + result );
+		result = (length == 0) ? BLOCK_LENGTH : ((length + (BLOCK_LENGTH - 1)) / BLOCK_LENGTH)
+				* BLOCK_LENGTH;
 
-		LOG.leaveMethod( "PwsFile.calcBlockLength" );
+		LOG.debug1("Length = " + length + ", BlockLength = " + result);
+
+		LOG.leaveMethod("PwsFile.calcBlockLength");
 
 		return result;
 	}
@@ -254,85 +254,84 @@ public abstract class PwsFile
 	 * 
 	 * @throws IOException If the attempt fails.
 	 */
-	void close()
-	throws IOException
-	{
-		LOG.enterMethod( "PwsFile.close" );
+	void close() throws IOException {
+		LOG.enterMethod("PwsFile.close");
 
-		if ( inStream != null )
-		{	
+		if (inStream != null) {
 			inStream.close();
-	
-			inStream	= null;
+
+			inStream = null;
 		}
 
-		LOG.leaveMethod( "PwsFile.close" );
+		LOG.leaveMethod("PwsFile.close");
 	}
 
-    /**
-     * Wipes any sensitive data from memory.
-     */
-    public void dispose () {
-        passphrase = null;
-        if (memoryKey != null) {
-        	memoryKey.dispose();
-        }
-        if (memoryIv != null) {
-        	Arrays.fill(memoryIv, (byte) 0);
-        	memoryIv = null;
-        }
-    }
-    
-    protected Cipher getCipher (boolean forWriting) {
-    	if (memoryIv == null) {
-    		memoryIv = new byte[8];
-    		Util.newRandBytes(memoryIv);
-    	}
-    	//TODO: use BouncyCastle Provider!        
-        SecretKeySpec   key = new SecretKeySpec(getKeyBytes(), "Blowfish");
-        IvParameterSpec ivSpec = new IvParameterSpec(memoryIv);
-        Cipher cipher = null;
+	/**
+	 * Wipes any sensitive data from memory.
+	 */
+	public void dispose() {
+		passphrase = null;
+		if (memoryKey != null) {
+			memoryKey.dispose();
+		}
+		if (memoryIv != null) {
+			Arrays.fill(memoryIv, (byte) 0);
+			memoryIv = null;
+		}
+	}
+
+	protected Cipher getCipher(boolean forWriting) {
+		if (memoryIv == null) {
+			memoryIv = new byte[8];
+			Util.newRandBytes(memoryIv);
+		}
+		// TODO: use BouncyCastle Provider!
+		final SecretKeySpec key = new SecretKeySpec(getKeyBytes(), "Blowfish");
+		final IvParameterSpec ivSpec = new IvParameterSpec(memoryIv);
+		Cipher cipher = null;
 		try {
 			cipher = Cipher.getInstance("Blowfish/CBC/PKCS5Padding");
-		} catch (NoSuchAlgorithmException e1) {
-			throw new MemoryKeyException("memory key generation failed",e1);
-//		} catch (NoSuchProviderException e1) {
-//			throw new MemoryKeyException("memory Key generation failed", e1);
-		} catch (NoSuchPaddingException e1) {
-			throw new MemoryKeyException("memory key generation failed",e1);
+		} catch (final NoSuchAlgorithmException e1) {
+			throw new MemoryKeyException("memory key generation failed", e1);
+			// } catch (NoSuchProviderException e1) {
+			// throw new MemoryKeyException("memory Key generation failed", e1);
+		} catch (final NoSuchPaddingException e1) {
+			throw new MemoryKeyException("memory key generation failed", e1);
 		}
 
-        try {
-        	if (forWriting)
-        		cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
-        	else
-        		cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
-		} catch (InvalidKeyException e) {
-			throw new MemoryKeyException("memory key generation failed",e);
-		} catch (InvalidAlgorithmParameterException e) {
-			throw new MemoryKeyException("memory key generation failed",e);
+		try {
+			if (forWriting) {
+				cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+			} else {
+				cipher.init(Cipher.DECRYPT_MODE, key, ivSpec);
+			}
+		} catch (final InvalidKeyException e) {
+			throw new MemoryKeyException("memory key generation failed", e);
+		} catch (final InvalidAlgorithmParameterException e) {
+			throw new MemoryKeyException("memory key generation failed", e);
 		}
 
-    	return cipher;
-    }
-    
-    private byte[] getKeyBytes () {
-    	if (memoryKey == null) {
-    		memoryKey = new InMemoryKey(16);
-    		memoryKey.init();    		
-	    }
-    	return memoryKey.getKey();
-    }
-    
+		return cipher;
+	}
+
+	private byte[] getKeyBytes() {
+		if (memoryKey == null) {
+			memoryKey = new InMemoryKey(16);
+			memoryKey.init();
+		}
+		return memoryKey.getKey();
+	}
+
 	/**
 	 * Returns the storage implementation for this file
 	 */
 	public PwsStorage getStorage() {
 		return storage;
 	}
-	
+
 	/**
 	 * Allow the storage implementation associated with this file to be set.
+	 * 
 	 * @param storage An implementation of the PwsStorage interface.
 	 */
 	public void setStorage(PwsStorage storage) {
@@ -346,23 +345,21 @@ public abstract class PwsFile
 	 */
 	public abstract int getFileVersionMajor();
 
-
 	/**
 	 * Returns the passphrase used to open the file.
 	 * 
 	 * @return The file's passphrase.
 	 */
-	public String getPassphrase()
-	{
+	public String getPassphrase() {
 		try {
 			return passphrase == null ? null : passphrase.getObject(getCipher(false)).toString();
-		} catch (IllegalBlockSizeException e) {
+		} catch (final IllegalBlockSizeException e) {
 			throw new RuntimeCryptoException(e.getMessage());
-		} catch (BadPaddingException e) {
+		} catch (final BadPaddingException e) {
 			throw new RuntimeCryptoException(e.getMessage());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeCryptoException(e.getMessage());
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			throw new RuntimeCryptoException(e.getMessage());
 		}
 	}
@@ -372,62 +369,58 @@ public abstract class PwsFile
 	 * 
 	 * @return The number of records in the file.
 	 */
-	public int getRecordCount()
-	{
-		LOG.enterMethod( "PwsFile.getRecordCount" );
-		
-		int size = sealedRecords.size();
+	public int getRecordCount() {
+		LOG.enterMethod("PwsFile.getRecordCount");
 
-		LOG.leaveMethod( "PwsFile.getRecordCount" );
+		final int size = sealedRecords.size();
+
+		LOG.leaveMethod("PwsFile.getRecordCount");
 
 		return size;
 	}
 
 	/**
-	 * Returns an iterator over the records.  Records may be deleted from the file by
-	 * calling the <code>remove()</code> method on the iterator.
+	 * Returns an iterator over the records. Records may be deleted from the
+	 * file by calling the <code>remove()</code> method on the iterator.
 	 * 
 	 * @return An <code>Iterator</code> over the records.
 	 */
-	public Iterator<? extends PwsRecord> getRecords()
-	{
-		return new FileIterator( this, sealedRecords.iterator() );
+	public Iterator<? extends PwsRecord> getRecords() {
+		return new FileIterator(this, sealedRecords.iterator());
 	}
 
-    /**
-     * Returns a record.
-     *
-     * @return the PwsRecord at that index
-     */
-    public PwsRecord getRecord(int index)
-    {
-    	// TODO validate here as well
-        Cipher cipher = getCipher(true);
-        SealedObject sealedRecord ;
+	/**
+	 * Returns a record.
+	 * 
+	 * @return the PwsRecord at that index
+	 */
+	public PwsRecord getRecord(int index) {
+		getCipher(true);
+		SealedObject sealedRecord;
 		try {
 			sealedRecord = sealedRecords.get(index);
 			return (PwsRecord) sealedRecord.getObject(getCipher(false));
-		} catch (IllegalBlockSizeException e) {
+		} catch (final IllegalBlockSizeException e) {
 			throw new MemoryKeyException(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MemoryKeyException(e);
-		} catch (BadPaddingException e) {
+		} catch (final BadPaddingException e) {
 			throw new MemoryKeyException(e);
-		} catch (ClassNotFoundException e) {
+		} catch (final ClassNotFoundException e) {
 			throw new MemoryKeyException(e);
 		}
-    }
-
-	/**
-	 * Returns an flag as to whether this file or any of its records have been modified.
-	 * 
-	 * @return <code>true</code> if the file has been modified, <code>false</code> if it hasn't.
-	 */
-	public boolean isModified()
-	{
-		return modified;
 	}
 
+	/**
+	 * Returns an flag as to whether this file or any of its records have been
+	 * modified.
+	 * 
+	 * @return <code>true</code> if the file has been modified,
+	 *         <code>false</code> if it hasn't.
+	 */
+	public boolean isModified() {
+		return modified;
+	}
 
 	/**
 	 * Allocates a new, empty record unowned by any file.
@@ -436,30 +429,28 @@ public abstract class PwsFile
 	 */
 	public abstract PwsRecord newRecord();
 
-    /**
-     * Updates a Record.
-     * Important to use this method as soon as getRecord 
-     * will return copies made from encrypted records.
-     *  
-     * @param index
-     * @param aRecord
-     */
-    public void set(int index, PwsRecord aRecord)
-    {
-    	// TODO validate here as well
-        Cipher cipher = getCipher(true);
-        SealedObject sealedRecord ;
+	/**
+	 * Updates a Record. Important to use this method as soon as getRecord will
+	 * return copies made from encrypted records.
+	 * 
+	 * @param index
+	 * @param aRecord
+	 */
+	public void set(int index, PwsRecord aRecord) {
+		// TODO validate here as well
+		final Cipher cipher = getCipher(true);
+		SealedObject sealedRecord;
 		try {
 			sealedRecord = new SealedObject(aRecord, cipher);
-	        sealedRecords.set(index, sealedRecord);
-	        setModified();
-		} catch (IllegalBlockSizeException e) {
+			sealedRecords.set(index, sealedRecord);
+			setModified();
+		} catch (final IllegalBlockSizeException e) {
 			throw new MemoryKeyException(e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new MemoryKeyException(e);
 		}
 
-    }
+	}
 
 	/**
 	 * Opens the database.
@@ -471,189 +462,187 @@ public abstract class PwsFile
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	protected abstract void open( String aPassphrase )
-	throws EndOfFileException, IOException, UnsupportedFileVersionException, NoSuchAlgorithmException;
-	
+	protected abstract void open(String aPassphrase) throws EndOfFileException, IOException,
+			UnsupportedFileVersionException, NoSuchAlgorithmException;
+
 	/**
 	 * Reads all records from the file.
 	 * 
-	 * @throws IOException  If an error occurs reading from the file.
-	 * @throws UnsupportedFileVersionException  If the file is an unsupported version
+	 * @throws IOException If an error occurs reading from the file.
+	 * @throws UnsupportedFileVersionException If the file is an unsupported
+	 *         version
 	 */
 	void readAll() throws IOException, UnsupportedFileVersionException {
 		try {
 			final Cipher c = getCipher(true);
-			for ( ;; ) {
-				final PwsRecord	rec = PwsRecord.read( this );
+			for (;;) {
+				final PwsRecord rec = PwsRecord.read(this);
 
-				if ( rec.isValid() ){	
-					this.add( rec, c );
+				if (rec.isValid()) {
+					this.add(rec, c);
 				}
 			}
-		} catch ( EndOfFileException e ) {
+		} catch (final EndOfFileException e) {
 			// OK
 		}
 	}
 
 	/**
-	 * Allocates a block of <code>BLOCK_LENGTH</code> bytes then reads and decrypts this many
-	 * bytes from the file.
+	 * Allocates a block of <code>BLOCK_LENGTH</code> bytes then reads and
+	 * decrypts this many bytes from the file.
 	 * 
 	 * @return A byte array containing the decrypted data.
 	 * 
 	 * @throws EndOfFileException If end of file occurs whilst reading the data.
-	 * @throws IOException        If an error occurs whilst reading the file.
+	 * @throws IOException If an error occurs whilst reading the file.
 	 */
-	protected byte [] readBlock()
-	throws EndOfFileException, IOException
-	{
-		byte []	block;
+	protected byte[] readBlock() throws EndOfFileException, IOException {
+		byte[] block;
 
-		block = new byte[ getBlockSize() ];
-		readDecryptedBytes( block );
-		
+		block = new byte[getBlockSize()];
+		readDecryptedBytes(block);
+
 		return block;
 	}
 
 	/**
-	 * Reads raw (undecrypted) bytes from the file.  The method attepts to read
+	 * Reads raw (undecrypted) bytes from the file. The method attepts to read
 	 * <code>bytes.length</code> bytes from the file.
 	 * 
 	 * @param bytes the array to be filled from the file.
 	 * 
 	 * @throws EndOfFileException If end of file occurs whilst reading the data.
-	 * @throws IOException        If an error occurs whilst reading the file.
+	 * @throws IOException If an error occurs whilst reading the file.
 	 */
-	public void readBytes( byte [] bytes )
-	throws IOException, EndOfFileException
-	{
+	public void readBytes(byte[] bytes) throws IOException, EndOfFileException {
 		int count;
 
-		count = inStream.read( bytes );
+		count = inStream.read(bytes);
 
-		if ( count == -1 )
-		{
-			LOG.debug1( "END OF FILE" );
+		if (count == -1) {
+			LOG.debug1("END OF FILE");
 			throw new EndOfFileException();
+		} else if (count < bytes.length) {
+			LOG.info(I18nHelper.getInstance().formatMessage("I00003",
+					new Object[] { new Integer(bytes.length), new Integer(count) }));
+			throw new IOException(I18nHelper.getInstance().formatMessage("E00006"));
 		}
-		else if ( count < bytes.length )
-		{
-			LOG.info( I18nHelper.getInstance().formatMessage("I00003", new Object [] { new Integer(bytes.length), new Integer(count) } ) );
-			throw new IOException( I18nHelper.getInstance().formatMessage("E00006") );
-		}
-		LOG.debug1( "Read " + count + " bytes" );
+		LOG.debug1("Read " + count + " bytes");
 	}
 
 	/**
-	 * Reads bytes from the file and decryps them.  <code>buff</code> may be any length provided
-	 * that is a multiple of <code>getBlockSize()</code> bytes in length.
+	 * Reads bytes from the file and decryps them. <code>buff</code> may be any
+	 * length provided that is a multiple of <code>getBlockSize()</code> bytes
+	 * in length.
 	 * 
 	 * @param buff the buffer to read the bytes into.
 	 * 
 	 * @throws EndOfFileException If end of file has been reached.
 	 * @throws IOException If a read error occurs.
-	 * @throws IllegalArgumentException If <code>buff.length</code> is not an integral multiple of <code>BLOCK_LENGTH</code>.
+	 * @throws IllegalArgumentException If <code>buff.length</code> is not an
+	 *         integral multiple of <code>BLOCK_LENGTH</code>.
 	 */
-	public abstract void readDecryptedBytes( byte [] buff )
-	throws EndOfFileException, IOException;
+	public abstract void readDecryptedBytes(byte[] buff) throws EndOfFileException, IOException;
 
 	/**
-	 * Reads any additional header from the file.  Subclasses should override this a necessary
-	 * as the default implementation does nothing.
+	 * Reads any additional header from the file. Subclasses should override
+	 * this a necessary as the default implementation does nothing.
 	 * 
 	 * @param file the {@link PwsFile} instance to read the header from.
 	 * 
-	 * @throws EndOfFileException              If end of file is reached.
-	 * @throws IOException                     If an error occurs while reading the file.
-	 * @throws UnsupportedFileVersionException If the file's version is unsupported.
+	 * @throws EndOfFileException If end of file is reached.
+	 * @throws IOException If an error occurs while reading the file.
+	 * @throws UnsupportedFileVersionException If the file's version is
+	 *         unsupported.
 	 */
-	protected void readExtraHeader( PwsFile file )
-	throws EndOfFileException, IOException, UnsupportedFileVersionException
-	{
+	protected void readExtraHeader(PwsFile file) throws EndOfFileException, IOException,
+			UnsupportedFileVersionException {
 	}
 
 	/**
-	 * Reads a single record from the file.  The correct subclass of PwsRecord is
+	 * Reads a single record from the file. The correct subclass of PwsRecord is
 	 * returned depending on the version of the file.
 	 * 
 	 * @return The record read from the file.
 	 * 
 	 * @throws EndOfFileException When end-of-file is reached.
 	 * @throws IOException
-	 * @throws UnsupportedFileVersionException If this version of the file cannot be handled.
+	 * @throws UnsupportedFileVersionException If this version of the file
+	 *         cannot be handled.
 	 */
-	protected PwsRecord readRecord()
-	throws EndOfFileException, IOException, UnsupportedFileVersionException, PasswordSafeException
-	{
-		final PwsRecord	rec = PwsRecord.read( this );
+	protected PwsRecord readRecord() throws EndOfFileException, IOException,
+			UnsupportedFileVersionException, PasswordSafeException {
+		final PwsRecord rec = PwsRecord.read(this);
 
-		if ( rec.isValid() ){	
-			this.add( rec );
+		if (rec.isValid()) {
+			this.add(rec);
 		}
 
 		return rec;
 	}
 
-    /**
-     *
-     * @param index
-     * @return true if a record was removed
-     */
-    public boolean removeRecord (int index) {
-        boolean success = sealedRecords.remove(index) != null;
-        if (success)
-            setModified();
-        return success;
-    }
+	/**
+	 * 
+	 * @param index
+	 * @return true if a record was removed
+	 */
+	public boolean removeRecord(int index) {
+		final boolean success = sealedRecords.remove(index) != null;
+		if (success) {
+			setModified();
+		}
+		return success;
+	}
 
 	/**
-	 * Writes this file back to the filesystem.  If successful the modified flag is also 
-	 * reset on the file and all records.
+	 * Writes this file back to the filesystem. If successful the modified flag
+	 * is also reset on the file and all records.
 	 * 
 	 * @throws IOException if the attempt fails.
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
-	 * @throws ConcurrentModificationException if the underlying store was 
-	 * independently changed  
+	 * @throws ConcurrentModificationException if the underlying store was
+	 *         independently changed
 	 */
-	public abstract void save()
-	throws IOException, NoSuchAlgorithmException, ConcurrentModificationException;
+	public abstract void save() throws IOException, NoSuchAlgorithmException,
+			ConcurrentModificationException;
 
 	/**
-	 * Set the flag to indicate that the file has been modified.  There should not normally
-	 * be any reason to call this method as it should be called indirectly when a record is
-	 * added, changed or removed.
+	 * Set the flag to indicate that the file has been modified. There should
+	 * not normally be any reason to call this method as it should be called
+	 * indirectly when a record is added, changed or removed.
 	 */
-	protected void setModified()
-	{
+	protected void setModified() {
 		modified = true;
 	}
 
 	/**
-	 * Sets the passphrase that will be used to encrypt the file when it is saved.
-	 * @deprecated 
+	 * Sets the passphrase that will be used to encrypt the file when it is
+	 * saved.
+	 * 
+	 * @deprecated
 	 * @param pass
 	 */
 	@Deprecated
-	public void setPassphrase( String pass )
-	{
-        this.setPassphrase(new StringBuilder(pass));
+	public void setPassphrase(String pass) {
+		this.setPassphrase(new StringBuilder(pass));
 
 	}
 
 	/**
-	 * Sets the passphrase that will be used to encrypt the file when it is saved.
+	 * Sets the passphrase that will be used to encrypt the file when it is
+	 * saved.
 	 * 
 	 * @param pass
 	 */
-	public void setPassphrase( StringBuilder pass ) {
-	    // TODO: convert to byte[] first
+	public void setPassphrase(StringBuilder pass) {
+		// TODO: convert to byte[] first
 		try {
-			passphrase	= new SealedObject(pass, getCipher(true));
+			passphrase = new SealedObject(pass, getCipher(true));
 			// now overwrite given StringBuider
 			Util.clear(pass);
-		} catch (IllegalBlockSizeException e) {
+		} catch (final IllegalBlockSizeException e) {
 			throw new RuntimeCryptoException(e.getMessage());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeCryptoException(e.getMessage());
 		}
 	}
@@ -665,11 +654,9 @@ public abstract class PwsFile
 	 * 
 	 * @throws IOException
 	 */
-	public void writeBytes( byte [] buffer )
-	throws IOException
-	{
-		outStream.write( buffer );
-		LOG.debug1( "Wrote " + buffer.length + " bytes" );
+	public void writeBytes(byte[] buffer) throws IOException {
+		outStream.write(buffer);
+		LOG.debug1("Wrote " + buffer.length + " bytes");
 	}
 
 	/**
@@ -679,23 +666,20 @@ public abstract class PwsFile
 	 * 
 	 * @throws IOException
 	 */
-	public abstract void writeEncryptedBytes( byte [] buff )
-	throws IOException;
+	public abstract void writeEncryptedBytes(byte[] buff) throws IOException;
 
 	/**
-	 * Writes any additional header.  This default implementation does nothing.  Subclasses 
-	 * should override this as necessary. 
+	 * Writes any additional header. This default implementation does nothing.
+	 * Subclasses should override this as necessary.
 	 * 
 	 * @param file
 	 * 
 	 * @throws IOException
 	 */
-	protected void writeExtraHeader( PwsFile file )
-	throws IOException
-	{
+	protected void writeExtraHeader(PwsFile file) throws IOException {
 	}
-	
-	/** 
+
+	/**
 	 * Returns the size of blocks in this file type.
 	 * 
 	 * @return the size of blocks in this file type as an int
@@ -704,6 +688,7 @@ public abstract class PwsFile
 
 	/**
 	 * May this file be changed?
+	 * 
 	 * @return the readOnly
 	 */
 	public boolean isReadOnly() {
@@ -712,105 +697,104 @@ public abstract class PwsFile
 
 	/**
 	 * Sets whether this file may be changed.
+	 * 
 	 * @param readOnly the readOnly to set
 	 */
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 
-
-
 	/**
-     * This provides a wrapper around the <code>Iterator</code> that is returned by the
-     * <code>iterator()</code> method on the Collections class used to store the PasswordSafe
-     * records.  It allows us to mark the file as modified when records are deleted file
-     * using the iterator's <code>remove()</code> method.
-     */
-    private class FileIterator implements Iterator
-    {
-        private final Log LOG = Log.getInstance(FileIterator.class.getPackage().getName());
+	 * This provides a wrapper around the <code>Iterator</code> that is returned
+	 * by the <code>iterator()</code> method on the Collections class used to
+	 * store the PasswordSafe records. It allows us to mark the file as modified
+	 * when records are deleted file using the iterator's <code>remove()</code>
+	 * method.
+	 */
+	private class FileIterator implements Iterator {
+		private final Log LOG = Log.getInstance(FileIterator.class.getPackage().getName());
 
-        private final PwsFile file;
-        private final Iterator<SealedObject> delegate;
-        private Cipher cipher;
+		private final PwsFile file;
+		private final Iterator<SealedObject> delegate;
+		private Cipher cipher;
 
-        /**
-         * Construct the <code>Iterator</code> linking it to the given PasswordSafe
-         * file.
-         *
-         * @param file the file this iterator is linked to.
-         * @param iter the <code>Iterator</code> over the records.
-         */
-        public FileIterator( PwsFile file, Iterator<SealedObject> iter )
-        {
-            LOG.enterMethod( "PwsFile$FileIterator" );
+		/**
+		 * Construct the <code>Iterator</code> linking it to the given
+		 * PasswordSafe file.
+		 * 
+		 * @param file the file this iterator is linked to.
+		 * @param iter the <code>Iterator</code> over the records.
+		 */
+		public FileIterator(PwsFile file, Iterator<SealedObject> iter) {
+			LOG.enterMethod("PwsFile$FileIterator");
 
-            this.file = file;
-            delegate = iter;
-            cipher = getCipher(false);
-            
-            LOG.leaveMethod( "PwsFile$FileIterator" );
-        }
+			this.file = file;
+			delegate = iter;
+			cipher = getCipher(false);
 
-        /**
-         * Returns <code>true</code> if the iteration has more elements. (In other words, returns
-         * <code>true</code> if next would return an element rather than throwing an exception.)
-         *
-         * @return <code>true</code> if the iterator has more elements.
-         *
-         * @see java.util.Iterator#hasNext()
-         */
-        public final boolean hasNext()
-        {
-            return delegate.hasNext();
-        }
+			LOG.leaveMethod("PwsFile$FileIterator");
+		}
 
-        /**
-         * Returns the next PasswordSafe record in the iteration.  The object returned will
-         * be a subclass of {@link PwsRecord}
-         *
-         * @return the next element in the iteration.
-         *
-         * @see java.util.Iterator#next()
-         */
-        public final Object next() {
-            SealedObject sealedRecord ;
-    		try {
-    			sealedRecord = delegate.next();
-    			PwsRecord theRecord = (PwsRecord) sealedRecord.getObject(cipher);
-    			if (! hasNext()) {// clean up
-    				cipher = null;
-    			}
-    			return theRecord;
-    		} catch (IllegalBlockSizeException e) {
-    			throw new MemoryKeyException(e);
-    		} catch (IOException e) {
-    			throw new MemoryKeyException(e);
-    		} catch (BadPaddingException e) {
-    			throw new MemoryKeyException(e);
-    		} catch (ClassNotFoundException e) {
-    			throw new MemoryKeyException(e);
-    		}
-        }
+		/**
+		 * Returns <code>true</code> if the iteration has more elements. (In
+		 * other words, returns <code>true</code> if next would return an
+		 * element rather than throwing an exception.)
+		 * 
+		 * @return <code>true</code> if the iterator has more elements.
+		 * 
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public final boolean hasNext() {
+			return delegate.hasNext();
+		}
 
-        /**
-         * Removes the last record returned by {@link PwsFile.FileIterator#next()} from the PasswordSafe
-         * file and marks the file as modified.
-         *
-         * @see java.util.Iterator#remove()
-         */
-        public final void remove()
-        {
-            LOG.enterMethod( "PwsFile$FileIterator.remove" );
+		/**
+		 * Returns the next PasswordSafe record in the iteration. The object
+		 * returned will be a subclass of {@link PwsRecord}
+		 * 
+		 * @return the next element in the iteration.
+		 * 
+		 * @see java.util.Iterator#next()
+		 */
+		public final Object next() {
+			SealedObject sealedRecord;
+			try {
+				sealedRecord = delegate.next();
+				final PwsRecord theRecord = (PwsRecord) sealedRecord.getObject(cipher);
+				if (!hasNext()) {// clean up
+					cipher = null;
+				}
+				return theRecord;
+			} catch (final IllegalBlockSizeException e) {
+				throw new MemoryKeyException(e);
+			} catch (final IOException e) {
+				throw new MemoryKeyException(e);
+			} catch (final BadPaddingException e) {
+				throw new MemoryKeyException(e);
+			} catch (final ClassNotFoundException e) {
+				throw new MemoryKeyException(e);
+			}
+		}
 
-            if (isReadOnly())
-                LOG.error("Illegal remove on read only file - saving won't be possible");
+		/**
+		 * Removes the last record returned by
+		 * {@link PwsFile.FileIterator#next()} from the PasswordSafe file and
+		 * marks the file as modified.
+		 * 
+		 * @see java.util.Iterator#remove()
+		 */
+		public final void remove() {
+			LOG.enterMethod("PwsFile$FileIterator.remove");
 
-            delegate.remove();
-            file.setModified();
+			if (isReadOnly()) {
+				LOG.error("Illegal remove on read only file - saving won't be possible");
+			}
 
-            LOG.leaveMethod( "PwsFile$FileIterator.remove" );
-        }
-    }
+			delegate.remove();
+			file.setModified();
+
+			LOG.leaveMethod("PwsFile$FileIterator.remove");
+		}
+	}
 
 }

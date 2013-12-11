@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -7,9 +7,9 @@
  */
 package org.pwsafe.lib.crypto;
 
-import org.pwsafe.lib.Util;
-
 import junit.framework.TestCase;
+
+import org.pwsafe.lib.Util;
 
 /**
  * Test HMAC operation.
@@ -18,18 +18,17 @@ import junit.framework.TestCase;
  */
 public class HmacPwsTest extends TestCase {
 
-	
-    public void testDigest() {
-        
-        String key = "Jefe";
-        String data = "what do ya want for nothing?";
-        HmacPws hash = new HmacPws(key.getBytes());
-        hash.digest(data.getBytes());
-        byte[] hmac = hash.doFinal();
-        
-        String result = Util.bytesToHex(hmac);
-        assertEquals("5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843", result);
-        
-    }
+	public void testDigest() {
+
+		final String key = "Jefe";
+		final String data = "what do ya want for nothing?";
+		final HmacPws hash = new HmacPws(key.getBytes());
+		hash.digest(data.getBytes());
+		final byte[] hmac = hash.doFinal();
+
+		final String result = Util.bytesToHex(hmac);
+		assertEquals("5bdcc146bf60754e6a042426089575c75a003f089d2739839dec58b964ec3843", result);
+
+	}
 
 }
