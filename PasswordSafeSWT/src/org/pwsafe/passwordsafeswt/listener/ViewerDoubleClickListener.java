@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -30,6 +30,7 @@ public class ViewerDoubleClickListener implements IDoubleClickListener {
 		cpa = new CopyPasswordAction();
 		era = new EditRecordAction();
 	}
+
 	/**
 	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
 	 */
@@ -38,8 +39,8 @@ public class ViewerDoubleClickListener implements IDoubleClickListener {
 			final ITreeSelection treeSelection = (ITreeSelection) dce.getSelection();
 			final AbstractTreeViewer treeViewer = (AbstractTreeViewer) dce.getSource();
 			boolean state = treeViewer.getExpandedState(treeSelection.getPaths()[0]);
-			treeViewer.setExpandedState(treeSelection.getPaths()[0], ! state);
-		} 
+			treeViewer.setExpandedState(treeSelection.getPaths()[0], !state);
+		}
 		if (UserPreferences.getInstance().getBoolean(
 				JpwPreferenceConstants.DOUBLE_CLICK_COPIES_TO_CLIPBOARD)) {
 			cpa.run();

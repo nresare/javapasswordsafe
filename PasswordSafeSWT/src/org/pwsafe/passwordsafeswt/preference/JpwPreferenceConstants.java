@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -9,7 +9,7 @@
 package org.pwsafe.passwordsafeswt.preference;
 
 public interface JpwPreferenceConstants {
-	
+
 	// Display
 	public static final String ALWAYS_ON_TOP = "display.always.on.top";
 	public static final String SHOW_NOTES_IN_LIST = "show.notes.in.list";
@@ -19,7 +19,7 @@ public interface JpwPreferenceConstants {
 	public static final String TREE_COLUMN_SIZE = "tree.width.column";
 	public static final String TABLE_COLUMN_SIZE = "table.width.column";
 
-    // Password Policy
+	// Password Policy
 	public static final String DEFAULT_PASSWORD_LENGTH = "default.password.length";
 	public static final String USE_LOWERCASE_LETTERS = "use.lowercase.letters";
 	public static final String USE_UPPERCASE_LETTERS = "use.uppercase.letters";
@@ -52,8 +52,7 @@ public interface JpwPreferenceConstants {
 	public static final String DEFAULT_OPEN_READ_ONLY = "default.open.readonly";
 	public static final String RECORD_LAST_ACCESS_TIME = "record.last.access.time";
 
-
 	// GUI Internal
 	public static final String DISPLAY_AS_LIST_PREF = "display.as.list";
-	
+
 }

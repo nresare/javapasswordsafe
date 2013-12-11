@@ -14,9 +14,10 @@ import org.eclipse.swt.graphics.Image;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 
 /**
- * Label provider for tree viewer.
- * Also implements {@link org.eclipse.jface.viewers.ITableLabelProvider} to allow for tree columns.
- *
+ * Label provider for tree viewer. Also implements
+ * {@link org.eclipse.jface.viewers.ITableLabelProvider} to allow for tree
+ * columns.
+ * 
  * @author Glen Smith
  */
 public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implements ILabelProvider {
@@ -30,9 +31,13 @@ public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implem
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * TODO: Merge this with the getColumnText method from {@link PasswordTableLabelProvider}.
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	/*
+	 * (non-Javadoc) TODO: Merge this with the getColumnText method from {@link
+	 * PasswordTableLabelProvider}.
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang
+	 * .Object, int)
 	 */
 	public String getColumnText(final Object element, final int columnIndex) {
 		String result = "";
@@ -63,7 +68,7 @@ public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implem
 			case 2:
 				result = theEntry.getNotes();
 				if (result != null) {
-					result = result.replace('\t',' ').replace('\r', ' ');//.replace('\n',' ')
+					result = result.replace('\t', ' ').replace('\r', ' ');// .replace('\n',' ')
 				}
 				break;
 			case 3:
@@ -73,7 +78,6 @@ public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implem
 		}
 		return result;
 	}
-
 
 	/**
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -99,10 +99,8 @@ public class IOUtils {
 	/**
 	 * Returns an image stored in the classpath at the specified path
 	 * 
-	 * @param clazz
-	 *            Class The class relative to which to find the image
-	 * @param path
-	 *            String The path to the image file
+	 * @param clazz Class The class relative to which to find the image
+	 * @param path String The path to the image file
 	 * @return Image The image stored in the file at the specified path
 	 */
 	public static Image getImage(Class<?> clazz, String path) {

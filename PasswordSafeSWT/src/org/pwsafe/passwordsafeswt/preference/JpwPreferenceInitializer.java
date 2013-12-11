@@ -49,17 +49,17 @@ import org.eclipse.jface.preference.JFacePreferences;
  * Initializer for default preference values.
  * 
  * @author roxon
- *
+ * 
  */
 public class JpwPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		// Use a scope etc. once we migrate to Eclipse RCP. 
+		// Use a scope etc. once we migrate to Eclipse RCP.
 		// IScopeContext theContext = new DefaultScope();
-		
+
 		// For now we simply use:
-		IPreferenceStore theStore = JFacePreferences.getPreferenceStore();
+		final IPreferenceStore theStore = JFacePreferences.getPreferenceStore();
 
 		// Display
 		theStore.setDefault(ALWAYS_ON_TOP, false);
@@ -67,10 +67,10 @@ public class JpwPreferenceInitializer extends AbstractPreferenceInitializer {
 		theStore.setDefault(SHOW_NOTES_IN_EDIT_MODE, true);
 		theStore.setDefault(SHOW_PASSWORD_IN_EDIT_MODE, false);
 		theStore.setDefault(SHOW_ICON_IN_SYSTEM_TRAY, false);
-		theStore.setDefault(TREE_COLUMN_SIZE, 150); 
+		theStore.setDefault(TREE_COLUMN_SIZE, 150);
 		theStore.setDefault(TABLE_COLUMN_SIZE, 150);
-		
-	    // Password Policy
+
+		// Password Policy
 		theStore.setDefault(DEFAULT_PASSWORD_LENGTH, 8);
 		theStore.setDefault(USE_LOWERCASE_LETTERS, true);
 		theStore.setDefault(USE_UPPERCASE_LETTERS, true);
@@ -78,12 +78,12 @@ public class JpwPreferenceInitializer extends AbstractPreferenceInitializer {
 		theStore.setDefault(USE_SYMBOLS, false);
 		theStore.setDefault(USE_EASY_TO_READ, false);
 		theStore.setDefault(USE_HEX_ONLY, false);
-		
+
 		// User name
 		theStore.setDefault(USE_DEFAULT_USERNAME, false);
 		theStore.setDefault(DEFAULT_USERNAME, "");
 		theStore.setDefault(QUERY_FOR_DEFAULT_USERNAME, false);
-		
+
 		// Security
 		theStore.setDefault(CLEAR_CLIPBOARD_ON_MIN, false);
 		theStore.setDefault(LOCK_DB_ON_MIN, false);

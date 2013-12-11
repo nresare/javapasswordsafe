@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -21,70 +21,77 @@ import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Copies the URL from selected item to the clipboard.
- *
+ * 
  * @author Glen Smith, Tim Hughes
  */
 public class CopyURLAction extends Action {
-    private static final Log log = LogFactory.getLog(CopyURLAction.class);
+	private static final Log log = LogFactory.getLog(CopyURLAction.class);
 
-    public CopyURLAction() {
-        super(Messages.getString("CopyURLAction.Label")); //$NON-NLS-1$
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_url.gif"))); //$NON-NLS-1$
-        setToolTipText(Messages.getString("CopyURLAction.Tooltip")); //$NON-NLS-1$
-    }
+	public CopyURLAction() {
+		super(Messages.getString("CopyURLAction.Label")); //$NON-NLS-1$
+		setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader()
+				.getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_url.gif"))); //$NON-NLS-1$
+		setToolTipText(Messages.getString("CopyURLAction.Tooltip")); //$NON-NLS-1$
+	}
 
-    /* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.Action#isEnabled()
 	 */
 	@Override
 	public boolean isEnabled() {
-		
+
 		return super.isEnabled();
-		
-		// TODO: the following will always disable the actions, find a better way:
-//        PasswordSafeJFace app = PasswordSafeJFace.getApp();
-//
-//        PwsEntryBean selected = app.getSelectedRecord();
-//        if (selected == null)
-//        	return false;
-//	  
-//		if (selected.getUrl() != null) {
-//			return true;
-//		}
-//		
-//		return false; 
+
+		// TODO: the following will always disable the actions, find a better
+		// way:
+		// PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		//
+		// PwsEntryBean selected = app.getSelectedRecord();
+		// if (selected == null)
+		// return false;
+		//
+		// if (selected.getUrl() != null) {
+		// return true;
+		// }
+		//
+		// return false;
 	}
 
-    /**
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	@Override
 	public void run() {
-        // TODO: disable option if v1 or v2; URL only seems to be available in V3 files
-        final PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		// TODO: disable option if v1 or v2; URL only seems to be available in
+		// V3 files
+		final PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
-        final PwsEntryBean selected = app.getSelectedRecord();
-        if (selected == null)
-        	return;
-        
-        // TODO: only fetch a filled entry if URL is not part of sparse fields.
-        PwsEntryBean theEntry;
-        if (selected.getUrl() != null && selected.getUrl().length() > 0) {
-        	theEntry = selected;
-        } else {// retrieve filled Entry for sparse
-        	theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
-        }
+		final PwsEntryBean selected = app.getSelectedRecord();
+		if (selected == null)
+			return;
 
-        Clipboard cb = new Clipboard(app.getShell().getDisplay());
+		// TODO: only fetch a filled entry if URL is not part of sparse fields.
+		PwsEntryBean theEntry;
+		if (selected.getUrl() != null && selected.getUrl().length() > 0) {
+			theEntry = selected;
+		} else {// retrieve filled Entry for sparse
+			theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+		}
 
-        app.copyToClipboard(cb, theEntry.getUrl() );
+		Clipboard cb = new Clipboard(app.getShell().getDisplay());
 
-        final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-        final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) { // this could/should be sent to a background thread
-        	app.updateAccessTime(theEntry);
-        }
+		app.copyToClipboard(cb, theEntry.getUrl());
 
-        cb.dispose();
-    }
+		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+		final boolean recordAccessTime = thePrefs
+				.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
+		if (recordAccessTime) { // this could/should be sent to a background
+								// thread
+			app.updateAccessTime(theEntry);
+		}
+
+		cb.dispose();
+	}
 }

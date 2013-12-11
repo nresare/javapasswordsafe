@@ -21,27 +21,33 @@ import org.eclipse.swt.widgets.Display;
 import org.pwsafe.lib.datastore.PwsEntryBean;
 
 /**
- * Abstract label Provider for the password table and tree table, implementing common functionality.
- *
+ * Abstract label Provider for the password table and tree table, implementing
+ * common functionality.
+ * 
  * @author roxon
  */
-public abstract class AbstractTableLabelProvider implements ITableLabelProvider, ITableColorProvider {
-	
+public abstract class AbstractTableLabelProvider implements ITableLabelProvider,
+		ITableColorProvider {
+
 	private static final Log log = LogFactory.getLog(AbstractTableLabelProvider.class);
-	
+
 	private static final Date NOW = new Date();
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang
+	 * .Object, int)
 	 */
-	public Image getColumnImage(Object element, int columnIndex) {
+	public Image getColumnImage(final Object element, final int columnIndex) {
 		return null;
-	} 
-	
+	}
+
 	/**
 	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 	 */
-	public void addListener(ILabelProviderListener listener) {
+	public void addListener(final ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
 
 	}
@@ -55,28 +61,33 @@ public abstract class AbstractTableLabelProvider implements ITableLabelProvider,
 	}
 
 	/**
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
+	 *      java.lang.String)
 	 */
-	public boolean isLabelProperty(Object element, String property) {
+	public boolean isLabelProperty(final Object element, final String property) {
 		// TODO Auto-generated method stub
-		log.debug("Property check: " + element + " " + property );
+		log.debug("Property check: " + element + " " + property);
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse
+	 * .jface.viewers.ILabelProviderListener)
 	 */
-	public void removeListener(ILabelProviderListener listener) {
+	public void removeListener(final ILabelProviderListener listener) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public Color getBackground(Object element, int columnIndex) {
+	public Color getBackground(final Object element, final int columnIndex) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Color getForeground(Object element, int columnIndex) {
+	public Color getForeground(final Object element, final int columnIndex) {
 		if (element instanceof PwsEntryBean) {
 			final PwsEntryBean entry = (PwsEntryBean) element;
 			if (entry.getExpires() != null && NOW.after(entry.getExpires())) {
@@ -85,6 +96,5 @@ public abstract class AbstractTableLabelProvider implements ITableLabelProvider,
 		}
 		return null;
 	}
-
 
 }

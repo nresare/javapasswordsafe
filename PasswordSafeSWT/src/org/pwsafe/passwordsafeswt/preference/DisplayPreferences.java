@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -45,13 +45,13 @@ public class DisplayPreferences extends PreferencePage {
 	 * Creates the controls for this page
 	 */
 	@Override
-	protected Control createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+	protected Control createContents(final Composite parent) {
+		final Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
-		
+
 		// Get the preference store and setup defaults
-	    IPreferenceStore preferenceStore = getPreferenceStore();
-	    
+		final IPreferenceStore preferenceStore = getPreferenceStore();
+
 		btnAlwaysOnTop = new Button(composite, SWT.CHECK);
 		btnAlwaysOnTop.setText(Messages.getString("DisplayPreferences.AlwaysOnTop")); //$NON-NLS-1$
 		btnAlwaysOnTop.setSelection(preferenceStore.getBoolean(ALWAYS_ON_TOP));
@@ -76,7 +76,6 @@ public class DisplayPreferences extends PreferencePage {
 
 		return composite;
 	}
-	
 
 	/**
 	 * Called when user clicks Restore Defaults
@@ -84,13 +83,14 @@ public class DisplayPreferences extends PreferencePage {
 	@Override
 	protected void performDefaults() {
 		// Get the preference store
-		IPreferenceStore preferenceStore = getPreferenceStore();
+		final IPreferenceStore preferenceStore = getPreferenceStore();
 
 		// Reset the fields to the defaults
 		btnAlwaysOnTop.setSelection(preferenceStore.getDefaultBoolean(ALWAYS_ON_TOP));
 		btnShowNotesInList.setSelection(preferenceStore.getDefaultBoolean(SHOW_NOTES_IN_LIST));
 		btnShowNotesInEdit.setSelection(preferenceStore.getDefaultBoolean(SHOW_NOTES_IN_EDIT_MODE));
-		btnShowPasswordInEdit.setSelection(preferenceStore.getDefaultBoolean(SHOW_PASSWORD_IN_EDIT_MODE));
+		btnShowPasswordInEdit.setSelection(preferenceStore
+				.getDefaultBoolean(SHOW_PASSWORD_IN_EDIT_MODE));
 		btnSystemTray.setSelection(preferenceStore.getDefaultBoolean(SHOW_ICON_IN_SYSTEM_TRAY));
 	}
 
@@ -102,17 +102,20 @@ public class DisplayPreferences extends PreferencePage {
 	@Override
 	public boolean performOk() {
 		// Get the preference store
-		IPreferenceStore preferenceStore = getPreferenceStore();
+		final IPreferenceStore preferenceStore = getPreferenceStore();
 
 		// Set the values from the fields
-		if (btnAlwaysOnTop != null) preferenceStore.setValue(ALWAYS_ON_TOP, btnAlwaysOnTop.getSelection());
-	    if (btnShowNotesInList != null) preferenceStore.setValue(SHOW_NOTES_IN_LIST, btnShowNotesInList.getSelection());
-	    if (btnShowNotesInEdit != null)
-	        preferenceStore.setValue(SHOW_NOTES_IN_EDIT_MODE, btnShowPasswordInEdit.getSelection());
-	    if (btnShowPasswordInEdit != null)
-	        preferenceStore.setValue(SHOW_PASSWORD_IN_EDIT_MODE, btnShowPasswordInEdit.getSelection());
-	    if (btnSystemTray != null)
-	        preferenceStore.setValue(SHOW_ICON_IN_SYSTEM_TRAY, btnSystemTray.getSelection());
+		if (btnAlwaysOnTop != null)
+			preferenceStore.setValue(ALWAYS_ON_TOP, btnAlwaysOnTop.getSelection());
+		if (btnShowNotesInList != null)
+			preferenceStore.setValue(SHOW_NOTES_IN_LIST, btnShowNotesInList.getSelection());
+		if (btnShowNotesInEdit != null)
+			preferenceStore.setValue(SHOW_NOTES_IN_EDIT_MODE, btnShowPasswordInEdit.getSelection());
+		if (btnShowPasswordInEdit != null)
+			preferenceStore.setValue(SHOW_PASSWORD_IN_EDIT_MODE,
+					btnShowPasswordInEdit.getSelection());
+		if (btnSystemTray != null)
+			preferenceStore.setValue(SHOW_ICON_IN_SYSTEM_TRAY, btnSystemTray.getSelection());
 
 		// Return true to allow dialog to close
 		return true;

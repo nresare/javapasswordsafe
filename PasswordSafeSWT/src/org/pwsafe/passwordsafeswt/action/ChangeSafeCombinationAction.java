@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -15,14 +15,14 @@ import org.pwsafe.passwordsafeswt.dialog.PasswordDialog;
 
 /**
  * Changes the safe combination.
- *
+ * 
  * @author Glen Smith
  */
 public class ChangeSafeCombinationAction extends Action {
 
-    public ChangeSafeCombinationAction() {
-        super(Messages.getString("ChangeSafeCombinationAction.Label")); //$NON-NLS-1$
-    }
+	public ChangeSafeCombinationAction() {
+		super(Messages.getString("ChangeSafeCombinationAction.Label")); //$NON-NLS-1$
+	}
 
 	/**
 	 * @see org.eclipse.jface.action.Action#run()
@@ -34,7 +34,8 @@ public class ChangeSafeCombinationAction extends Action {
 		PwsFile pf = app.getPwsFile();
 		if (pf != null) {
 			PwsStorage pfs = pf.getStorage();
-			if (pfs == null) pd.setFileName("Untitled Safe");
+			if (pfs == null)
+				pd.setFileName("Untitled Safe");
 			else {
 				pd.setFileName(pfs.getIdentifier());
 			}

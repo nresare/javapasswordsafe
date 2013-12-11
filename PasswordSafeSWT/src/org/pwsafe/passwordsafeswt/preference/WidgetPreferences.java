@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -28,206 +28,169 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.pwsafe.passwordsafeswt.util.UserPreferences;
 
 /**
- * Widget related preferences.
- * TODO: Maybe also the same store as UserPreferences 
- * and get rid of load and save code. 
+ * Widget related preferences. TODO: Maybe also the same store as
+ * UserPreferences and get rid of load and save code.
  * 
  * @author shamilbi
  */
-public class WidgetPreferences
-{
-    static final Log log = LogFactory.getLog(WidgetPreferences.class);
+public class WidgetPreferences {
 
-    private static final String PREFS_FILENAME = "widget.properties";
+	static final Log log = LogFactory.getLog(WidgetPreferences.class);
 
-    private static final String FULL_PATH = System.getProperty("user.home")
-            + File.separator + UserPreferences.PROPS_DIR + File.separator
-            + PREFS_FILENAME;
+	private static final String PREFS_FILENAME = "widget.properties";
 
-    public static final PreferenceStore ps = new PreferenceStore(FULL_PATH);
+	private static final String FULL_PATH = System.getProperty("user.home") + File.separator
+			+ UserPreferences.PROPS_DIR + File.separator + PREFS_FILENAME;
 
-    static
-    {
-        try
-        {
-            log.info("loading preferences ..");
-            ps.load();
-        } catch (FileNotFoundException e)
-        {
-            // ignore
-        } catch (IOException e)
-        {
-            log.warn("Error while loading preferences", e);
-        }
-    }
+	public static final PreferenceStore ps = new PreferenceStore(FULL_PATH);
 
-    /**
-     * Restores location of a Shell and adds two listeners to make sure that
-     * current location is saved
-     * 
-     * @param shell
-     *            a shell
-     * @param clazz
-     *            a class that makes an id for saving and restoring location
-     */
-    public static void tuneShell(final Shell shell, final Class clazz)
-    {
-        WidgetPreferences.restoreLocation(shell, clazz);
-        shell.addShellListener(new ShellAdapter()
-        {
-            public void shellClosed(ShellEvent e)
-            {
-                save();
-            }
-        });
-        
-        shell.addDisposeListener(new DisposeListener()
-        {
-            public void widgetDisposed(DisposeEvent e)
-            {
-                saveLocation(shell, clazz);
-            }
-        });
-    }
-    
-    /**
-     * Restores width of a TableColumn and adds listener to make sure that
-     * current width is saved
-     * 
-     * @param column
-     *            a TableColumn
-     * @param id
-     *            an id for saving and restoring width of the column
-     */
-    public static void tuneTableColumn(final TableColumn column, final String id)
-    {
-        final Rectangle rectangle = PreferenceConverter.getRectangle(ps, id);
-        if (rectangle.width > 0)
-        {
-            column.setWidth(rectangle.width);
-        }
+	static {
+		try {
+			log.info("loading preferences ..");
+			ps.load();
+		} catch (final FileNotFoundException e) {
+			// ignore
+		} catch (final IOException e) {
+			log.warn("Error while loading preferences", e);
+		}
+	}
 
-        column.addDisposeListener(new DisposeListener()
-        {
-            public void widgetDisposed(DisposeEvent e)
-            {
-                log.debug("saving widget size, id=" + id);
-                PreferenceConverter.setValue(ps, id, new Rectangle(0, 0, column
-                        .getWidth(), 0));
-            }
-        });
+	/**
+	 * Restores location of a Shell and adds two listeners to make sure that
+	 * current location is saved
+	 * 
+	 * @param shell a shell
+	 * @param clazz a class that makes an id for saving and restoring location
+	 */
+	public static void tuneShell(final Shell shell, final Class clazz) {
+		WidgetPreferences.restoreLocation(shell, clazz);
+		shell.addShellListener(new ShellAdapter() {
+			@Override
+			public void shellClosed(final ShellEvent e) {
+				save();
+			}
+		});
 
-    }
+		shell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(final DisposeEvent e) {
+				saveLocation(shell, clazz);
+			}
+		});
+	}
 
-    /**
-     * Redirects to {@link #tuneTableColumn(TableColumn, String)} with
-     * <code>id = clazz.getName() + "/" + id</code>
-     */
-    public static void tuneTableColumn(final TableColumn column, Class clazz,
-            final String id)
-    {
-        tuneTableColumn(column, clazz.getName() + "/" + id);
-    }
-    
-    /**
-     * Restores width of a TreeColumn and adds listener to make sure that
-     * current width is saved
-     * 
-     * @param column
-     *            a TreeColumn
-     * @param id
-     *            an id for saving and restoring width of the column
-     */
-    public static void tuneTreeColumn(final TreeColumn column, final String id)
-    {
-        final Rectangle rectangle = PreferenceConverter.getRectangle(ps, id);
-        if (rectangle.width > 0)
-        {
-            column.setWidth(rectangle.width);
-        }
+	/**
+	 * Restores width of a TableColumn and adds listener to make sure that
+	 * current width is saved
+	 * 
+	 * @param column a TableColumn
+	 * @param id an id for saving and restoring width of the column
+	 */
+	public static void tuneTableColumn(final TableColumn column, final String id) {
+		final Rectangle rectangle = PreferenceConverter.getRectangle(ps, id);
+		if (rectangle.width > 0) {
+			column.setWidth(rectangle.width);
+		}
 
-        column.addDisposeListener(new DisposeListener()
-        {
-            public void widgetDisposed(DisposeEvent e)
-            {
-                log.debug("saving widget size, id=" + id);
-                PreferenceConverter.setValue(ps, id, new Rectangle(0, 0, column.getWidth(), 0));
-            }
-        });
+		column.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(final DisposeEvent e) {
+				log.debug("saving widget size, id=" + id);
+				PreferenceConverter.setValue(ps, id, new Rectangle(0, 0, column.getWidth(), 0));
+			}
+		});
 
-    }
-    
-    /**
-     * Redirects to {@link #tuneTreeColumn(TreeColumn, String)} with
-     * <code>id = clazz.getName() + "/" + id</code>
-     */
-    public static void tuneTreeColumn(final TreeColumn column, Class clazz, final String id)
-    {
-        tuneTreeColumn(column, clazz.getName() + "/" + id);
-    }
+	}
 
-    /**
-     * Saves all the cached preferences
-     * 
-     * @see #tuneShell(Shell, Class)
-     */
-    static void save()
-    {
-        log.info("saving preferences ..");
-        try
-        {
-            ps.save();
-        } catch (IOException e)
-        {
-            log.warn("Error while saving preferences", e);
-        }
-    }
+	/**
+	 * Redirects to {@link #tuneTableColumn(TableColumn, String)} with
+	 * <code>id = clazz.getName() + "/" + id</code>
+	 */
+	public static void tuneTableColumn(final TableColumn column, final Class clazz, final String id) {
+		tuneTableColumn(column, clazz.getName() + "/" + id);
+	}
 
-    /**
-     * Restores location of a Shell
-     */
-    private static void restoreLocation(Shell shell, String id)
-    {
-        final Rectangle rectangle = PreferenceConverter.getRectangle(ps, id);
-        if (rectangle.x != 0 || rectangle.y != 0)
-        {
-            shell.setLocation(rectangle.x, rectangle.y);
-        }
+	/**
+	 * Restores width of a TreeColumn and adds listener to make sure that
+	 * current width is saved
+	 * 
+	 * @param column a TreeColumn
+	 * @param id an id for saving and restoring width of the column
+	 */
+	public static void tuneTreeColumn(final TreeColumn column, final String id) {
+		final Rectangle rectangle = PreferenceConverter.getRectangle(ps, id);
+		if (rectangle.width > 0) {
+			column.setWidth(rectangle.width);
+		}
 
-        if (rectangle.width > 0 && rectangle.height > 0)
-        {
-            shell.setSize(rectangle.width, rectangle.height);
-        }
-    }
+		column.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(final DisposeEvent e) {
+				log.debug("saving widget size, id=" + id);
+				PreferenceConverter.setValue(ps, id, new Rectangle(0, 0, column.getWidth(), 0));
+			}
+		});
 
-    /**
-     * Redirects to {@link #restoreLocation(Shell, String)} with
-     * <code>id = clazz.getName() + "/window"</code>
-     */
-    private static void restoreLocation(Shell shell, Class clazz)
-    {
-        restoreLocation(shell, clazz.getName() + "/window");
-    }
+	}
 
-    /**
-     * Saves the location of a Shell
-     */
-    private static void saveLocation(Shell shell, String id)
-    {
-        log.debug("saving window location, id=" + id);
-        final Point location = shell.getLocation();
-        final Point size = shell.getSize();
-        final Rectangle rectangle = new Rectangle(location.x, location.y, size.x, size.y);
-        PreferenceConverter.setValue(ps, id, rectangle);
-    }
+	/**
+	 * Redirects to {@link #tuneTreeColumn(TreeColumn, String)} with
+	 * <code>id = clazz.getName() + "/" + id</code>
+	 */
+	public static void tuneTreeColumn(final TreeColumn column, final Class clazz, final String id) {
+		tuneTreeColumn(column, clazz.getName() + "/" + id);
+	}
 
-    /**
-     * Redirects to {@link #saveLocation(Shell, String)} with
-     * <code>id = clazz.getName() + "/window"</code>
-     */
-    static void saveLocation(Shell shell, Class clazz)
-    {
-        saveLocation(shell, clazz.getName() + "/window");
-    }
+	/**
+	 * Saves all the cached preferences
+	 * 
+	 * @see #tuneShell(Shell, Class)
+	 */
+	static void save() {
+		log.info("saving preferences ..");
+		try {
+			ps.save();
+		} catch (final IOException e) {
+			log.warn("Error while saving preferences", e);
+		}
+	}
+
+	/**
+	 * Restores location of a Shell
+	 */
+	private static void restoreLocation(final Shell shell, final String id) {
+		final Rectangle rectangle = PreferenceConverter.getRectangle(ps, id);
+		if (rectangle.x != 0 || rectangle.y != 0) {
+			shell.setLocation(rectangle.x, rectangle.y);
+		}
+
+		if (rectangle.width > 0 && rectangle.height > 0) {
+			shell.setSize(rectangle.width, rectangle.height);
+		}
+	}
+
+	/**
+	 * Redirects to {@link #restoreLocation(Shell, String)} with
+	 * <code>id = clazz.getName() + "/window"</code>
+	 */
+	private static void restoreLocation(final Shell shell, final Class clazz) {
+		restoreLocation(shell, clazz.getName() + "/window");
+	}
+
+	/**
+	 * Saves the location of a Shell
+	 */
+	private static void saveLocation(final Shell shell, final String id) {
+		log.debug("saving window location, id=" + id);
+		final Point location = shell.getLocation();
+		final Point size = shell.getSize();
+		final Rectangle rectangle = new Rectangle(location.x, location.y, size.x, size.y);
+		PreferenceConverter.setValue(ps, id, rectangle);
+	}
+
+	/**
+	 * Redirects to {@link #saveLocation(Shell, String)} with
+	 * <code>id = clazz.getName() + "/window"</code>
+	 */
+	static void saveLocation(final Shell shell, final Class clazz) {
+		saveLocation(shell, clazz.getName() + "/window");
+	}
 
 }

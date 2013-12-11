@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -19,48 +19,52 @@ import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Copyies the username to the clipboard.
- *
+ * 
  * @author Glen Smith
  */
 public class CopyUsernameAction extends Action {
 
-    public CopyUsernameAction() {
-        super(Messages.getString("CopyUsernameAction.Label")); //$NON-NLS-1$
-        setAccelerator( SWT.MOD1 | 'U'  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_user.gif"))); //$NON-NLS-1$
-        setToolTipText(Messages.getString("CopyUsernameAction.Tooltip")); //$NON-NLS-1$
+	public CopyUsernameAction() {
+		super(Messages.getString("CopyUsernameAction.Label")); //$NON-NLS-1$
+		setAccelerator(SWT.MOD1 | 'U');
+		setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader()
+				.getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_user.gif"))); //$NON-NLS-1$
+		setToolTipText(Messages.getString("CopyUsernameAction.Tooltip")); //$NON-NLS-1$
 
-    }
+	}
 
-    /**
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	@Override
 	public void run() {
-        PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
-        PwsEntryBean selected = app.getSelectedRecord();
-        if (selected == null)
-        	return;
- 
-        // TODO: only fetch a filled entry if username is not part of sparse fields (-> never).
-        PwsEntryBean theEntry;
-        if (selected.getUsername() != null && selected.getUsername().length() > 0) {
-        	theEntry = selected;
-        } else {// retrieve filled Entry for sparse
-        	theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
-        }
+		PwsEntryBean selected = app.getSelectedRecord();
+		if (selected == null)
+			return;
 
-        Clipboard cb = new Clipboard(app.getShell().getDisplay());
+		// TODO: only fetch a filled entry if username is not part of sparse
+		// fields (-> never).
+		PwsEntryBean theEntry;
+		if (selected.getUsername() != null && selected.getUsername().length() > 0) {
+			theEntry = selected;
+		} else {// retrieve filled Entry for sparse
+			theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+		}
 
-        app.copyToClipboard(cb, theEntry.getUsername());
+		Clipboard cb = new Clipboard(app.getShell().getDisplay());
 
-        final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-        final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) { // this could/should be sent to a background thread
-        	app.updateAccessTime(theEntry);
-        }
+		app.copyToClipboard(cb, theEntry.getUsername());
 
-        cb.dispose();        
-    }
+		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+		final boolean recordAccessTime = thePrefs
+				.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
+		if (recordAccessTime) { // this could/should be sent to a background
+								// thread
+			app.updateAccessTime(theEntry);
+		}
+
+		cb.dispose();
+	}
 }

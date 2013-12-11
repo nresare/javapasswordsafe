@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -19,42 +19,45 @@ import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Copies the password from selected item to the clipboard.
- *
+ * 
  * @author Glen Smith
  */
 public class CopyPasswordAction extends Action {
 
-    public CopyPasswordAction() {
-        super(Messages.getString("CopyPasswordAction.Label")); //$NON-NLS-1$
-        setAccelerator( SWT.MOD1 | 'C'  );
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_pwd.gif"))); //$NON-NLS-1$
-        setToolTipText(Messages.getString("CopyPasswordAction.Tooltip")); //$NON-NLS-1$
+	public CopyPasswordAction() {
+		super(Messages.getString("CopyPasswordAction.Label")); //$NON-NLS-1$
+		setAccelerator(SWT.MOD1 | 'C');
+		setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader()
+				.getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_pwd.gif"))); //$NON-NLS-1$
+		setToolTipText(Messages.getString("CopyPasswordAction.Tooltip")); //$NON-NLS-1$
 
-    }
+	}
 
-    /**
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	@Override
 	public void run() {
-        PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
-        PwsEntryBean selected = app.getSelectedRecord();
-        if (selected == null)
-        	return;
- 
-        // retrieve filled Entry, always needed for passwords 
-        PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
+		PwsEntryBean selected = app.getSelectedRecord();
+		if (selected == null)
+			return;
 
-        Clipboard cb = new Clipboard(app.getShell().getDisplay());
+		// retrieve filled Entry, always needed for passwords
+		PwsEntryBean theEntry = app.getPwsDataStore().getEntry(selected.getStoreIndex());
 
-        app.copyToClipboard(cb, theEntry.getPassword().toString());
+		Clipboard cb = new Clipboard(app.getShell().getDisplay());
 
-        final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-        final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) { // this could/should be sent to a background thread
-        	app.updateAccessTime(theEntry);
-        }
-        cb.dispose();        
-    }
+		app.copyToClipboard(cb, theEntry.getPassword().toString());
+
+		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+		final boolean recordAccessTime = thePrefs
+				.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
+		if (recordAccessTime) { // this could/should be sent to a background
+								// thread
+			app.updateAccessTime(theEntry);
+		}
+		cb.dispose();
+	}
 }

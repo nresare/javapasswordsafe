@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -133,7 +133,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 /**
  * A port of PasswordSafe to JFace. This is the main class that is launched from
  * the commandline.
- *
+ * 
  * @author Glen Smith
  */
 public class PasswordSafeJFace extends ApplicationWindow {
@@ -148,8 +148,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private Table table;
 
 	/**
-	 * Is set to either Table- or Treeviewer,
-	 * so it is not always needed to make a difference.
+	 * Is set to either Table- or Treeviewer, so it is not always needed to make
+	 * a difference.
 	 */
 	private ColumnViewer viewer;
 
@@ -179,7 +179,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private LockDbAction lockDbAction;
 	private UnlockDbAction unlockDbAction;
 
-
 	private SysTray systemTray;
 	private Composite composite;
 
@@ -198,7 +197,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	private PwsFile pwsFile;
 	private PwsEntryStore dataStore;
 
-	private static final String V1_GROUP_PLACEHOLDER = Messages.getString("PasswordSafeJFace.V1GroupPlaceholder"); //$NON-NLS-1$
+	private static final String V1_GROUP_PLACEHOLDER = Messages
+			.getString("PasswordSafeJFace.V1GroupPlaceholder"); //$NON-NLS-1$
 
 	/**
 	 * Constructor.
@@ -215,8 +215,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	private void displayOpeningDialog() {
 		final IPreferenceStore prefs = JFacePreferences.getPreferenceStore();
-		final boolean openReadOnly = prefs.getBoolean(JpwPreferenceConstants.DEFAULT_OPEN_READ_ONLY);
-		final StartupDialog sd = new StartupDialog(getShell(), UserPreferences.getInstance().getMRUFiles(), openReadOnly);
+		final boolean openReadOnly = prefs
+				.getBoolean(JpwPreferenceConstants.DEFAULT_OPEN_READ_ONLY);
+		final StartupDialog sd = new StartupDialog(getShell(), UserPreferences.getInstance()
+				.getMRUFiles(), openReadOnly);
 		boolean allDone = false;
 
 		while (!allDone) {
@@ -232,14 +234,16 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 					allDone = true;
 				} catch (final FileNotFoundException anEx) {
-					log.warn("File + " + sd.getFilename() + " not found." );//$NON-NLS-1$
-					displayErrorDialog(Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.NoFileFoundMessage") + sd.getFilename() + "]", anEx); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					log.warn("File + " + sd.getFilename() + " not found.");//$NON-NLS-1$
+					displayErrorDialog(
+							Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.NoFileFoundMessage") + sd.getFilename() + "]", anEx); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					UserPreferences.getInstance().removeMRUFile(sd.getFilename());
 					allDone = false;
 				} catch (final Exception anEx) {
 					log.error("Exception on opening file + " + sd.getFilename(), anEx);//$NON-NLS-1$
 					UserPreferences.getInstance().setMostRecentFilename(sd.getFilename());
-					displayErrorDialog(Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
+					displayErrorDialog(
+							Messages.getString("PasswordSafeJFace.OpenError.Title"), Messages.getString("PasswordSafeJFace.OpenError.Message"), anEx); //$NON-NLS-1$ //$NON-NLS-2$
 					allDone = false;
 				}
 			} else if (result == StartupDialog.NEW_FILE) {
@@ -262,15 +266,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			}
 		});
 	}
+
 	/**
 	 * Returns a singleton handle to the app for making business logic calls.
-	 *
+	 * 
 	 * @return a handle to a singleton of this class
 	 */
 	public static PasswordSafeJFace getApp() {
 		return app;
 	}
-
 
 	/**
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
@@ -342,9 +346,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 */
 	@Override
 	protected MenuManager createMenuManager() {
-		final MenuManager result = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.Menu")); //$NON-NLS-1$
+		final MenuManager result = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.Menu")); //$NON-NLS-1$
 
-		final MenuManager menuManagerFile = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.File")); //$NON-NLS-1$
+		final MenuManager menuManagerFile = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.File")); //$NON-NLS-1$
 		result.add(menuManagerFile);
 
 		menuManagerFile.add(newFileAction);
@@ -368,13 +374,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		menuManagerFile.add(saveFileAsAction);
 		menuManagerFile.add(new Separator());
 
-		final MenuManager menuManagerExportTo = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.ExportTo")); //$NON-NLS-1$
+		final MenuManager menuManagerExportTo = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.ExportTo")); //$NON-NLS-1$
 		menuManagerFile.add(menuManagerExportTo);
 
 		menuManagerExportTo.add(exportToTextAction);
 		menuManagerExportTo.add(exportToXMLAction);
 
-		final MenuManager menuManagerImportFrom = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.ImportFrom")); //$NON-NLS-1$
+		final MenuManager menuManagerImportFrom = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.ImportFrom")); //$NON-NLS-1$
 		menuManagerFile.add(menuManagerImportFrom);
 
 		menuManagerImportFrom.add(importFromTextAction);
@@ -383,7 +391,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		menuManagerFile.add(new Separator());
 		menuManagerFile.add(exitAppAction);
 
-		final MenuManager menuManagerEdit = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.Edit")); //$NON-NLS-1$
+		final MenuManager menuManagerEdit = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.Edit")); //$NON-NLS-1$
 		result.add(menuManagerEdit);
 
 		menuManagerEdit.add(addRecordAction);
@@ -397,20 +406,23 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		menuManagerEdit.add(openUrlAction);
 		menuManagerEdit.add(clearClipboardAction);
 
-		final MenuManager menuManagerView = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.View")); //$NON-NLS-1$
+		final MenuManager menuManagerView = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.View")); //$NON-NLS-1$
 		result.add(menuManagerView);
 
 		menuManagerView.add(viewAsListAction);
 		menuManagerView.add(viewAsTreeAction);
 
-		final MenuManager menuManagerManage = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.Manage")); //$NON-NLS-1$
+		final MenuManager menuManagerManage = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.Manage")); //$NON-NLS-1$
 		result.add(menuManagerManage);
 
 		menuManagerManage.add(changeSafeCombinationAction);
 		menuManagerManage.add(new Separator());
 		menuManagerManage.add(optionsAction);
 
-		final MenuManager menuManagerHelp = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.Help")); //$NON-NLS-1$
+		final MenuManager menuManagerHelp = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.Help")); //$NON-NLS-1$
 		result.add(menuManagerHelp);
 
 		menuManagerHelp.add(helpAction);
@@ -424,14 +436,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Creates the popup (right click) menu for the given control.
-	 *
-	 * @param ctl
-	 *            the control to add the popup to
+	 * 
+	 * @param ctl the control to add the popup to
 	 * @return the created menu
 	 */
 	protected Menu createPopupMenu(final Control ctl) {
 
-		final MenuManager menuListPopup = new MenuManager(Messages.getString("PasswordSafeJFace.Menu.ListPopup")); //$NON-NLS-1$
+		final MenuManager menuListPopup = new MenuManager(
+				Messages.getString("PasswordSafeJFace.Menu.ListPopup")); //$NON-NLS-1$
 
 		menuListPopup.createContextMenu(ctl);
 
@@ -500,9 +512,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Main program entry point.
-	 *
-	 * @param args
-	 *            commandline args that are passed in
+	 * 
+	 * @param args commandline args that are passed in
 	 */
 	public static void main(final String args[]) {
 		log.info("PasswordSafe starting...");
@@ -514,10 +525,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			window.open();
 		} catch (final Exception e) {
 			log.error("Error Starting PasswordSafe", e);
-		} finally { //try to clean up in any case
+		} finally { // try to clean up in any case
 			try {
 				Display.getCurrent().dispose();
-			} catch (final Exception anEx1) {}// ok
+			} catch (final Exception anEx1) {
+			}// ok
 
 		}
 		log.info("PasswordSafe terminating...");
@@ -530,10 +542,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PasswordSafeJFace.APP_NAME);
-		final Image jpwIcon = IOUtils.getImage(PasswordSafeJFace.class, "/org/pwsafe/passwordsafeswt/images/cpane.ico"); //$NON-NLS-1$
+		final Image jpwIcon = IOUtils.getImage(PasswordSafeJFace.class,
+				"/org/pwsafe/passwordsafeswt/images/cpane.ico"); //$NON-NLS-1$
 		newShell.setImage(jpwIcon);
 		// provide it for the rest of jpwsafe:
-		JFaceResources.getImageRegistry().put(JPW_ICON, jpwIcon); //$NON-NLS-1$
+		JFaceResources.getImageRegistry().put(JPW_ICON, jpwIcon);
 		Window.setDefaultImage(jpwIcon);
 		WidgetPreferences.tuneShell(newShell, getClass());
 		startOpeningDialogThread(newShell);
@@ -549,11 +562,13 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Create a brand new empty safe.
-	 *
+	 * 
 	 * @param password the password for the new safe
 	 */
 	public void newFile(final StringBuilder password) {
-		getShell().setText(PasswordSafeJFace.APP_NAME + Messages.getString("PasswordSafeJFace.AppTitle.Default")); //$NON-NLS-1$
+		getShell().setText(
+				PasswordSafeJFace.APP_NAME
+						+ Messages.getString("PasswordSafeJFace.AppTitle.Default")); //$NON-NLS-1$
 		final PwsFile newFile = PwsFileFactory.newFile();
 		newFile.setPassphrase(password);
 		this.setPwsFile(newFile);
@@ -561,13 +576,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	/**
-	 * Opens a password safe from the file system.
-	 * Readonly status stays unchanged.
-	 *
+	 * Opens a password safe from the file system. Readonly status stays
+	 * unchanged.
+	 * 
 	 * @param fileName
 	 * @param password
-	 * @throws Exception
-	 *             if bad things happen during open
+	 * @throws Exception if bad things happen during open
 	 */
 	public void openFile(final String fileName, final StringBuilder password) throws Exception {
 
@@ -576,14 +590,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Opens a password safe from the file system.
-	 *
+	 * 
 	 * @param fileName
 	 * @param password
 	 * @param forReadOnly
-	 * @throws Exception
-	 *             if bad things happen during open
+	 * @throws Exception if bad things happen during open
 	 */
-	public void openFile(final String fileName, final StringBuilder password, final boolean forReadOnly) throws Exception {
+	public void openFile(final String fileName, final StringBuilder password,
+			final boolean forReadOnly) throws Exception {
 
 		final PwsFile file = PwsFileFactory.loadFile(fileName, password);
 		getShell().setText(PasswordSafeJFace.APP_NAME + " - " + fileName); //$NON-NLS-1$
@@ -595,11 +609,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Save the current safe.
-	 *
-	 * @throws IOException
-	 *             if bad things happen during save
-	 * @throws NoSuchAlgorithmException
-	 *             if SHA-1 implementation not found
+	 * 
+	 * @throws IOException if bad things happen during save
+	 * @throws NoSuchAlgorithmException if SHA-1 implementation not found
 	 */
 	public void saveFile() throws IOException, NoSuchAlgorithmException {
 		final PwsFile file = getPwsFile();
@@ -612,11 +624,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Saves the current safe under a new filename.
-	 *
+	 * 
 	 * @param newFilename the new name to save the file as
 	 * @throws IOException if something went wrong while trying to save the file
-	 * @throws NoSuchAlgorithmException
-	 *             if SHA-1 implementation not found
+	 * @throws NoSuchAlgorithmException if SHA-1 implementation not found
 	 */
 	public void saveFileAs(final String newFilename) throws IOException, NoSuchAlgorithmException {
 		final PwsFileStorage s = new PwsFileStorage(newFilename);
@@ -628,28 +639,29 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Copy field to clipboard.
-	 *
-	 * @param cb
-	 *            handle to the clipboard
-	 * @param valueToCopy
-	 *            the value to copy to clipboard
+	 * 
+	 * @param cb handle to the clipboard
+	 * @param valueToCopy the value to copy to clipboard
 	 */
 	public void copyToClipboard(final Clipboard cb, final String valueToCopy) {
-		//TODO: check whether to create the clipboard here in order to reset it later
+		// TODO: check whether to create the clipboard here in order to reset it
+		// later
 		if (valueToCopy != null) {
-			cb.setContents(new Object[]{valueToCopy}, new Transfer[]{TextTransfer.getInstance()});
+			cb.setContents(new Object[] { valueToCopy },
+					new Transfer[] { TextTransfer.getInstance() });
 			log.debug("Copied to clipboard");
 		}
 	}
 
 	/**
-	 * Update the access time of an entry.
-	 * This method should be moved to PwsDatastore in V0.9.
+	 * Update the access time of an entry. This method should be moved to
+	 * PwsDatastore in V0.9.
+	 * 
 	 * @param anEntry to update the access time, may be sparse
 	 */
 	public void updateAccessTime(PwsEntryBean anEntry) {
 		if (anEntry != null) {
-			//set access date
+			// set access date
 			if (!isReadOnly() && "3".equals(anEntry.getVersion())) {
 				// fetch the real entry if sparse
 				if (anEntry.isSparse()) {
@@ -663,7 +675,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Locates the selected record in the underlying tree or table control.
-	 *
+	 * 
 	 * @return the selected record
 	 */
 	public PwsEntryBean getSelectedRecord() {
@@ -673,7 +685,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			if (tree.getSelectionCount() == 1) {
 				final TreeItem ti = tree.getSelection()[0];
 				final Object treeData = ti.getData();
-				if (treeData != null && treeData instanceof PwsEntryBean) { // must be a left, not a group entry
+				if (treeData != null && treeData instanceof PwsEntryBean) { // must
+																			// be
+																			// a
+																			// left,
+																			// not
+																			// a
+																			// group
+																			// entry
 					recordToCopy = (PwsEntryBean) treeData;
 				}
 			}
@@ -689,6 +708,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Updates an existing record.
+	 * 
 	 * @param newEntry the entry's new values
 	 */
 	public void updateRecord(final PwsEntryBean newEntry) {
@@ -698,12 +718,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		if (isDirty()) {
 			saveOnUpdateOrEditCheck();
 		}
-		//TODO: this should only be called if the the update changes visible fields
+		// TODO: this should only be called if the the update changes visible
+		// fields
 		updateViewers();
 	}
 
 	/**
 	 * Adds a new record to the safe in a new dialog.
+	 * 
 	 * @param newEntry the entry to add
 	 */
 	public void addRecord(final PwsEntryBean newEntry) {
@@ -713,7 +735,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			getPwsDataStore().addEntry(newEntry);
 			saveOnUpdateOrEditCheck();
 		} catch (final PasswordSafeException e) {
-			displayErrorDialog(Messages.getString("PasswordSafeJFace.AddEntryError.Title"), Messages.getString("PasswordSafeJFace.AddEntryError.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
+			displayErrorDialog(
+					Messages.getString("PasswordSafeJFace.AddEntryError.Title"), Messages.getString("PasswordSafeJFace.AddEntryError.Message"), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		updateViewers();
@@ -722,7 +745,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	/**
 	 * If the user has set "Save on Update or Edit", we save the file
 	 * immediately.
-	 *
+	 * 
 	 */
 	private void saveOnUpdateOrEditCheck() {
 		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
@@ -735,8 +758,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Prompts the user to save the current file, if it has been modified.
-	 * @return <code>true</code> if the user cancels the action which triggered the
-	 * call to this method, <code>false</code> if the save was successful or ignored.
+	 * 
+	 * @return <code>true</code> if the user cancels the action which triggered
+	 *         the call to this method, <code>false</code> if the save was
+	 *         successful or ignored.
 	 */
 	public boolean saveAppIfDirty() {
 		boolean cancelled = false;
@@ -744,17 +769,18 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			final int style = SWT.APPLICATION_MODAL | SWT.YES | SWT.NO | SWT.CANCEL;
 			final MessageBox messageBox = new MessageBox(getShell(), style);
 			messageBox.setText(Messages.getString("PasswordSafeJFace.SaveChanges.Title")); //$NON-NLS-1$
-			messageBox
-			.setMessage(Messages.getString("PasswordSafeJFace.SaveChanges.Message")); //$NON-NLS-1$
+			messageBox.setMessage(Messages.getString("PasswordSafeJFace.SaveChanges.Message")); //$NON-NLS-1$
 			final int result = messageBox.open();
 			if (result == SWT.YES) {
 				try {
 					saveFile();
 				} catch (final IOException e1) {
-					displayErrorDialog(Messages.getString("PasswordSafeJFace.SaveSafeError.Title"), e1.getMessage(), e1); //$NON-NLS-1$
+					displayErrorDialog(
+							Messages.getString("PasswordSafeJFace.SaveSafeError.Title"), e1.getMessage(), e1); //$NON-NLS-1$
 					cancelled = true;
 				} catch (final NoSuchAlgorithmException e) {
-					displayErrorDialog(Messages.getString("PasswordSafeJFace.SaveSafeError.Title"), e.getMessage(), e); //$NON-NLS-1$
+					displayErrorDialog(
+							Messages.getString("PasswordSafeJFace.SaveSafeError.Title"), e.getMessage(), e); //$NON-NLS-1$
 					cancelled = true;
 				}
 			} else if (result == SWT.CANCEL) {
@@ -766,7 +792,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Deletes the selected record in the tree or table.
-	 *
+	 * 
 	 */
 	public void deleteRecord() {
 		final PwsEntryBean selectedRec = getSelectedRecord();
@@ -777,7 +803,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Has the current safe been modified.
-	 *
+	 * 
 	 * @return true if the safe has been modified
 	 */
 	public boolean isDirty() {
@@ -789,7 +815,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Is the Application in locked mode.
-	 *
+	 * 
 	 * @return true if the application has been locked
 	 */
 	public boolean isLocked() {
@@ -798,7 +824,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Sets the Application in locked mode.
-	 *
+	 * 
 	 * @param sets the locked mode
 	 */
 	public void setLocked(final boolean isLocked) {
@@ -811,7 +837,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Is the Application in read only mode.
-	 *
+	 * 
 	 * @return true if the safe is opened read only
 	 */
 	public boolean isReadOnly() {
@@ -820,7 +846,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Sets the Application in read only mode.
-	 *
+	 * 
 	 * @param sets the read only mode testtesttest@
 	 */
 	public void setReadOnly(final boolean isReadOnly) {
@@ -828,15 +854,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		// TODO check modified flag in PwsFile?
 		getPwsFile().setReadOnly(isReadOnly);
 
-		setEditMenusEnabled(! isReadOnly);
+		setEditMenusEnabled(!isReadOnly);
 
 		readOnly = isReadOnly;
 	}
 
-
 	/**
 	 * Returns the currently loaded pwsafe file.
-	 *
+	 * 
 	 * @return Returns the pwsFile.
 	 */
 	public PwsFile getPwsFile() {
@@ -845,7 +870,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Returns the currently loaded pwsafe file.
-	 *
+	 * 
 	 * @return Returns the pwsFile.
 	 */
 	public PwsEntryStore getPwsDataStore() {
@@ -854,9 +879,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Sets the currently load pwsafe file.
-	 *
-	 * @param pwsFile
-	 *            The pwsFile to set.
+	 * 
+	 * @param pwsFile The pwsFile to set.
 	 */
 	public void setPwsFile(final PwsFile pwsFile) {
 		this.pwsFile = pwsFile;
@@ -865,9 +889,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	/**
-	 * Perform necessary shutdown operations, regardless of how the user
-	 * exited the application.
-	 *
+	 * Perform necessary shutdown operations, regardless of how the user exited
+	 * the application.
+	 * 
 	 */
 	private void tidyUpOnExit() {
 		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
@@ -875,17 +899,18 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		if (thePrefs.getBoolean(JpwPreferenceConstants.CLEAR_CLIPBOARD_ON_MIN)) {
 			clearClipboardAction.run();
 		}
-		thePrefs.setValue(DISPLAY_AS_LIST_PREF, ! isTreeViewShowing());
+		thePrefs.setValue(DISPLAY_AS_LIST_PREF, !isTreeViewShowing());
 		try {
 			UserPreferences.getInstance().savePreferences();
 		} catch (final IOException e) {
-			displayErrorDialog(Messages.getString("PasswordSafeJFace.SavePrefsError.Title"), Messages.getString("PasswordSafeJFace.SavePrefsError.Message") + e.getMessage(), e); //$NON-NLS-1$ //$NON-NLS-2$
+			displayErrorDialog(
+					Messages.getString("PasswordSafeJFace.SavePrefsError.Title"), Messages.getString("PasswordSafeJFace.SavePrefsError.Message") + e.getMessage(), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	/**
 	 * Exit the app.
-	 *
+	 * 
 	 */
 	public void exitApplication() {
 		tidyUpOnExit();
@@ -894,7 +919,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			systemTray = null;
 		}
 		getShell().close();
-		if (getShell() != null && (! getShell().isDisposed()))
+		if (getShell() != null && (!getShell().isDisposed()))
 			getShell().dispose();
 	}
 
@@ -916,7 +941,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	}
 
-	protected void addTableView (final Composite aComposite) {
+	protected void addTableView(final Composite aComposite) {
 		tableViewer = new TableViewer(aComposite, SWT.FULL_SELECTION | SWT.BORDER);
 		tableViewer.addDoubleClickListener(new ViewerDoubleClickListener());
 		table = tableViewer.getTable();
@@ -973,7 +998,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		composite.layout();
 	}
 
-	protected void addTreeView (final Composite aComposite) {
+	protected void addTreeView(final Composite aComposite) {
 		treeViewer = new TreeViewer(aComposite, SWT.BORDER);
 		treeViewer.setLabelProvider(new PasswordTreeLabelProvider());
 		treeViewer.setContentProvider(new PasswordTreeContentProvider());
@@ -982,7 +1007,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		treeViewer.setComparer(new IElementComparer() {
 			public boolean equals(final Object a, final Object b) {
 				if (a instanceof PwsEntryBean && b instanceof PwsEntryBean)
-					return ((PwsEntryBean) a).getStoreIndex() == (((PwsEntryBean) b).getStoreIndex());
+					return ((PwsEntryBean) a).getStoreIndex() == (((PwsEntryBean) b)
+							.getStoreIndex());
 				else
 					return a.equals(b);
 			}
@@ -1005,13 +1031,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		treeColumn.setText(Messages.getString("PasswordSafeJFace.Column.Title")); //$NON-NLS-1$
 		treeColumn.setWidth(100);
 		WidgetPreferences.tuneTreeColumn(treeColumn, getClass(), "tree/title"); //$NON-NLS-1$
-		//        treeColumn.addSelectionListener(new TreeColumnSelectionAdaptor(treeViewer, 1));
+		// treeColumn.addSelectionListener(new
+		// TreeColumnSelectionAdaptor(treeViewer, 1));
 
 		final TreeColumn treeColumn_1 = new TreeColumn(tree, SWT.LEFT);
 		treeColumn_1.setText(Messages.getString("PasswordSafeJFace.Column.UserName")); //$NON-NLS-1$
 		treeColumn_1.setWidth(100);
 		WidgetPreferences.tuneTreeColumn(treeColumn_1, getClass(), "tree/userName"); //$NON-NLS-1$
-		//        treeColumn_1.addSelectionListener(new TreeColumnSelectionAdaptor(treeViewer, 2));
+		// treeColumn_1.addSelectionListener(new
+		// TreeColumnSelectionAdaptor(treeViewer, 2));
 
 		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 		if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_NOTES_IN_LIST)) {
@@ -1019,24 +1047,23 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			treeColumn_2.setText(Messages.getString("PasswordSafeJFace.Column.Notes")); //$NON-NLS-1$
 			treeColumn_2.setWidth(100);
 			WidgetPreferences.tuneTreeColumn(treeColumn_2, getClass(), "tree/notes"); //$NON-NLS-1$
-			//        treeColumn_2.addSelectionListener(new TreeColumnSelectionAdaptor(treeViewer, 3));
+			// treeColumn_2.addSelectionListener(new
+			// TreeColumnSelectionAdaptor(treeViewer, 3));
 		}
 
 		final TreeColumn[] columns = tree.getColumns();
 		for (int i = 0; i < columns.length; i++) {
-			//        	ps.getDefaultInt("bla");
-			//        	columns[i].setWidth(100);
+			// ps.getDefaultInt("bla");
+			// columns[i].setWidth(100);
 			columns[i].setMoveable(true);
 		}
-		//        treeViewer.setExpandedState(arg0, arg1)
-
-
+		// treeViewer.setExpandedState(arg0, arg1)
 
 	}
 
 	/**
 	 * Returns whether the treeview is the active view.
-	 *
+	 * 
 	 * @return true if the treeview is showing, false otherwise
 	 */
 	public boolean isTreeViewShowing() {
@@ -1044,7 +1071,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	public String getSelectedTreeGroupPath() {
-		final StringBuilder theGroupPath = new StringBuilder ();
+		final StringBuilder theGroupPath = new StringBuilder();
 		if (isTreeViewShowing() && tree.getSelectionCount() == 1) {
 			TreeItem ti = tree.getSelection()[0];
 
@@ -1052,7 +1079,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				ti = ti.getParentItem();
 			}
 			while (ti != null) {
-				theGroupPath.insert(0,ti.getText());
+				theGroupPath.insert(0, ti.getText());
 				ti = ti.getParentItem();
 				if (ti != null)
 					theGroupPath.insert(0, '.');
@@ -1063,22 +1090,23 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		return theGroupPath.toString();
 	}
 
-	public void highlightEntry( final PwsEntryBean entry ) {
-		if( isTreeViewShowing() ) {
-			//           todo: save previous state? treeViewer.getExpandedElements()
+	public void highlightEntry(final PwsEntryBean entry) {
+		if (isTreeViewShowing()) {
+			// todo: save previous state? treeViewer.getExpandedElements()
 
-			final String parent = (String)((PasswordTreeContentProvider)treeViewer.getContentProvider()).getParent( entry );
+			final String parent = (String) ((PasswordTreeContentProvider) treeViewer
+					.getContentProvider()).getParent(entry);
 			final List<TreeItem> allItemsList = new ArrayList();
 			allItemsList.addAll(Arrays.asList(tree.getItems()));
 
-			for( final String group : parent.split( "\\." ) ) {
-				for( final TreeItem tmpTI : allItemsList ) {
+			for (final String group : parent.split("\\.")) {
+				for (final TreeItem tmpTI : allItemsList) {
 					// TreeItem.getData can be a String or a TreeGroup
-					if( group.equals(tmpTI.getData().toString() ) ){
+					if (group.equals(tmpTI.getData().toString())) {
 						tmpTI.setExpanded(true);
 						treeViewer.refresh();
 						allItemsList.clear();
-						allItemsList.addAll(Arrays.asList( tmpTI.getItems() ));
+						allItemsList.addAll(Arrays.asList(tmpTI.getItems()));
 						break;
 					}
 				}
@@ -1087,19 +1115,18 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			final StructuredSelection ss = new StructuredSelection(entry);
 			treeViewer.setSelection(ss, true);
 			treeViewer.refresh(false);
-		}
-		else {
+		} else {
 			tableViewer.setSelection(new StructuredSelection(entry), true);
 			tableViewer.refresh(entry, false);
 		}
 	}
 
 	private void expandToRoot(final TreeItem ti) {
-		log.info( "expandToRoot; ti=" + ti.toString());
+		log.info("expandToRoot; ti=" + ti.toString());
 		TreeItem tmpTI = ti.getParentItem();
 		treeViewer.setExpandedState(ti, true);
-		while ( tmpTI.getParentItem() != null ) {
-			log.info( "expanding; tmpTI=" + tmpTI.toString());
+		while (tmpTI.getParentItem() != null) {
+			log.info("expanding; tmpTI=" + tmpTI.toString());
 			tmpTI.setExpanded(true);
 			treeViewer.refresh(tmpTI, false);
 			tmpTI = tmpTI.getParentItem();
@@ -1108,7 +1135,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Refresh the tree and table.
-	 *
+	 * 
 	 */
 	public void updateViewers() {
 		if (isTreeViewShowing()) {
@@ -1125,15 +1152,15 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	/**
 	 * Turns on or off the edit record menus (add/edit/delete) and save/as
 	 * menus.
-	 *
-	 * @param enabled
-	 *            true to enable the menus, false otherwise
+	 * 
+	 * @param enabled true to enable the menus, false otherwise
 	 */
 	private void setEditMenusEnabled(final boolean enabled) {
 		addRecordAction.setEnabled(enabled);
-		// TODO: maybe add a new action viewRecord, possibly with a dedicated (read-only) dialog ?
+		// TODO: maybe add a new action viewRecord, possibly with a dedicated
+		// (read-only) dialog ?
 		// for now edit is also needed to VIEW the records
-		//		editRecordAction.setEnabled(enabled);
+		// editRecordAction.setEnabled(enabled);
 		deleteRecordAction.setEnabled(enabled);
 		findRecordAction.setEnabled(enabled);
 		saveFileAction.setEnabled(enabled);
@@ -1143,8 +1170,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	/**
-	 * TODO: Refactor this to one or several external Listeners.
-	 * The URL copy action should only be enabled when an URL is available.
+	 * TODO: Refactor this to one or several external Listeners. The URL copy
+	 * action should only be enabled when an URL is available.
+	 * 
 	 * @param enabled
 	 */
 	public void setUrlCopyEnabled(final boolean enabled) {
@@ -1152,10 +1180,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	/**
-	 * Exports the contents of the password safe to tab separated file.
-	 * TODO: write unit test, then get rid of pwsrecord
-	 * @param filename
-	 *            full path to output file
+	 * Exports the contents of the password safe to tab separated file. TODO:
+	 * write unit test, then get rid of pwsrecord
+	 * 
+	 * @param filename full path to output file
 	 * @throws FileNotFoundException if the password file was not found
 	 */
 	public void exportToText(final String filename) {
@@ -1189,7 +1217,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 			}
 		} catch (final IOException ioe) {
-			displayErrorDialog(Messages.getString("PasswordSafeJFace.ExportError.Title"), Messages.getString("PasswordSafeJFace.ExportError.Message"), ioe); //$NON-NLS-1$ //$NON-NLS-2$
+			displayErrorDialog(
+					Messages.getString("PasswordSafeJFace.ExportError.Title"), Messages.getString("PasswordSafeJFace.ExportError.Message"), ioe); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			if (fw != null) {
 				try {
@@ -1208,7 +1237,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		final File theFile = new File(filename);
 
 		if (!theFile.exists()) {
-			throw new RuntimeException(Messages.getString("PasswordSafeJFace.ImportCSV.NoFileFound") + filename + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new RuntimeException(
+					Messages.getString("PasswordSafeJFace.ImportCSV.NoFileFound") + filename + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		Reader fileReader = null;
@@ -1221,7 +1251,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			String[] nextLine;
 			final PwsFile pwsFile = getPwsFile();
 			while ((nextLine = csvReader.readNext()) != null) {
-				if (nextLine.length < 2) continue; // ignore blank lines
+				if (nextLine.length < 2)
+					continue; // ignore blank lines
 				final PwsEntryBean entry = PwsEntryBean.fromPwsRecord(getPwsFile().newRecord());
 				entry.setSparse(false);
 				if (!nextLine[0].equals(V1_GROUP_PLACEHOLDER)) {
@@ -1234,7 +1265,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			}
 		} catch (final Exception e) {
 
-			throw new RuntimeException(Messages.getString("PasswordSafeJFace.ImportCSV.ProcessingError") + filename + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new RuntimeException(
+					Messages.getString("PasswordSafeJFace.ImportCSV.ProcessingError") + filename + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
 
 		} finally {
 			if (fileReader != null) {
@@ -1252,9 +1284,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Import an XML file into the current passwordsafe.
-	 *
-	 * @param filename
-	 *            the name of the file
+	 * 
+	 * @param filename the name of the file
 	 * @throws PasswordSafeException
 	 */
 	public void importFromXML(final String filename) throws PasswordSafeException {
@@ -1262,14 +1293,16 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		final File theFile = new File(filename);
 
 		if (!theFile.exists()) {
-			throw new RuntimeException(Messages.getString("PasswordSafeJFace.ImportXML.NoFileFound") + filename + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new RuntimeException(
+					Messages.getString("PasswordSafeJFace.ImportXML.NoFileFound") + filename + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		BufferedInputStream bis;
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			bis = new BufferedInputStream(new FileInputStream(filename));
 		} catch (final FileNotFoundException e) {
-			throw new RuntimeException(Messages.getString("PasswordSafeJFace.ImportXML.CantOpen"), e); //$NON-NLS-1$
+			throw new RuntimeException(
+					Messages.getString("PasswordSafeJFace.ImportXML.CantOpen"), e); //$NON-NLS-1$
 		}
 
 		String utf8String;
@@ -1288,9 +1321,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			}
 
 		} catch (final Exception ioe) {
-			throw new RuntimeException(Messages.getString("PasswordSafeJFace.ImportXML.IOException"), ioe); //$NON-NLS-1$
-		} finally
-		{
+			throw new RuntimeException(
+					Messages.getString("PasswordSafeJFace.ImportXML.IOException"), ioe); //$NON-NLS-1$
+		} finally {
 			IOUtils.closeQuietly(bis);
 		}
 
@@ -1309,10 +1342,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 	/**
 	 * Export the current safe to the name file in XML format.
-	 *
-	 * @param filename
-	 *            the filename to export to
-	 * @throws IOException if there was a problem with the export to the XML file
+	 * 
+	 * @param filename the filename to export to
+	 * @throws IOException if there was a problem with the export to the XML
+	 *         file
 	 */
 	public void exportToXML(final String filename) throws IOException {
 
@@ -1336,22 +1369,19 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			dos.close();
 
 			// TODO: Dispose entries !
-			//			for (PwsEntryBean entry : entryList) {
-			//				entry.dispose();
-			//			}
+			// for (PwsEntryBean entry : entryList) {
+			// entry.dispose();
+			// }
 		}
 
 	}
 
 	/**
 	 * Display error dialog and log error.
-	 *
-	 * @param title
-	 *            the title of the dialog
-	 * @param message
-	 *            the message to display
-	 * @param e
-	 *            the exception that caused the problem.
+	 * 
+	 * @param title the title of the dialog
+	 * @param message the message to display
+	 * @param e the exception that caused the problem.
 	 */
 	public void displayErrorDialog(final String title, final String message, final Exception e) {
 		final MessageBox mb = new MessageBox(getShell(), SWT.ICON_ERROR);
@@ -1371,7 +1401,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	 * method <code>handleShellCloseEvent</code> when the shell is closed.
 	 * Subclasses may extend or reimplement.
 	 * </p>
-	 *
+	 * 
 	 * @return a shell listener
 	 */
 	@Override
@@ -1385,7 +1415,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				event.doit = false; // don't close now
 
 				final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-				if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY) && systemTray != null) {
+				if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)
+						&& systemTray != null) {
 					// minimize on close when sys tray is present
 					getShell().setMinimized(true);
 					setReturnCode(OK);
@@ -1401,16 +1432,17 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				}
 				log.trace("PWSJface shell listener leave 'Closed'"); //$NON-NLS-1$
 			}
+
 			/**
-			 * Sent when a shell becomes the active window.
-			 * The default behavior is to do nothing.
-			 *
+			 * Sent when a shell becomes the active window. The default behavior
+			 * is to do nothing.
+			 * 
 			 * @param e an event containing information about the activation
 			 */
 
 			@Override
 			public void shellActivated(final ShellEvent e) {
-				//TODO: avoid recalling when aborting unlock
+				// TODO: avoid recalling when aborting unlock
 				log.trace("PWSJface shell listener enter 'Activated'"); //$NON-NLS-1$
 
 				if (unlocking) {
@@ -1426,12 +1458,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					}
 					if (lockState.isLocked()) {
 						log.info("PWSJface shell listener 'Activated' - unlocking"); //$NON-NLS-1$
-						//e.doit = false;
+						// e.doit = false;
 						unlockDbAction.run();
 					}
-					//					if (getShell().getMinimized()) {
-					//						getShell().setMinimized(false);
-					//					}
+					// if (getShell().getMinimized()) {
+					// getShell().setMinimized(false);
+					// }
 				} finally {
 					unlocking = false;
 				}
@@ -1439,9 +1471,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 			}
 
 			/**
-			 * Sent when a shell stops being the active window.
-			 * The default behavior is to do nothing.
-			 *
+			 * Sent when a shell stops being the active window. The default
+			 * behavior is to do nothing.
+			 * 
 			 * @param e an event containing information about the deactivation
 			 */
 			@Override
@@ -1452,14 +1484,13 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				log.trace("PWSJface shell listener leave 'Deactivated'"); //$NON-NLS-1$
 			}
 
-
 			/**
-			 * In <em>theory</em>, sent when a shell is un-minimized.
-			 * On windows sent when the shell is set visible.
-			 * Do <strong>not</strong> call setVisible(true)
-			 * within this method, danger of endless loop.
-			 *
-			 * @param e an event containing information about the un-minimization
+			 * In <em>theory</em>, sent when a shell is un-minimized. On windows
+			 * sent when the shell is set visible. Do <strong>not</strong> call
+			 * setVisible(true) within this method, danger of endless loop.
+			 * 
+			 * @param e an event containing information about the
+			 *        un-minimization
 			 */
 
 			@Override
@@ -1480,8 +1511,8 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					try {
 						log.info("PWSJface shell listener deiconify - unlocking"); //$NON-NLS-1$
 						e.doit = unlockDbAction.performUnlock();
-						//e.doit = false;
-						//Display.getDefault().asyncExec(unlockDbAction);
+						// e.doit = false;
+						// Display.getDefault().asyncExec(unlockDbAction);
 					} finally {
 						unlocking = false;
 					}
@@ -1490,16 +1521,14 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 			}
 
-
 			/**
-			 * Sent when a shell is minimized.
-			 * The default behavior is to do nothing.
-			 * <br>
-			 * On Mac Carbon, this is called the first time when disposing
-			 * the password dialogue when reactivating from Systray.
-			 * The second time it is not called. Still no good, therefore
-			 * Systray on Mac is blocked - see PasswordSafeMacOSX.main.
-			 *
+			 * Sent when a shell is minimized. The default behavior is to do
+			 * nothing. <br>
+			 * On Mac Carbon, this is called the first time when disposing the
+			 * password dialogue when reactivating from Systray. The second time
+			 * it is not called. Still no good, therefore Systray on Mac is
+			 * blocked - see PasswordSafeMacOSX.main.
+			 * 
 			 * @param e an event containing information about the minimization
 			 */
 			@Override
@@ -1511,10 +1540,10 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					clearClipboardAction.run();
 				}
 
-				//handle Save and DB lock
+				// handle Save and DB lock
 				if (isDirty()) {
 					if (thePrefs.getBoolean(JpwPreferenceConstants.CONFIRM_SAVE_ON_MIN)) {
-						//TODO
+						// TODO
 						saveFileAction.run();
 					} else {
 						saveFileAction.run();
@@ -1526,7 +1555,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 						&& thePrefs.getBoolean(JpwPreferenceConstants.SHOW_ICON_IN_SYSTEM_TRAY)) {
 					if (log.isDebugEnabled())
 						log.debug("Shrinking to tray");
-					getShell ().setVisible(false);
+					getShell().setVisible(false);
 				}
 
 				// lock safe
@@ -1542,11 +1571,12 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 			private void startLockTimer() {
 				final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-				if (pwsFile != null && thePrefs.getBoolean(JpwPreferenceConstants.LOCK_ON_IDLE)){
-					if (lockTask != null) {//be on the safe side:
+				if (pwsFile != null && thePrefs.getBoolean(JpwPreferenceConstants.LOCK_ON_IDLE)) {
+					if (lockTask != null) {// be on the safe side:
 						lockTask.cancel();
 					}
-					final String idleMins = thePrefs.getString(JpwPreferenceConstants.LOCK_ON_IDLE_MINS);
+					final String idleMins = thePrefs
+							.getString(JpwPreferenceConstants.LOCK_ON_IDLE_MINS);
 					try {
 						final int mins = Integer.parseInt(idleMins);
 						lockTask = lockDbAction.createTaskTimer();
@@ -1557,7 +1587,6 @@ public class PasswordSafeJFace extends ApplicationWindow {
 					}
 				}
 			}
-
 
 		};
 	}

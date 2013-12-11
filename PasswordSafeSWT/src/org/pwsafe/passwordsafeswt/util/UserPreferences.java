@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -28,7 +28,7 @@ import org.pwsafe.passwordsafeswt.preference.JpwPreferenceInitializer;
  * all that jazz).
  * 
  * @see JFacePreferences for a central place for accessing a preference store.
- *  
+ * 
  * @author Glen Smith
  */
 public class UserPreferences {
@@ -42,25 +42,26 @@ public class UserPreferences {
 
 	public static final String PROPS_DIR = ".passwordsafe";
 	private static final String PREFS_FILENAME = "preferences.properties";
-	
-    private PreferenceStore prefStore;
 
+	private PreferenceStore prefStore;
 
 	/**
 	 * Private constructor enforces singleton.
+	 * 
 	 * @throws IOException
 	 */
 	private UserPreferences() throws IOException {
 		loadPreferences();
 	}
 
-    /**
-     * Returns the name of the preference file.
-     * 
-     * @return the name of the preferences file.
-     */
+	/**
+	 * Returns the name of the preference file.
+	 * 
+	 * @return the name of the preferences file.
+	 */
 	public String getPreferencesFilename() {
-		String userDir = System.getProperty("user.home") + File.separator + PROPS_DIR + File.separator + PREFS_FILENAME;
+		String userDir = System.getProperty("user.home") + File.separator + PROPS_DIR
+				+ File.separator + PREFS_FILENAME;
 		return userDir;
 	}
 
@@ -68,13 +69,13 @@ public class UserPreferences {
 		return prefStore;
 	}
 
-    /**
-     * Loads preferences from a properties file.
-     * 
-     * @throws IOException if there are problems loading the preferences file
-     */
+	/**
+	 * Loads preferences from a properties file.
+	 * 
+	 * @throws IOException if there are problems loading the preferences file
+	 */
 	private void loadPreferences() throws IOException {
-//		props = new Properties();
+		// props = new Properties();
 		String userFile = getPreferencesFilename();
 		if (log.isDebugEnabled())
 			log.debug("Loading from [" + userFile + "]");
@@ -88,23 +89,22 @@ public class UserPreferences {
 
 		prefStore = new PreferenceStore(getPreferencesFilename());
 		JFacePreferences.setPreferenceStore(prefStore);
-		new  JpwPreferenceInitializer().initializeDefaultPreferences();
-		
+		new JpwPreferenceInitializer().initializeDefaultPreferences();
+
 		if (prefsFile.exists()) {
 			prefStore.load();
 		}
-		//TODO: Check what happens if no file exists?
-			
+		// TODO: Check what happens if no file exists?
+
 		if (log.isDebugEnabled())
-			log.debug("Loaded " + prefStore
-					+ " preference settings from file");
+			log.debug("Loaded " + prefStore + " preference settings from file");
 	}
 
-    /**
-     * Saves the preference to a properties file.
-     * 
-     * @throws IOException if there are problems saving the file
-     */
+	/**
+	 * Saves the preference to a properties file.
+	 * 
+	 * @throws IOException if there are problems saving the file
+	 */
 	public void savePreferences() throws IOException {
 
 		if (prefStore.needsSaving()) {
@@ -113,60 +113,58 @@ public class UserPreferences {
 				log.debug("Saving to [" + userFile + "]");
 			prefStore.save();
 			if (log.isDebugEnabled())
-				log.debug("Saved " + prefStore
-						+ " preference settings to file");
+				log.debug("Saved " + prefStore + " preference settings to file");
 		}
 	}
 
-
-    /**
-     * Sets the name of the most recently opened file.
-     * 
-     * @param fileName the name of the file
-     */
+	/**
+	 * Sets the name of the most recently opened file.
+	 * 
+	 * @param fileName the name of the file
+	 */
 	public void setMostRecentFilename(String fileName) {
-        
-        if (log.isDebugEnabled())
-            log.debug("Setting most recently opened file to: [" + fileName +"]");
-        
-        try {
-			loadPreferences();  // make sure we get the latest
+
+		if (log.isDebugEnabled())
+			log.debug("Setting most recently opened file to: [" + fileName + "]");
+
+		try {
+			loadPreferences(); // make sure we get the latest
 		} catch (IOException ioe) {
 			log.error("Couldn't load preferences", ioe);
-		} 
+		}
 		Set<String> newMRU = new LinkedHashSet<String>(13);
-        newMRU.add(fileName);
-        newMRU.addAll(getMRUFiles());		
+		newMRU.add(fileName);
+		newMRU.addAll(getMRUFiles());
 		writeOutMruList(newMRU);
 	}
 
 	private void writeOutMruList(Collection<String> newMRU) {
 		int mruCounter = 0;
-		for (Iterator<String> iter = newMRU.iterator(); iter.hasNext()
-				&& mruCounter <= MAX_MRU;) {
+		for (Iterator<String> iter = newMRU.iterator(); iter.hasNext() && mruCounter <= MAX_MRU;) {
 			final String nextFilename = iter.next();
 			final String mruKey = MRU + ++mruCounter;
-			//log.debug("Write MRU List key: " + mruKey + ", file: " + nextFilename);
+			// log.debug("Write MRU List key: " + mruKey + ", file: " +
+			// nextFilename);
 			prefStore.setValue(mruKey, nextFilename);
 		}
 		// remove old values
-		for (int i = MAX_MRU; i < MAX_MRU * 2; i++ ) {
+		for (int i = MAX_MRU; i < MAX_MRU * 2; i++) {
 			if (prefStore.contains(MRU + i)) {
 				prefStore.setValue(MRU + i, "");
 			}
 		}
-        try {
+		try {
 			savePreferences();
 		} catch (IOException e) {
 			log.warn("Unable to save preferences file", e);
 		}
 	}
 
-    /**
-     * Returns an array of recently opened filename (most recent to oldest).
-     * 
-     * @return an array of recently opened filename, not null
-     */
+	/**
+	 * Returns an array of recently opened filename (most recent to oldest).
+	 * 
+	 * @return an array of recently opened filename, not null
+	 */
 	public List<String> getMRUFiles() {
 
 		List<String> allFiles = new LinkedList<String>();
@@ -178,40 +176,40 @@ public class UserPreferences {
 		return allFiles;
 
 	}
-    
-    /**
-     * Convenience routine for getting most recently opened file.
-     * 
-     * @return the filename of the MRU file (or null if there is no MRU file)
-     */
-    public String getMRUFile() {
-        
-    	List<String> allMRU = getMRUFiles();
-        if (allMRU.size() > 0) {
-        	return allMRU.get(0);
-        } else {
-        	return null;
-        }
-        
-    }
-    
-    public String getString(String propName) {
-    	return prefStore.getString(propName);
-    }
-    
-    public void setString(String propName, String propValue) {
-    	prefStore.setValue(propName, propValue);
-    }
-    
-    public boolean getBoolean(String propName) {
-    	return prefStore.getBoolean(propName);
-    }
 
-    /**
-     * Singleton creator.
-     * 
-     * @return a handle to the UserPreferences object for this user
-     */
+	/**
+	 * Convenience routine for getting most recently opened file.
+	 * 
+	 * @return the filename of the MRU file (or null if there is no MRU file)
+	 */
+	public String getMRUFile() {
+
+		List<String> allMRU = getMRUFiles();
+		if (allMRU.size() > 0) {
+			return allMRU.get(0);
+		} else {
+			return null;
+		}
+
+	}
+
+	public String getString(String propName) {
+		return prefStore.getString(propName);
+	}
+
+	public void setString(String propName, String propValue) {
+		prefStore.setValue(propName, propValue);
+	}
+
+	public boolean getBoolean(String propName) {
+		return prefStore.getBoolean(propName);
+	}
+
+	/**
+	 * Singleton creator.
+	 * 
+	 * @return a handle to the UserPreferences object for this user
+	 */
 	public static synchronized UserPreferences getInstance() {
 		if (prefs == null) {
 			try {
@@ -233,7 +231,7 @@ public class UserPreferences {
 	 * @param fileName
 	 */
 	public void removeMRUFile(final String fileName) {
-		List<String> files =  getMRUFiles();
+		List<String> files = getMRUFiles();
 		if (files.contains(fileName)) {
 			int index = files.indexOf(fileName);
 			files.remove(index);
@@ -244,5 +242,5 @@ public class UserPreferences {
 			writeOutMruList(files);
 		}
 	}
-	
+
 }

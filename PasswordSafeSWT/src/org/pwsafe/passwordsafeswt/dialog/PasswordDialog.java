@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -62,7 +62,7 @@ public class PasswordDialog extends Dialog {
 		shell.layout();
 		shell.pack();
 		shell.open();
-		shell.forceActive();//try to make sure this is drawn on top
+		shell.forceActive();// try to make sure this is drawn on top
 		Display display = getParent().getDisplay();
 		Shell activeShell = display.getActiveShell();
 		if (activeShell != null && activeShell != shell) {
@@ -77,10 +77,10 @@ public class PasswordDialog extends Dialog {
 
 	protected void createContents() {
 		shell = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setImage(JFaceResources.getImage(PasswordSafeJFace.JPW_ICON)); 
+		shell.setImage(JFaceResources.getImage(PasswordSafeJFace.JPW_ICON));
 		shell.setLayout(new FormLayout());
-		
-		int heigth = verified ? 230 : 170; 
+
+		int heigth = verified ? 230 : 170;
 		shell.setSize(380, heigth);
 		shell.setText(windowTitle);
 		final Label label = new Label(shell, SWT.WRAP);
@@ -106,9 +106,9 @@ public class PasswordDialog extends Dialog {
 		formData_2.left = new FormAttachment(lblCombination, 5);
 		formData_2.right = new FormAttachment(85, 0);
 		txtCombination.setLayoutData(formData_2);
-		
-		Control buttonOrientation = txtCombination; 
-		
+
+		Control buttonOrientation = txtCombination;
+
 		if (verified) {
 			final Label lblVerify = new Label(shell, SWT.NONE);
 			final FormData formData_3 = new FormData();
@@ -123,7 +123,7 @@ public class PasswordDialog extends Dialog {
 			formData_4.left = new FormAttachment(txtCombination, 0, SWT.LEFT);
 			formData_4.right = new FormAttachment(txtCombination, 0, SWT.RIGHT);
 			txtVerify.setLayoutData(formData_4);
-			
+
 			buttonOrientation = txtVerify;
 		}
 		final Button btnCancel = new Button(shell, SWT.NONE);
@@ -152,16 +152,18 @@ public class PasswordDialog extends Dialog {
 						result = new StringBuilder(txtCombination.getText());
 						shell.dispose();
 					} else {
-						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR
-								| SWT.OK);
-						mb.setText(Messages.getString("PasswordDialog.PasswordMismatchMessage.Title")); //$NON-NLS-1$
-						mb.setMessage(Messages.getString("PasswordDialog.PasswordMismatchMessage.Text")); //$NON-NLS-1$
+						MessageBox mb = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+						mb.setText(Messages
+								.getString("PasswordDialog.PasswordMismatchMessage.Title")); //$NON-NLS-1$
+						mb.setMessage(Messages
+								.getString("PasswordDialog.PasswordMismatchMessage.Text")); //$NON-NLS-1$
 						mb.open();
 					}
 				}
 			});
 		} else {
-			//TODO: On Mac Carbon dispose leads to a recall of Main Window shellActivated - check this
+			// TODO: On Mac Carbon dispose leads to a recall of Main Window
+			// shellActivated - check this
 			btnOk.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -182,13 +184,14 @@ public class PasswordDialog extends Dialog {
 		 * formData_8 = new FormData(); formData_8.width = 80; formData_8.top =
 		 * new FormAttachment(btnCancel, 0, SWT.TOP); formData_8.left = new
 		 * FormAttachment(btnCancel, 10, SWT.RIGHT);
-		 * btnHelp.setLayoutData(formData_8); btnHelp.setText(Messages.getString("PasswordDialog.HelpButton")); //$NON-NLS-1$
+		 * btnHelp.setLayoutData(formData_8);
+		 * btnHelp.setText(Messages.getString("PasswordDialog.HelpButton"));
+		 * //$NON-NLS-1$
 		 */
 	}
 
 	/**
-	 * @param aFileName
-	 *            The fileName to set.
+	 * @param aFileName The fileName to set.
 	 */
 	public void setFileName(String aFileName) {
 		try {
@@ -203,5 +206,5 @@ public class PasswordDialog extends Dialog {
 	public void setVerified(boolean verify) {
 		this.verified = verify;
 	}
-	
+
 }

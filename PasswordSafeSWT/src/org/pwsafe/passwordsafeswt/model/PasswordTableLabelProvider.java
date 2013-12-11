@@ -13,7 +13,7 @@ import org.pwsafe.lib.datastore.PwsEntryBean;
 
 /**
  * Label Provider for the password Table.
- *
+ * 
  * @author Glen Smith
  */
 public class PasswordTableLabelProvider extends AbstractTableLabelProvider {
@@ -21,20 +21,23 @@ public class PasswordTableLabelProvider extends AbstractTableLabelProvider {
 	private static final Log log = LogFactory.getLog(PasswordTableLabelProvider.class);
 
 	/**
-	 * TODO: Merge this with the getColumnText method from {@link PasswordTreeTableLabelProvider}.
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+	 * TODO: Merge this with the getColumnText method from
+	 * {@link PasswordTreeTableLabelProvider}.
+	 * 
+	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
+	 *      int)
 	 */
 	public String getColumnText(final Object element, final int columnIndex) {
 		String columnString = null;
 
 		if (element instanceof PwsEntryBean) {
 			final PwsEntryBean entry = (PwsEntryBean) element;
-			switch(columnIndex) {
+			switch (columnIndex) {
 			case 0:
-				columnString =  entry.getTitle();
+				columnString = entry.getTitle();
 				break;
 			case 1:
-				columnString =  entry.getUsername();
+				columnString = entry.getUsername();
 				break;
 			case 2:
 				columnString = entry.getNotes();
@@ -48,7 +51,7 @@ public class PasswordTableLabelProvider extends AbstractTableLabelProvider {
 		}
 		if (log.isDebugEnabled())
 			log.debug("Setting column index " + columnIndex + " to [" + columnString + "]");
-		return columnString;  // unknown column
+		return columnString; // unknown column
 	}
 
 }

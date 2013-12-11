@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -13,23 +13,23 @@ import org.pwsafe.passwordsafeswt.dialog.AboutDialog;
 
 /**
  * Displays the About dialog.
- *
+ * 
  * @author Glen Smith
  */
 public class AboutAction extends Action {
 
-    public AboutAction() {
-        super(Messages.getString("AboutAction.Label")); //$NON-NLS-1$
-    }
+	public AboutAction() {
+		super(Messages.getString("AboutAction.Label")); //$NON-NLS-1$
+	}
 
-    /**
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    @Override
+	/**
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	@Override
 	public void run() {
-        PasswordSafeJFace app = PasswordSafeJFace.getApp();
-        AboutDialog ad = new AboutDialog(app.getShell());
-        ad.open();
-    }
+		PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		AboutDialog ad = new AboutDialog(app.getShell());
+		ad.open();
+	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -74,10 +74,9 @@ public class XMLDataParser {
 		PwsEntryBean entryDTO = new PwsEntryBean();
 
 		List entryList = new ArrayList();
-		
+
 		StringBuilder tagContent = new StringBuilder();
 
-		
 		public XMLDataParserHandler() {
 			super();
 			entryDTO.setSparse(false);
@@ -88,15 +87,13 @@ public class XMLDataParser {
 		 *      java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
 		@Override
-		public void startElement(String uri, String localName, String qName,
-				Attributes attrs) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes attrs)
+				throws SAXException {
 			tagStack.push(qName);
-			if (qName.startsWith(ENTRY_TAG)
-					&& tagStack.search(LIST_TAG) == PARENT_NODE) {
+			if (qName.startsWith(ENTRY_TAG) && tagStack.search(LIST_TAG) == PARENT_NODE) {
 				entryDTO = new PwsEntryBean();
 			}
-			if (qName.startsWith(GROUP_TAG)
-					&& tagStack.search(ENTRY_TAG) == PARENT_NODE) {
+			if (qName.startsWith(GROUP_TAG) && tagStack.search(ENTRY_TAG) == PARENT_NODE) {
 				String treeName = attrs.getValue(TREE_ATTR);
 				entryDTO.setGroup(treeName);
 			}
@@ -108,15 +105,14 @@ public class XMLDataParser {
 		 *      java.lang.String, java.lang.String)
 		 */
 		@Override
-		public void endElement(String uri, String localName, String qName)
-				throws SAXException {
-			
+		public void endElement(String uri, String localName, String qName) throws SAXException {
+
 			if (qName.startsWith(ENTRY_TAG)) {
 				entryList.add(entryDTO);
 			}
-			
+
 			String prevTag = (String) tagStack.peek();
-			
+
 			tagContent.toString();
 
 			if (prevTag.equalsIgnoreCase(GROUP_TAG)) {
@@ -140,8 +136,7 @@ public class XMLDataParser {
 					entryDTO.setNotes(tagContent.toString());
 				}
 			}
-			
-			
+
 			tagStack.pop();
 		}
 
@@ -149,8 +144,7 @@ public class XMLDataParser {
 		 * @see org.xml.sax.helpers.DefaultHandler#characters(char[], int, int)
 		 */
 		@Override
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
+		public void characters(char[] ch, int start, int length) throws SAXException {
 
 			String xmlText = new String(ch).substring(start, start + length);
 			tagContent.append(xmlText);
@@ -167,17 +161,14 @@ public class XMLDataParser {
 		PwsEntryBean[] entries = null;
 
 		try {
-			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser()
-					.getXMLReader();
+			XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 
 			XMLDataParserHandler xmlHandler = new XMLDataParserHandler();
 
 			xmlReader.setContentHandler(xmlHandler);
-			InputSource is = new InputSource(
-					new StringReader(incomingXMLString));
+			InputSource is = new InputSource(new StringReader(incomingXMLString));
 			xmlReader.parse(is);
-			entries = (PwsEntryBean[]) xmlHandler.entryList
-					.toArray(new PwsEntryBean[0]);
+			entries = (PwsEntryBean[]) xmlHandler.entryList.toArray(new PwsEntryBean[0]);
 		} catch (Exception e) {
 			// Almost certainly related issues parsing the XML.
 			throw new RuntimeException(e);
@@ -217,13 +208,11 @@ public class XMLDataParser {
 			el.appendChild(userTag);
 
 			Element passwordTag = doc.createElement(PASSWORD_TAG);
-			passwordTag
-					.appendChild(doc.createTextNode(nextEntry.getPassword().toString()));
+			passwordTag.appendChild(doc.createTextNode(nextEntry.getPassword().toString()));
 			el.appendChild(passwordTag);
-			
+
 			Element notesTag = doc.createElement(NOTES_TAG);
-			notesTag
-					.appendChild(doc.createTextNode(nextEntry.getNotes()));
+			notesTag.appendChild(doc.createTextNode(nextEntry.getNotes()));
 			el.appendChild(notesTag);
 
 			list.appendChild(el);

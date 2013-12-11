@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -27,112 +27,113 @@ import org.eclipse.swt.widgets.Spinner;
 
 /**
  * Preferences related to password generation.
- *
+ * 
  * @author Glen Smith
  */
 public class PasswordPolicyPreferences extends PreferencePage {
 
-	  // Text fields for user to enter preferences
-	  private Spinner spiLength;
-	  private Button btnUseLowercase;
-	  private Button btnUserUppercase;
-	  private Button btnUseDigits;
-	  private Button btnUseSymbols;
-	  private Button btnUseEaseToRead;
-	  private Button btnUseHexOnly;
-	  
+	// Text fields for user to enter preferences
+	private Spinner spiLength;
+	private Button btnUseLowercase;
+	private Button btnUserUppercase;
+	private Button btnUseDigits;
+	private Button btnUseSymbols;
+	private Button btnUseEaseToRead;
+	private Button btnUseHexOnly;
 
-	  /**
-	   * Creates the controls for this page
-	   */
-	  protected Control createContents(Composite parent) {
-	    Composite composite = new Composite(parent, SWT.NONE);
-	    composite.setLayout(new GridLayout());
-	    
-	    // Get the preference store
-	    IPreferenceStore preferenceStore = getPreferenceStore();
+	/**
+	 * Creates the controls for this page
+	 */
+	@Override
+	protected Control createContents(final Composite parent) {
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
 
+		// Get the preference store
+		final IPreferenceStore preferenceStore = getPreferenceStore();
 
-	    final Label lblRandomRules = new Label(composite, SWT.NONE);
-	    lblRandomRules.setText(Messages.getString("PasswordPolicyPreferences.RulesLabel")); //$NON-NLS-1$
+		final Label lblRandomRules = new Label(composite, SWT.NONE);
+		lblRandomRules.setText(Messages.getString("PasswordPolicyPreferences.RulesLabel")); //$NON-NLS-1$
 
-	    final Composite composite_1 = new Composite(composite, SWT.NONE);
-	    final GridLayout gridLayout = new GridLayout();
-	    gridLayout.marginHeight = 0;
-	    gridLayout.marginWidth = 0;
-	    gridLayout.numColumns = 2;
-	    composite_1.setLayout(gridLayout);
+		final Composite composite_1 = new Composite(composite, SWT.NONE);
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		gridLayout.numColumns = 2;
+		composite_1.setLayout(gridLayout);
 
-	    final Label lblDefaultLength = new Label(composite_1, SWT.NONE);
-	    lblDefaultLength.setText(Messages.getString("PasswordPolicyPreferences.PasswordLength")); //$NON-NLS-1$
+		final Label lblDefaultLength = new Label(composite_1, SWT.NONE);
+		lblDefaultLength.setText(Messages.getString("PasswordPolicyPreferences.PasswordLength")); //$NON-NLS-1$
 
-	    spiLength = new Spinner(composite_1, SWT.BORDER);
-	    spiLength.setSelection(preferenceStore.getInt(DEFAULT_PASSWORD_LENGTH));
+		spiLength = new Spinner(composite_1, SWT.BORDER);
+		spiLength.setSelection(preferenceStore.getInt(DEFAULT_PASSWORD_LENGTH));
 
-	    btnUseLowercase = new Button(composite, SWT.CHECK);
-	    btnUseLowercase.setText(Messages.getString("PasswordPolicyPreferences.Lowercase")); //$NON-NLS-1$
-	    btnUseLowercase.setSelection(preferenceStore.getBoolean(USE_LOWERCASE_LETTERS));
+		btnUseLowercase = new Button(composite, SWT.CHECK);
+		btnUseLowercase.setText(Messages.getString("PasswordPolicyPreferences.Lowercase")); //$NON-NLS-1$
+		btnUseLowercase.setSelection(preferenceStore.getBoolean(USE_LOWERCASE_LETTERS));
 
-	    btnUserUppercase = new Button(composite, SWT.CHECK);
-	    btnUserUppercase.setText(Messages.getString("PasswordPolicyPreferences.Uppercase")); //$NON-NLS-1$
-	    btnUserUppercase.setSelection(preferenceStore.getBoolean(USE_UPPERCASE_LETTERS));
+		btnUserUppercase = new Button(composite, SWT.CHECK);
+		btnUserUppercase.setText(Messages.getString("PasswordPolicyPreferences.Uppercase")); //$NON-NLS-1$
+		btnUserUppercase.setSelection(preferenceStore.getBoolean(USE_UPPERCASE_LETTERS));
 
-	    btnUseDigits = new Button(composite, SWT.CHECK);
-	    btnUseDigits.setText(Messages.getString("PasswordPolicyPreferences.Digits")); //$NON-NLS-1$
-	    btnUseDigits.setSelection(preferenceStore.getBoolean(USE_DIGITS));
+		btnUseDigits = new Button(composite, SWT.CHECK);
+		btnUseDigits.setText(Messages.getString("PasswordPolicyPreferences.Digits")); //$NON-NLS-1$
+		btnUseDigits.setSelection(preferenceStore.getBoolean(USE_DIGITS));
 
-	    btnUseSymbols = new Button(composite, SWT.CHECK);
-	    btnUseSymbols.setText(Messages.getString("PasswordPolicyPreferences.Symbols")); //$NON-NLS-1$
-	    btnUseSymbols.setSelection(preferenceStore.getBoolean(USE_SYMBOLS));
+		btnUseSymbols = new Button(composite, SWT.CHECK);
+		btnUseSymbols.setText(Messages.getString("PasswordPolicyPreferences.Symbols")); //$NON-NLS-1$
+		btnUseSymbols.setSelection(preferenceStore.getBoolean(USE_SYMBOLS));
 
-	    btnUseEaseToRead = new Button(composite, SWT.CHECK);
-	    btnUseEaseToRead.setText(Messages.getString("PasswordPolicyPreferences.EasyToRead")); //$NON-NLS-1$
-	    btnUseEaseToRead.setSelection(preferenceStore.getBoolean(USE_EASY_TO_READ));
-	    
-	    btnUseHexOnly = new Button(composite, SWT.CHECK);
-	    btnUseHexOnly.setEnabled(false);
-	    btnUseHexOnly.setText(Messages.getString("PasswordPolicyPreferences.HexOnly")); //$NON-NLS-1$
-	    btnUseHexOnly.setSelection(preferenceStore.getBoolean(USE_HEX_ONLY));
+		btnUseEaseToRead = new Button(composite, SWT.CHECK);
+		btnUseEaseToRead.setText(Messages.getString("PasswordPolicyPreferences.EasyToRead")); //$NON-NLS-1$
+		btnUseEaseToRead.setSelection(preferenceStore.getBoolean(USE_EASY_TO_READ));
 
-	    return composite;
-	  }
+		btnUseHexOnly = new Button(composite, SWT.CHECK);
+		btnUseHexOnly.setEnabled(false);
+		btnUseHexOnly.setText(Messages.getString("PasswordPolicyPreferences.HexOnly")); //$NON-NLS-1$
+		btnUseHexOnly.setSelection(preferenceStore.getBoolean(USE_HEX_ONLY));
 
-	  /**
-	   * Called when user clicks Restore Defaults
-	   */
-	  protected void performDefaults() {
-	    // Get the preference store
-	    IPreferenceStore preferenceStore = getPreferenceStore();
+		return composite;
+	}
 
-	    spiLength.setSelection(preferenceStore.getDefaultInt(DEFAULT_PASSWORD_LENGTH));
-	    btnUseLowercase.setSelection(preferenceStore.getDefaultBoolean(USE_LOWERCASE_LETTERS));
-	    btnUserUppercase.setSelection(preferenceStore.getDefaultBoolean(USE_UPPERCASE_LETTERS));  
-	    btnUseDigits.setSelection(preferenceStore.getDefaultBoolean(USE_DIGITS));
-	    btnUseSymbols.setSelection(preferenceStore.getDefaultBoolean(USE_SYMBOLS));
-	    btnUseEaseToRead.setSelection(preferenceStore.getDefaultBoolean(USE_EASY_TO_READ));
-	    btnUseHexOnly.setSelection(preferenceStore.getDefaultBoolean(USE_HEX_ONLY));
-	    
-	  }
+	/**
+	 * Called when user clicks Restore Defaults
+	 */
+	@Override
+	protected void performDefaults() {
+		// Get the preference store
+		final IPreferenceStore preferenceStore = getPreferenceStore();
 
-	  /**
-	   * Called when user clicks Apply or OK
-	   * 
-	   * @return boolean
-	   */
-	  public boolean performOk() {
-	    // Get the preference store
-	    IPreferenceStore preferenceStore = getPreferenceStore();
+		spiLength.setSelection(preferenceStore.getDefaultInt(DEFAULT_PASSWORD_LENGTH));
+		btnUseLowercase.setSelection(preferenceStore.getDefaultBoolean(USE_LOWERCASE_LETTERS));
+		btnUserUppercase.setSelection(preferenceStore.getDefaultBoolean(USE_UPPERCASE_LETTERS));
+		btnUseDigits.setSelection(preferenceStore.getDefaultBoolean(USE_DIGITS));
+		btnUseSymbols.setSelection(preferenceStore.getDefaultBoolean(USE_SYMBOLS));
+		btnUseEaseToRead.setSelection(preferenceStore.getDefaultBoolean(USE_EASY_TO_READ));
+		btnUseHexOnly.setSelection(preferenceStore.getDefaultBoolean(USE_HEX_ONLY));
 
-	    // Set the values from the fields
-	    preferenceStore.setValue(DEFAULT_PASSWORD_LENGTH, spiLength.getSelection());
-	    preferenceStore.setValue(USE_LOWERCASE_LETTERS, btnUseLowercase.getSelection());
-	    preferenceStore.setValue(USE_UPPERCASE_LETTERS, btnUserUppercase.getSelection());
-	    preferenceStore.setValue(USE_DIGITS, btnUseDigits.getSelection());
-	    preferenceStore.setValue(USE_SYMBOLS, btnUseSymbols.getSelection());
-	    preferenceStore.setValue(USE_EASY_TO_READ, btnUseEaseToRead.getSelection());
-	    preferenceStore.setValue(USE_HEX_ONLY, btnUseHexOnly.getSelection());
+	}
 
-	    // Return true to allow dialog to close
-	    return true;
-	  }
+	/**
+	 * Called when user clicks Apply or OK
+	 * 
+	 * @return boolean
+	 */
+	@Override
+	public boolean performOk() {
+		// Get the preference store
+		final IPreferenceStore preferenceStore = getPreferenceStore();
+
+		// Set the values from the fields
+		preferenceStore.setValue(DEFAULT_PASSWORD_LENGTH, spiLength.getSelection());
+		preferenceStore.setValue(USE_LOWERCASE_LETTERS, btnUseLowercase.getSelection());
+		preferenceStore.setValue(USE_UPPERCASE_LETTERS, btnUserUppercase.getSelection());
+		preferenceStore.setValue(USE_DIGITS, btnUseDigits.getSelection());
+		preferenceStore.setValue(USE_SYMBOLS, btnUseSymbols.getSelection());
+		preferenceStore.setValue(USE_EASY_TO_READ, btnUseEaseToRead.getSelection());
+		preferenceStore.setValue(USE_HEX_ONLY, btnUseHexOnly.getSelection());
+
+		// Return true to allow dialog to close
+		return true;
+	}
 }

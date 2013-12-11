@@ -1,6 +1,6 @@
 /*
  * $Id$
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -21,19 +21,22 @@ import org.pwsafe.passwordsafeswt.util.IOUtils;
 
 /**
  * Open the URL from selected item to the clipboard.
- *
+ * 
  * @author roxon
  */
 public class OpenUrlAction extends Action {
-    private static final Log log = LogFactory.getLog(OpenUrlAction.class);
+	private static final Log log = LogFactory.getLog(OpenUrlAction.class);
 
-    public OpenUrlAction() {
-        super(Messages.getString("OpenUrlAction.Label")); //$NON-NLS-1$
-        setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader().getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_openurl.gif"))); //$NON-NLS-1$
-        setToolTipText(Messages.getString("OpenUrlAction.Tooltip")); //$NON-NLS-1$
-    }
-    
-    /* (non-Javadoc)
+	public OpenUrlAction() {
+		super(Messages.getString("OpenUrlAction.Label")); //$NON-NLS-1$
+		setImageDescriptor(ImageDescriptor.createFromURL(this.getClass().getClassLoader()
+				.getResource("org/pwsafe/passwordsafeswt/images/tool_newbar_openurl.gif"))); //$NON-NLS-1$
+		setToolTipText(Messages.getString("OpenUrlAction.Tooltip")); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.Action#isEnabled()
 	 */
 	@Override
@@ -43,23 +46,25 @@ public class OpenUrlAction extends Action {
 	}
 
 	/**
-     * @see org.eclipse.jface.action.Action#run()
-     */
-    @Override
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	@Override
 	public void run() {
-        PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		PasswordSafeJFace app = PasswordSafeJFace.getApp();
 
-        // TODO: this should check if URL is part of sparse fields
-        PwsEntryBean selected = app.getSelectedRecord();
-        if (selected == null || selected.getUrl() == null || selected.getUrl().length() == 0)
-        	return;
-        
-        IOUtils.openBrowser(selected.getUrl());
-        
-        final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
-        final boolean recordAccessTime =  thePrefs.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
-        if (recordAccessTime) {// this could/should be sent to a background thread
-        	app.updateAccessTime(selected);
-        }
-    }
+		// TODO: this should check if URL is part of sparse fields
+		PwsEntryBean selected = app.getSelectedRecord();
+		if (selected == null || selected.getUrl() == null || selected.getUrl().length() == 0)
+			return;
+
+		IOUtils.openBrowser(selected.getUrl());
+
+		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+		final boolean recordAccessTime = thePrefs
+				.getBoolean(JpwPreferenceConstants.RECORD_LAST_ACCESS_TIME);
+		if (recordAccessTime) {// this could/should be sent to a background
+								// thread
+			app.updateAccessTime(selected);
+		}
+	}
 }

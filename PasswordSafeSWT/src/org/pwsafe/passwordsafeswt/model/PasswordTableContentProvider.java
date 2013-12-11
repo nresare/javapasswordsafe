@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2009 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -11,8 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.pwsafe.lib.datastore.PwsEntryStore;
 import org.pwsafe.lib.datastore.PwsEntryBean;
+import org.pwsafe.lib.datastore.PwsEntryStore;
 
 /**
  * Content Provider for the Table.
@@ -22,7 +22,7 @@ import org.pwsafe.lib.datastore.PwsEntryBean;
 public class PasswordTableContentProvider implements IStructuredContentProvider {
 
 	private static final Log log = LogFactory.getLog(PasswordTableContentProvider.class);
-	
+
 	PwsEntryStore dataStore;
 
 	/**
@@ -37,19 +37,19 @@ public class PasswordTableContentProvider implements IStructuredContentProvider 
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
 	 *      java.lang.Object, java.lang.Object)
 	 */
-	public void inputChanged(Viewer vwr, Object oldInput, Object newInput) {
+	public void inputChanged(final Viewer vwr, final Object oldInput, final Object newInput) {
 		if (newInput instanceof PwsEntryStore) {
 			dataStore = (PwsEntryStore) newInput;
 		}
-		
-		if (log.isDebugEnabled()) 
+
+		if (log.isDebugEnabled())
 			log.debug("Input changed fired");
 	}
 
 	/**
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
-	public Object[] getElements(Object inputElement) {
+	public Object[] getElements(final Object inputElement) {
 
 		if (inputElement instanceof PwsEntryStore) {
 			dataStore = (PwsEntryStore) inputElement;
