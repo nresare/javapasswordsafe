@@ -33,8 +33,9 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	/**
 	 * This class represents a group displayed in the tree.
 	 */
-	static final class TreeGroup {
+	public static final class TreeGroup {
 
+		private static final char GROUP_SEPARATOR = '.';
 		String parent;
 		String name;
 
@@ -54,6 +55,10 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 		@Override
 		public String toString() {
 			return name;
+		}
+
+		public String getGroupPath () {
+			return parent + GROUP_SEPARATOR + name;
 		}
 
 		/*
@@ -160,9 +165,9 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	 */
 	public boolean hasChildren(final Object node) {
 		return node instanceof String || node instanceof TreeGroup; // only
-																	// groups
-																	// have
-																	// children
+		// groups
+		// have
+		// children
 	}
 
 	/**

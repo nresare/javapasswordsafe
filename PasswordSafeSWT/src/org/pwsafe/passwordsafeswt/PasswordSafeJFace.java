@@ -51,6 +51,7 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.ShellAdapter;
@@ -113,6 +114,9 @@ import org.pwsafe.passwordsafeswt.action.ViewAsListAction;
 import org.pwsafe.passwordsafeswt.action.ViewAsTreeAction;
 import org.pwsafe.passwordsafeswt.action.VisitPasswordSafeWebsiteAction;
 import org.pwsafe.passwordsafeswt.dialog.StartupDialog;
+import org.pwsafe.passwordsafeswt.dnd.PwsEntryBeanTransfer;
+import org.pwsafe.passwordsafeswt.dnd.TreeDragListener;
+import org.pwsafe.passwordsafeswt.dnd.TreeDropper;
 import org.pwsafe.passwordsafeswt.listener.TableColumnSelectionAdaptor;
 import org.pwsafe.passwordsafeswt.listener.ViewerDoubleClickListener;
 import org.pwsafe.passwordsafeswt.model.PasswordTableContentProvider;
@@ -568,7 +572,7 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	public void newFile(final StringBuilder password) {
 		getShell().setText(
 				PasswordSafeJFace.APP_NAME
-						+ Messages.getString("PasswordSafeJFace.AppTitle.Default")); //$NON-NLS-1$
+				+ Messages.getString("PasswordSafeJFace.AppTitle.Default")); //$NON-NLS-1$
 		final PwsFile newFile = PwsFileFactory.newFile();
 		newFile.setPassphrase(password);
 		this.setPwsFile(newFile);
@@ -686,13 +690,13 @@ public class PasswordSafeJFace extends ApplicationWindow {
 				final TreeItem ti = tree.getSelection()[0];
 				final Object treeData = ti.getData();
 				if (treeData != null && treeData instanceof PwsEntryBean) { // must
-																			// be
-																			// a
-																			// left,
-																			// not
-																			// a
-																			// group
-																			// entry
+					// be
+					// a
+					// left,
+					// not
+					// a
+					// group
+					// entry
 					recordToCopy = (PwsEntryBean) treeData;
 				}
 			}
@@ -1004,6 +1008,11 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		treeViewer.setContentProvider(new PasswordTreeContentProvider());
 		treeViewer.setSorter(new ViewerSorter());
 		treeViewer.addDoubleClickListener(new ViewerDoubleClickListener());
+		final int operations = DND.DROP_COPY| DND.DROP_MOVE;
+		final Transfer[] transferTypes = new Transfer[]
+				{PwsEntryBeanTransfer.getInstance(), TextTransfer.getInstance()};
+		treeViewer.addDragSupport(operations, transferTypes , new TreeDragListener(treeViewer));
+		treeViewer.addDropSupport(operations, transferTypes, new TreeDropper(treeViewer));
 		treeViewer.setComparer(new IElementComparer() {
 			public boolean equals(final Object a, final Object b) {
 				if (a instanceof PwsEntryBean && b instanceof PwsEntryBean)
