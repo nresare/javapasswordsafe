@@ -19,7 +19,7 @@ import org.pwsafe.passwordsafeswt.model.PasswordTreeContentProvider;
 
 /**
  * Listens for drags in the tree view.
- * For now only the dragging of a beans is correctly handled.
+ * For now only the dragging of a bean is correctly handled.
  * 
  * @author roxon
  *
@@ -58,13 +58,8 @@ public class TreeDragListener implements DragSourceListener {
 			if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
 				event.data = group.getGroupPath();
 			}
-		} else if (selection.getFirstElement() instanceof String) {
-			event.doit = false; // disable for now
-			if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-				event.data = selection.getFirstElement();
-			}
 		} else {
-			log.info("Unknown type: " + selection.getFirstElement().getClass());
+			log.warn("Unknown type: " + selection.getFirstElement().getClass());
 		}
 	}
 

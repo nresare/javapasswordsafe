@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2010 David Muller <roxon@users.sourceforge.net>.
+ * Copyright (c) 2008-2014 David Muller <roxon@users.sourceforge.net>.
  * All rights reserved. Use of the code is allowed under the
  * Artistic License 2.0 terms, as specified in the LICENSE file
  * distributed with this code, or available from
@@ -32,9 +32,6 @@ public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implem
 	}
 
 	/*
-	 * (non-Javadoc) TODO: Merge this with the getColumnText method from {@link
-	 * PasswordTableLabelProvider}.
-	 * 
 	 * @see
 	 * org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang
 	 * .Object, int)
@@ -44,9 +41,7 @@ public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implem
 
 		if (columnIndex == 0) {
 			result = "<unknown node type>";
-			if (element instanceof String) {
-				result = element.toString();
-			} else if (element instanceof PwsEntryBean) {
+			if (element instanceof PwsEntryBean) {
 				final PwsEntryBean theEntry = (PwsEntryBean) element;
 				result = theEntry.getTitle();
 			} else if (element instanceof PasswordTreeContentProvider.TreeGroup) {
@@ -84,9 +79,7 @@ public class PasswordTreeLabelProvider extends AbstractTableLabelProvider implem
 	 */
 	public String getText(final Object node) {
 		String result = "<unknown node type>";
-		if (node instanceof String) {
-			result = node.toString();
-		} else if (node instanceof PwsEntryBean) {
+		if (node instanceof PwsEntryBean) {
 			final PwsEntryBean theEntry = (PwsEntryBean) node;
 			result = theEntry.getTitle();
 		} else if (node instanceof PasswordTreeContentProvider.TreeGroup) {

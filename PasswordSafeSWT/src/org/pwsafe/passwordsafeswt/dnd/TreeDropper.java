@@ -17,6 +17,7 @@ import org.pwsafe.lib.datastore.PwsEntryBean;
 import org.pwsafe.lib.datastore.PwsEntryStore;
 import org.pwsafe.passwordsafeswt.PasswordSafeJFace;
 import org.pwsafe.passwordsafeswt.model.PasswordTreeContentProvider;
+import org.pwsafe.passwordsafeswt.model.PasswordTreeContentProvider.TreeGroup;
 
 /**
  * Performs drops in the tree view.
@@ -47,12 +48,15 @@ public final class TreeDropper extends ViewerDropAdapter {
 	}
 
 	private boolean performDropOfPwsEntryBean(final Integer aDragSourceIndex) {
-		final Object target = getCurrentTarget();
+		Object target = getCurrentTarget();
+
+		// allow drop on "root" null
+		if (target == null) {
+			target = new TreeGroup("");
+		}
 
 		String newGroup;
-		if (target instanceof String) {
-			newGroup = target.toString();
-		} else	if (target instanceof PasswordTreeContentProvider.TreeGroup) {
+		if (target instanceof TreeGroup) {
 			final PasswordTreeContentProvider.TreeGroup treeGroup =
 					(PasswordTreeContentProvider.TreeGroup) target;
 			newGroup = treeGroup.getGroupPath();

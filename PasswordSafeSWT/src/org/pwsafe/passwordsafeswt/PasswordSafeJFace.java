@@ -1103,26 +1103,26 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		if (isTreeViewShowing()) {
 			// todo: save previous state? treeViewer.getExpandedElements()
 
-			final String parent = (String) ((PasswordTreeContentProvider) treeViewer
+			final String parent = ((PasswordTreeContentProvider) treeViewer
 					.getContentProvider()).getParent(entry);
-			final List<TreeItem> allItemsList = new ArrayList();
+			final List<TreeItem> allItemsList = new ArrayList<TreeItem>();
 			allItemsList.addAll(Arrays.asList(tree.getItems()));
 
 			for (final String group : parent.split("\\.")) {
-				for (final TreeItem tmpTI : allItemsList) {
-					// TreeItem.getData can be a String or a TreeGroup
-					if (group.equals(tmpTI.getData().toString())) {
-						tmpTI.setExpanded(true);
+				for (final TreeItem item : allItemsList) {
+					// TreeItem.getData is a TreeGroup
+					if (group.equals(item.getData().toString())) {
+						item.setExpanded(true);
 						treeViewer.refresh();
 						allItemsList.clear();
-						allItemsList.addAll(Arrays.asList(tmpTI.getItems()));
+						allItemsList.addAll(Arrays.asList(item.getItems()));
 						break;
 					}
 				}
 			}
 
-			final StructuredSelection ss = new StructuredSelection(entry);
-			treeViewer.setSelection(ss, true);
+			final StructuredSelection selection = new StructuredSelection(entry);
+			treeViewer.setSelection(selection, true);
 			treeViewer.refresh(false);
 		} else {
 			tableViewer.setSelection(new StructuredSelection(entry), true);

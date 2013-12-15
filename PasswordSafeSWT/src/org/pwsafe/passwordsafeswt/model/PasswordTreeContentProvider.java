@@ -36,13 +36,24 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	public static final class TreeGroup {
 
 		private static final char GROUP_SEPARATOR = '.';
-		String parent;
-		String name;
+		String parent = "";
+		String name = "";
 
-		public TreeGroup(final String groupPath) {
-			final int lastDot = groupPath.lastIndexOf('.') > -1 ? groupPath.lastIndexOf('.') : 0;
-			this.parent = groupPath.substring(0, lastDot);
-			this.name = groupPath.substring(lastDot + 1);
+		public TreeGroup(String groupPath) {
+			if (groupPath == null) {
+				groupPath = "";
+			}
+			if (isTopGroup(groupPath)) {
+				this.name = groupPath;
+			} else {
+				final int lastDot = groupPath.lastIndexOf(GROUP_SEPARATOR);
+				this.parent = groupPath.substring(0, lastDot);
+				this.name = groupPath.substring(lastDot + 1);
+			}
+		}
+
+		private boolean isTopGroup(final String groupPath) {
+			return groupPath.lastIndexOf(GROUP_SEPARATOR) < 0;
 		}
 
 		/**
@@ -58,7 +69,7 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 		}
 
 		public String getGroupPath () {
-			return parent + GROUP_SEPARATOR + name;
+			return parent.length() == 0 ? name : parent + GROUP_SEPARATOR + name;
 		}
 
 		/*
@@ -115,31 +126,25 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	 */
 	public Object[] getChildren(final Object parentElement) {
 		final Set matchingRecs = new LinkedHashSet();
-		String stringParent = null;
-		if (parentElement instanceof String) {
-			stringParent = (String) parentElement;
-		} else if (parentElement instanceof TreeGroup) {
+		if (parentElement instanceof TreeGroup) {
 			final TreeGroup element = (TreeGroup) parentElement;
-			stringParent = element.parent + "." + element.name;
-		}
+			final String parentGroup = element.getGroupPath();
 
-		if (stringParent != null) {
-			// return all record matching this group...
+			// return all entries matching this group...
 			for (final PwsEntryBean theEntry : dataStore.getSparseEntries()) {
-				String recGroup = "";
+				String entryGroup = "";
 				if (!"1".equals(theEntry.getVersion()))
-					recGroup = theEntry.getGroup();
+					entryGroup = theEntry.getGroup();
 
 				// TODO: This looks as if it breaks for V1 files
-				if (stringParent.equalsIgnoreCase(recGroup)) {
+				if (parentGroup.equalsIgnoreCase(entryGroup)) {
 					log.debug("Adding record");
 					matchingRecs.add(theEntry);
-				} else if (recGroup.length() > stringParent.length() && recGroup.contains(".")
-						&& stringParent.regionMatches(true, 0, recGroup, 0, stringParent.length())) {
+				} else if (isChild(parentGroup, entryGroup)) {
 					log.debug("Adding group");
-					final int nextDot = recGroup.indexOf('.', stringParent.length() + 1);
-					final int endOfGroup = nextDot > 0 ? nextDot : recGroup.length();
-					final String subGroup = recGroup.substring(0, endOfGroup);
+					final int nextDot = entryGroup.indexOf('.', parentGroup.length() + 1);
+					final int endOfGroup = nextDot > 0 ? nextDot : entryGroup.length();
+					final String subGroup = entryGroup.substring(0, endOfGroup);
 					matchingRecs.add(new TreeGroup(subGroup));
 				}
 			}
@@ -147,10 +152,16 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 		return matchingRecs.toArray();
 	}
 
+	private boolean isChild(final String stringParent, final String recGroup) {
+		return recGroup.length() > stringParent.length() && recGroup.contains(".")
+				&& recGroup.startsWith(stringParent)
+				&& (recGroup.charAt(stringParent.length()) == '.');
+	}
+
 	/**
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
-	public Object getParent(final Object element) {
+	public String getParent(final Object element) {
 		if (element instanceof PwsEntryBean) {
 			return ((PwsEntryBean) element).getGroup();
 		} else if (element instanceof TreeGroup) {
@@ -164,7 +175,7 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(final Object node) {
-		return node instanceof String || node instanceof TreeGroup; // only
+		return node instanceof TreeGroup; // only
 		// groups
 		// have
 		// children
@@ -191,7 +202,7 @@ public class PasswordTreeContentProvider implements ITreeContentProvider {
 						if (recGroup.indexOf('.') > 0) {
 							recGroup = recGroup.substring(0, recGroup.indexOf('.'));
 						}
-						rootElements.add(recGroup);
+						rootElements.add(new TreeGroup(recGroup));
 					}
 				}
 			}
