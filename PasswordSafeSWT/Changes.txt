@@ -1,10 +1,15 @@
 Changes:
 
+changes in swt 0.8.1 (xx.xx.xxxx)
+- Added Drag and Drop of Passssword Records (Trac Ticket 1)
+- Added a find function (Feature 14)
+- Speed up for password database loading 
+
 changes in swt 0.8 final (24.03.2011)
 - Changed system tray icon preference default to false because of possible problems on Ubuntu Netbook Edition
 - New menu item for opening a safe in opposite read/write mode (Trac Ticket 22)
 - finished Read-only Support (Trac Ticket 22 & 24)
-- Remove not found safes from most recentrly used files list (Trac Ticket 25)
+- Remove not found safes from most recently used files list (Trac Ticket 25)
 
 changes in swt 0.8 beta 5 (21.12.2010)
 - Show expired password entries (Trac Ticket 23)
