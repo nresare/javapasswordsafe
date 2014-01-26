@@ -13,7 +13,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.pwsafe.passwordsafeswt.action.FindRecordAction;
@@ -78,12 +77,13 @@ public class FindRecordDialog extends InputDialog {
 	protected void createButtonsForButtonBar(final Composite parent) {
 		LOG.debug("createButtonsForButtonBar called");
 		// create buttons
-		final Button findButton = createButton(parent, FIND_BUTTON_ID,
-				Messages.getString("FindDialog.Find"), true);
-		// todo: add F3 accelerator for find next and shift+F3 for previous
+		createButton(parent, FIND_BUTTON_ID,
+				Messages.getString("FindDialog.Find"), true); //$NON-NLS-1$
 		createButton(parent, FIND_PREVIOUS_BUTTON_ID,
-				Messages.getString("FindDialog.FindPrevious"), false);
-		createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, false);
+				Messages.getString("FindDialog.FindPrevious"), false); //$NON-NLS-1$
+		// Todo: somehow the default JFace labels don't work... :-(
+		//		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.CANCEL_ID, Messages.getString("FindDialog.CancelButton"), false);
 		getText().setFocus();
 	}
 
