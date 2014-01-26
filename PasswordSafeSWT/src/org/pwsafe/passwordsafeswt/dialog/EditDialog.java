@@ -78,12 +78,12 @@ public class EditDialog extends Dialog implements Observer {
 	protected Shell shell;
 	private final PwsEntryBean entryToEdit;
 
-	public EditDialog(Shell parent, int style, PwsEntryBean entryToEdit) {
+	public EditDialog(final Shell parent, final int style, final PwsEntryBean entryToEdit) {
 		super(parent, style);
 		this.entryToEdit = entryToEdit;
 	}
 
-	public EditDialog(Shell parent, PwsEntryBean entryToEdit) {
+	public EditDialog(final Shell parent, final PwsEntryBean entryToEdit) {
 		this(parent, SWT.NONE, entryToEdit);
 	}
 
@@ -93,7 +93,7 @@ public class EditDialog extends Dialog implements Observer {
 		shell.layout();
 		shell.pack();
 		shell.open();
-		Display display = getParent().getDisplay();
+		final Display display = getParent().getDisplay();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
@@ -115,7 +115,7 @@ public class EditDialog extends Dialog implements Observer {
 	 * 
 	 * @param dirty true if the dialog data needs saving, false otherwise.
 	 */
-	public void setDirty(boolean dirty) {
+	public void setDirty(final boolean dirty) {
 		this.dirty = dirty;
 	}
 
@@ -131,18 +131,18 @@ public class EditDialog extends Dialog implements Observer {
 		shell.setMinimumSize(300, 400);
 
 		// Setup adapter to catch any keypress and mark dialog dirty
-		KeyAdapter dirtyKeypress = new KeyAdapter() {
+		final KeyAdapter dirtyKeypress = new KeyAdapter() {
 			@Override
-			public void keyPressed(KeyEvent e) {
+			public void keyPressed(final KeyEvent e) {
 				setDirty(true);
 			}
 		};
 
 		// use a modify listener as the password field drops letter key events
 		// on Linux
-		ModifyListener entryEdited = new ModifyListener() {
+		final ModifyListener entryEdited = new ModifyListener() {
 
-			public void modifyText(ModifyEvent e) {
+			public void modifyText(final ModifyEvent e) {
 				setDirty(true);
 			}
 
@@ -242,12 +242,12 @@ public class EditDialog extends Dialog implements Observer {
 		if (entryToEdit.getPassword() != null)
 			txtPassword.setText(entryToEdit.getPassword().toString());
 		txtPassword.addModifyListener(entryEdited);// important: add after
-													// setting content
+		// setting content
 
 		final Button btnShowPassword = new Button(compositeFields, SWT.NONE);
 		btnShowPassword.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				if (txtPassword.getEchoChar() != '\0') {
 					txtPassword.setEchoChar('\0');
 					btnShowPassword.setText(Messages.getString("EditDialog.HidePasswordButton")); //$NON-NLS-1$
@@ -351,13 +351,13 @@ public class EditDialog extends Dialog implements Observer {
 						normal = shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 					}
 					try {
-						Date date = convertTextToDate(dateText);
+						final Date date = convertTextToDate(dateText);
 						if (now.after(date)) {
 							widget.setForeground(red);
 						} else {
 							widget.setForeground(normal);
 						}
-					} catch (ParseException e1) { // no prob
+					} catch (final ParseException e1) { // no prob
 					}
 				}
 
@@ -374,8 +374,8 @@ public class EditDialog extends Dialog implements Observer {
 		}
 	}
 
-	private void addDateChooser(Composite compositeFields) {
-		Button open = new Button(compositeFields, SWT.PUSH);
+	private void addDateChooser(final Composite compositeFields) {
+		final Button open = new Button(compositeFields, SWT.PUSH);
 		final FormData fd_dtPasswordExpire = new FormData();
 		fd_dtPasswordExpire.left = new FormAttachment(txtPasswordExpire, 10, SWT.RIGHT);
 		fd_dtPasswordExpire.top = new FormAttachment(txtPasswordExpire, 0, SWT.TOP);
@@ -384,10 +384,10 @@ public class EditDialog extends Dialog implements Observer {
 		open.setText(Messages.getString("EditDialog.Calendar")); //$NON-NLS-1$
 		open.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DateDialog dialog = new DateDialog(shell);
+			public void widgetSelected(final SelectionEvent e) {
+				final DateDialog dialog = new DateDialog(shell);
 				dialog.setDate(entryToEdit.getExpires());
-				Date result = dialog.open();
+				final Date result = dialog.open();
 				if (result != null && !result.equals(entryToEdit.getExpires())) {
 					txtPasswordExpire.setText(format(result));
 					setDirty(true);
@@ -406,7 +406,7 @@ public class EditDialog extends Dialog implements Observer {
 		final Button btnOk = new Button(compositeFields, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				if (isDirty()) {
 					final Date now = new Date();
 					entryToEdit.setLastChange(now);
@@ -419,19 +419,19 @@ public class EditDialog extends Dialog implements Observer {
 						entryToEdit.setLastPwChange(now);
 					}
 					entryToEdit.setNotes(txtNotes.getText());
-					String fieldText = txtPasswordExpire.getText();
+					final String fieldText = txtPasswordExpire.getText();
 					if (fieldText != null && (!fieldText.trim().equals(""))) { //$NON-NLS-1$
 						try {
-							Date expireDate = convertTextToDate(fieldText);
+							final Date expireDate = convertTextToDate(fieldText);
 
 							entryToEdit.setExpires(expireDate);
-						} catch (ParseException e1) {
-							MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES
+						} catch (final ParseException e1) {
+							final MessageBox mb = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES
 									| SWT.NO);
 							mb.setText(Messages.getString("EditDialog.ExpiryNotValidMessage.Title")); //$NON-NLS-1$
 							mb.setMessage(Messages
 									.getString("EditDialog.ExpiryNotValidMessage.Text")); //$NON-NLS-1$
-							int result = mb.open();
+							final int result = mb.open();
 							if (result == SWT.NO) {
 								return;
 							}
@@ -461,7 +461,7 @@ public class EditDialog extends Dialog implements Observer {
 		final Button btnCancel = new Button(compositeFields, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				result = null;
 				shell.dispose();
 			}
@@ -495,8 +495,8 @@ public class EditDialog extends Dialog implements Observer {
 		final Button btnGenerate = new Button(group, SWT.NONE);
 		btnGenerate.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				String generatedPassword = generatePassword();
+			public void widgetSelected(final SelectionEvent e) {
+				final String generatedPassword = generatePassword();
 				txtPassword.setText(generatedPassword);
 			}
 		});
@@ -506,7 +506,7 @@ public class EditDialog extends Dialog implements Observer {
 		final Button chkOverride = new Button(group, SWT.CHECK);
 		chkOverride.setText(Messages.getString("EditDialog.OverridePolicyButton")); //$NON-NLS-1$
 		chkOverride.setEnabled(false); // TODO: Open policy dialog and generate
-										// a password with it on exit
+		// a password with it on exit
 
 		return btnOk;
 	}
@@ -553,17 +553,17 @@ public class EditDialog extends Dialog implements Observer {
 	}
 
 	private String generatePassword() {
-		String BASE_LETTERS = String.valueOf(PassphraseUtils.LOWERCASE_CHARS);
-		String BASE_DIGITS = String.valueOf(PassphraseUtils.DIGIT_CHARS);
-		String BASE_LETTERS_EASY = "abcdefghjkmnpqrstuvwxyz"; //$NON-NLS-1$
-		String BASE_DIGITS_EASY = "23456789"; //$NON-NLS-1$
-		String BASE_SYMBOLS = "!@#$%^&*()"; //$NON-NLS-1$
-		StringBuilder pwSet = new StringBuilder();
+		final String BASE_LETTERS = String.valueOf(PassphraseUtils.LOWERCASE_CHARS);
+		final String BASE_DIGITS = String.valueOf(PassphraseUtils.DIGIT_CHARS);
+		final String BASE_LETTERS_EASY = "abcdefghjkmnpqrstuvwxyz"; //$NON-NLS-1$
+		final String BASE_DIGITS_EASY = "23456789"; //$NON-NLS-1$
+		final String BASE_SYMBOLS = "!@#$%^&*()"; //$NON-NLS-1$
+		final StringBuilder pwSet = new StringBuilder();
 
 		UserPreferences.reload(); // make sure we have a fresh copy
-		UserPreferences preferenceStore = UserPreferences.getInstance();
+		final UserPreferences preferenceStore = UserPreferences.getInstance();
 
-		String passwordLengthStr = preferenceStore
+		final String passwordLengthStr = preferenceStore
 				.getString(JpwPreferenceConstants.DEFAULT_PASSWORD_LENGTH);
 		int passwordLength = 0;
 		if (passwordLengthStr != null && passwordLengthStr.trim().length() > 0) {
@@ -572,13 +572,13 @@ public class EditDialog extends Dialog implements Observer {
 		if (passwordLength <= 0)
 			passwordLength = 8; // let's be sensible about this..
 
-		boolean useLowerCase = preferenceStore
+		final boolean useLowerCase = preferenceStore
 				.getBoolean(JpwPreferenceConstants.USE_LOWERCASE_LETTERS);
-		boolean useUpperCase = preferenceStore
+		final boolean useUpperCase = preferenceStore
 				.getBoolean(JpwPreferenceConstants.USE_UPPERCASE_LETTERS);
-		boolean useDigits = preferenceStore.getBoolean(JpwPreferenceConstants.USE_DIGITS);
-		boolean useSymbols = preferenceStore.getBoolean(JpwPreferenceConstants.USE_SYMBOLS);
-		boolean useEasyToRead = preferenceStore.getBoolean(JpwPreferenceConstants.USE_EASY_TO_READ);
+		final boolean useDigits = preferenceStore.getBoolean(JpwPreferenceConstants.USE_DIGITS);
+		final boolean useSymbols = preferenceStore.getBoolean(JpwPreferenceConstants.USE_SYMBOLS);
+		final boolean useEasyToRead = preferenceStore.getBoolean(JpwPreferenceConstants.USE_EASY_TO_READ);
 
 		if (useLowerCase) {
 			if (useEasyToRead) {
@@ -608,12 +608,12 @@ public class EditDialog extends Dialog implements Observer {
 			pwSet.append(BASE_SYMBOLS);
 		}
 
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		if (pwSet.length() > 0) {
-			SecureRandom rand = new SecureRandom();
+			final SecureRandom rand = new SecureRandom();
 			rand.setSeed(System.currentTimeMillis());
 			for (int i = 0; i < passwordLength; i++) {
-				int randOffset = rand.nextInt(pwSet.length());
+				final int randOffset = rand.nextInt(pwSet.length());
 				sb.append(pwSet.charAt(randOffset));
 			}
 		} else {
@@ -624,22 +624,22 @@ public class EditDialog extends Dialog implements Observer {
 
 	}
 
-	private String format(Date aDate) {
+	private String format(final Date aDate) {
 		if (aDate != null)
 			return DateFormat.getDateInstance().format(aDate);
 		else
 			return ""; //$NON-NLS-1$
 	}
 
-	private Date convertTextToDate(String fieldText) throws ParseException {
+	private Date convertTextToDate(final String fieldText) throws ParseException {
 		Date expireDate = DateFormat.getDateInstance().parse(fieldText);
-		Calendar cal = Calendar.getInstance();
+		final Calendar cal = Calendar.getInstance();
 		cal.setTime(expireDate);
 		int year = cal.get(Calendar.YEAR);
 		if (year < 2000) {
 			if (year < 100)
 				year += 2000; // avoid years like 07 passing as 0007 (Linux /
-								// DE)
+			// DE)
 			else
 				year += 100; // avoid years like 07 passing as 1907 (Win / US)
 			cal.set(Calendar.YEAR, year);
@@ -656,13 +656,12 @@ public class EditDialog extends Dialog implements Observer {
 	 */
 	// todo move this method into a super-class (abstract LockStateObserver) if
 	// we have another similar dialog
-	public void update(Observable o, Object arg) {
+	public void update(final Observable o, final Object arg) {
 		if ((o instanceof LockState) && (arg instanceof Boolean)) {
 			// we expect do be called on the swt event thread, so we simply do:
 			final boolean lockState = (Boolean) arg;
 			shell.setVisible(!lockState);
 			// shell.setActive(); // always??
-			int i = 0;
 		}
 	}
 

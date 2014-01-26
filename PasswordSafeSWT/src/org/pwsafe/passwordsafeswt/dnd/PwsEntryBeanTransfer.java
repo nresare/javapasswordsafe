@@ -70,11 +70,12 @@ public class PwsEntryBeanTransfer extends ByteArrayTransfer {
 			if (! TextTransfer.getInstance().isSupportedType(transferData)) {
 				// FIXME this is a hack - works on Linux x64...
 				// no danger for now as treegroups are disabled on drag side
-				long type = transferData.type;
+				long type =  transferData.type;
 				for (final TransferData data : TextTransfer.getInstance().getSupportedTypes()) {
 					type = data.type;
 				}
-				transferData.type = type;
+				// on 32bit you need int instead of long, to avoid compile errors there use this here
+				transferData.type = (int) type;
 			}
 			TextTransfer.getInstance().javaToNative(object, transferData);
 		}

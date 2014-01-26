@@ -112,12 +112,17 @@ public class FindRecordAction extends Action {
 		// app.getShell().addKeyListener( new FindKeyListener() );
 		// app.getShell().getDisplay().addListener(SWT.KeyDown, (Listener)new
 		// FindKeyListener()); causes class cast ex
-		findDialog = new FindRecordDialog(app.getShell(), Messages.getString("FindAction.Label"),
+		findDialog = new FindRecordDialog(app.getShell(), Messages.getString("FindAction.Dialog.Title"),
 				Messages.getString("FindAction.Message"), searchState.getSearchString(), null);
 		// todo refactor to remove this overly-tight coupling? Comments or
 		// opinions gratefully received.
 		findDialog.setCallingAction(this);
-		findDialog.open();
+		app.getLockStatus().addObserver(findDialog);
+		try {
+			findDialog.open();
+		} finally {
+			app.getLockStatus().deleteObserver(findDialog);
+		}
 	}
 
 	/**
@@ -147,7 +152,7 @@ public class FindRecordAction extends Action {
 
 			if (searchState.getResultCount() > 0) {
 				sortResults(searchState.getResults(), resultsSorter);
-				searchState.setCurrentEntry(searchState.getResults().get(0));
+				searchState.setCurrentEntry(searchState.getResults().getFirst());
 			} else {
 				findDialog.setErrorMessage(Messages.getString("FindAction.NoResults"));
 			}
@@ -158,7 +163,7 @@ public class FindRecordAction extends Action {
 
 			if (searchState.getResultCount() == 1) {
 				findDialog.setErrorMessage(Messages.getString("FindAction.NoMoreResults"));
-			} else if (index == searchState.getResultCount() - 1 && !previous) {
+			} else if (index == (searchState.getResultCount() -1) && !previous) {
 				findDialog.setErrorMessage(Messages.getString("FindAction.BackToBeginning"));
 				index = 0;
 			} else if (index == 0 && previous) {
