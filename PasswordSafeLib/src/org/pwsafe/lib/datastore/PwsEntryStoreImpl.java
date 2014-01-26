@@ -24,9 +24,10 @@ import org.pwsafe.lib.file.PwsFieldTypeV3;
 import org.pwsafe.lib.file.PwsFile;
 import org.pwsafe.lib.file.PwsFileV1;
 import org.pwsafe.lib.file.PwsFileV2;
+import org.pwsafe.lib.file.PwsLoadListener;
 import org.pwsafe.lib.file.PwsRecord;
 
-public class PwsEntryStoreImpl implements PwsEntryStore {
+public class PwsEntryStoreImpl implements PwsEntryStore, PwsLoadListener {
 
 	private final static Log LOGGER = Log.getInstance(PwsEntryStoreImpl.class);
 	private static final EnumSet<PwsFieldTypeV1> DEFAULT_V1_SPARSE_FIELDS = EnumSet.of(
@@ -47,20 +48,41 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 
 	private Set<? extends PwsFieldType> sparseFields;
 
+
 	public PwsEntryStoreImpl(final PwsFile aPwsFile) {
+		this(aPwsFile, false);
+	}
+
+	public PwsEntryStoreImpl(final PwsFile aPwsFile, final boolean isListenerAdded) {
 		super();
 		pwsFile = aPwsFile;
 		setDefaultSparseFields();
-		init();
+		if (sparseEntries == null) {
+			sparseEntries = new ArrayList<PwsEntryBean>();
+		}
+
+		// Backward compatibility - if the store is not loaded via the listener,
+		// fill it here
+		if (! isListenerAdded) {
+			load();
+		}
 	}
 
 	public PwsEntryStoreImpl(final PwsFile aPwsFile, final Set<PwsFieldType> someSparseFields) {
+		this(aPwsFile, someSparseFields, false);
+	}
+
+	public PwsEntryStoreImpl(final PwsFile aPwsFile, final Set<PwsFieldType> someSparseFields, final boolean isListenerAdded) {
 		super();
 		pwsFile = aPwsFile;
 		sparseFields = someSparseFields;
-		init();
-	}
 
+		// Backward compatibility - if the store is not loaded via the listener,
+		// fill it here
+		if (! isListenerAdded) {
+			load();
+		}
+	}
 	private void setDefaultSparseFields() {
 		if (pwsFile instanceof PwsFileV1) {
 			sparseFields = DEFAULT_V1_SPARSE_FIELDS.clone();
@@ -71,7 +93,7 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 		}
 	}
 
-	private void init() {
+	private void load() {
 
 		if (sparseEntries == null) {
 			sparseEntries = new ArrayList<PwsEntryBean>();
@@ -86,14 +108,17 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 			return;
 		}
 		final Iterator<? extends PwsRecord> it = pwsFile.getRecords();
-		for (int i = 0; it.hasNext(); i++) {
+		while(it.hasNext()) {
 			final PwsRecord r = it.next();
 			// TODO: more effective: only fill sparse fields
-
-			final PwsEntryBean theBean = sparsify(PwsEntryBean.fromPwsRecord(r, sparseFields));
-			theBean.setStoreIndex(i);
-			sparseEntries.add(theBean);
+			addRecord(r);
 		}
+	}
+
+	private void addRecord(final PwsRecord r) {
+		final PwsEntryBean theBean = sparsify(PwsEntryBean.fromPwsRecord(r, sparseFields));
+		theBean.setStoreIndex(sparseEntries.size());
+		sparseEntries.add(theBean);
 	}
 
 	/*
@@ -114,11 +139,11 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 		pwsFile.add(theRecord);
 
 		theRecord = pwsFile.getRecord(pwsFile.getRecordCount() - 1); // TODO can
-																		// this
-																		// be
-																		// made
-																		// more
-																		// robust?
+		// this
+		// be
+		// made
+		// more
+		// robust?
 
 		anEntry = sparsify(PwsEntryBean.fromPwsRecord(theRecord, sparseFields));
 		anEntry.setStoreIndex(pwsFile.getRecordCount() - 1);
@@ -250,6 +275,11 @@ public class PwsEntryStoreImpl implements PwsEntryStore {
 
 		refresh();
 		return result;
+	}
+
+
+	public void loaded(final PwsRecord aRecord) {
+		addRecord(aRecord);
 	}
 
 }

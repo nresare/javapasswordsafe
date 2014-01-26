@@ -58,7 +58,7 @@ public class PwsFileFactory {
 	 * @throws IOException If an error occurs whilst reading from the file.
 	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
-	private static final void checkPassword(String filename, String passphrase)
+	private static final void checkPassword(final String filename, final String passphrase)
 			throws InvalidPassphraseException, FileNotFoundException, IOException,
 			NoSuchAlgorithmException {
 		LOG.enterMethod("PwsFileFactory.checkPassword");
@@ -135,7 +135,7 @@ public class PwsFileFactory {
 	 * 
 	 * @return the generated checksum.
 	 */
-	static final byte[] genRandHash(String passphrase, byte[] stuff) {
+	static final byte[] genRandHash(final String passphrase, final byte[] stuff) {
 		LOG.enterMethod("PwsFileFactory.genRandHash");
 
 		SHA1 md;
@@ -195,7 +195,7 @@ public class PwsFileFactory {
 	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
 	@Deprecated
-	public static final PwsFile loadFile(String filename, String passphrase)
+	public static final PwsFile loadFile(final String filename, final String passphrase)
 			throws EndOfFileException, FileNotFoundException, InvalidPassphraseException,
 			IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
 		return loadFile(filename, new StringBuilder(passphrase));
@@ -217,7 +217,7 @@ public class PwsFileFactory {
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
 	 */
-	public static final PwsFile loadFile(String filename, StringBuilder aPassphrase)
+	public static final PwsFile loadFile(final String filename, final StringBuilder aPassphrase)
 			throws EndOfFileException, FileNotFoundException, InvalidPassphraseException,
 			IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
 		LOG.enterMethod("PwsFileFactory.loadFile");
@@ -227,9 +227,9 @@ public class PwsFileFactory {
 		// TODO change to StringBuilder Constructors
 		final String passphrase = aPassphrase.toString();
 		if (filename.endsWith(PwsS3Storage.FILE_EXTENSION)) {
+			LOG.debug1("This is a S3 Storage backed V3 format file.");
 			file = new PwsFileV3(new PwsS3Storage(filename, null, passphrase), passphrase);
-			file.readAll();
-			file.close();
+			readRecords(file);
 			return file;
 		}
 
@@ -241,8 +241,7 @@ public class PwsFileFactory {
 		if (Util.bytesAreEqual("PWS3".getBytes(), first4Bytes)) {
 			LOG.debug1("This is a V3 format file.");
 			file = new PwsFileV3(new PwsFileStorage(filename), passphrase);
-			file.readAll();
-			file.close();
+			readRecords(file);
 			return file;
 		}
 
@@ -271,8 +270,7 @@ public class PwsFileFactory {
 			LOG.debug1("This is a V1 format file.");
 			file = new PwsFileV1(new PwsFileStorage(filename), passphrase);
 		}
-		file.readAll();
-		file.close();
+		readRecords(file);
 
 		LOG.debug1("File contains " + file.getRecordCount() + " records.");
 		LOG.leaveMethod("PwsFileFactory.loadFile");
@@ -282,7 +280,7 @@ public class PwsFileFactory {
 	/**
 	 * Creates a new, empty PasswordSafe database in memory. The database will
 	 * always be the latest version supported by this library which for this
-	 * release is version 2.
+	 * release is version 3.
 	 * 
 	 * @return A new empty PasswordSafe database.
 	 */
@@ -290,11 +288,131 @@ public class PwsFileFactory {
 		return new PwsFileV3();
 	}
 
-	public static PwsEntryStore getStore(PwsFile aFile) {
+	/**
+	 * Creates a new, empty PasswordSafe database in memory. The database will
+	 * always be the latest version supported by this library which for this
+	 * release is version 3.
+	 * 
+	 * @return A new empty PasswordSafe database.
+	 */
+	public static final PwsEntryStore newStore() {
+		return new PwsEntryStoreImpl(new PwsFileV3());
+	}
+
+	/**
+	 * Loads a Password Safe file and returns it wrapped by an entry store.
+	 * It creates the appropriate subclass of {@link PwsFile}.
+	 * 
+	 * @param filename the name of the file to open
+	 * @param passphrase the passphrase for the file
+	 * 
+	 * @return PwsEntryStore loaded with the entries from the wrapped PWsFile.
+	 * 
+	 * @throws EndOfFileException
+	 * @throws FileNotFoundException
+	 * @throws InvalidPassphraseException
+	 * @throws IOException
+	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
+	 */
+	public static final PwsEntryStore loadStore(final String filename, final StringBuilder aPassphrase)
+			throws EndOfFileException, FileNotFoundException, InvalidPassphraseException,
+			IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
+		final PwsEntryStore entryStore;
+		PwsFile file;
+
+		// TODO change to StringBuilder Constructors
+		final String passphrase = aPassphrase.toString();
+		if (filename.endsWith(PwsS3Storage.FILE_EXTENSION)) {
+			LOG.debug1("This is a S3 Storage backed V3 format file.");
+			file = new PwsFileV3(new PwsS3Storage(filename, null, passphrase), passphrase);
+			entryStore = readRecords(file);
+			return entryStore;
+		}
+
+		// First check for a v3 file...
+		final FileInputStream fis = new FileInputStream(filename);
+		final byte[] first4Bytes = new byte[4];
+		fis.read(first4Bytes);
+		fis.close();
+		if (Util.bytesAreEqual("PWS3".getBytes(), first4Bytes)) {
+			LOG.debug1("This is a V3 format file.");
+			file = new PwsFileV3(new PwsFileStorage(filename), passphrase);
+			entryStore = readRecords(file);
+			return entryStore;
+		}
+
+		PwsRecordV1 rec;
+
+		checkPassword(filename, passphrase);
+
+		file = new PwsFileV1(new PwsFileStorage(filename), passphrase);
+		try {
+			rec = (PwsRecordV1) file.readRecord();
+		} catch (final PasswordSafeException e) {
+			throw new IllegalStateException(e);
+		}
+
+		file.close();
+
+		// TODO what can we do about this?
+		// it will probably be fooled if someone is daft enough to create a V1
+		// file with the
+		// title of the first record set to the value of PwsFileV2.ID_STRING!
+
+		if (rec.getField(PwsRecordV1.TITLE).equals(PwsFileV2.ID_STRING)) {
+			LOG.debug1("This is a V2 format file.");
+			file = new PwsFileV2(new PwsFileStorage(filename), passphrase);
+		} else {
+			LOG.debug1("This is a V1 format file.");
+			file = new PwsFileV1(new PwsFileStorage(filename), passphrase);
+		}
+		entryStore = readRecords(file);
+
+		LOG.debug1("File contains " + file.getRecordCount() + " records.");
+		LOG.leaveMethod("PwsFileFactory.loadStore");
+
+		return entryStore;
+	}
+
+	private static PwsEntryStore readRecords(final PwsFile aFile) throws IOException,
+	UnsupportedFileVersionException {
+		final PwsEntryStoreImpl entryStore = new PwsEntryStoreImpl(aFile, false);
+		aFile.addLoadListener(entryStore);
+		aFile.readAll();
+		aFile.close();
+		return entryStore;
+	}
+
+	/**
+	 * Loads a Password Safe file and returns it wrapped by an entry store.
+	 * It creates the appropriate subclass of {@link PwsFile}.
+	 * 
+	 * @param filename the name of the file to open
+	 * @param passphrase the passphrase for the file
+	 * @param Set of fields to fill in the sparse entries.
+	 * 
+	 * @return PwsEntryStore loaded with the entries from the wrapped PWsFile.
+	 * 
+	 * @throws EndOfFileException
+	 * @throws FileNotFoundException
+	 * @throws InvalidPassphraseException
+	 * @throws IOException
+	 * @throws UnsupportedFileVersionException
+	 * @throws NoSuchAlgorithmException If no SHA-1 implementation is found.
+	 */
+	public static final PwsEntryStore loadStore(final String filename, final StringBuilder aPassphrase,
+			final Set<PwsFieldType> sparseFields) throws EndOfFileException, FileNotFoundException, InvalidPassphraseException,
+			IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
+		return null;
+
+	}
+
+	public static PwsEntryStore getStore(final PwsFile aFile) {
 		return new PwsEntryStoreImpl(aFile);
 	}
 
-	public static PwsEntryStore getStore(PwsFile aFile, Set<PwsFieldType> sparseFields) {
+	public static PwsEntryStore getStore(final PwsFile aFile, final Set<PwsFieldType> sparseFields) {
 		return new PwsEntryStoreImpl(aFile, sparseFields);
 
 	}

@@ -17,7 +17,7 @@ public class AllDataStoreTests {
 		final TestSuite suite = new TestSuite("Tests for org.pwsafe.lib.datastore");
 		// $JUnit-BEGIN$
 		suite.addTestSuite(TestSparseRecords.class);
-		suite.addTestSuite(PwsDataStoreTest.class);
+		suite.addTestSuite(PwsEntryStoreTest.class);
 		// $JUnit-END$
 		return suite;
 	}

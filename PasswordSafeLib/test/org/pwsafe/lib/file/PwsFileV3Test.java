@@ -53,7 +53,7 @@ public class PwsFileV3Test extends TestCase {
 		deletePwsFile(filename);
 	}
 
-	private static void deletePwsFile(String filename) {
+	private static void deletePwsFile(final String filename) {
 		final File file = new File(filename);
 		if (file.exists()) {
 			assertTrue("Couldn't delete testfile", file.delete());
@@ -61,7 +61,7 @@ public class PwsFileV3Test extends TestCase {
 	}
 
 	public void testPassphrase() throws EndOfFileException, IOException,
-			UnsupportedFileVersionException, NoSuchAlgorithmException {
+	UnsupportedFileVersionException, NoSuchAlgorithmException {
 		final String myPassphrase = "new Passphrase";
 
 		assertEquals(0, pwsFile.getRecordCount());
@@ -176,8 +176,9 @@ public class PwsFileV3Test extends TestCase {
 		final PwsFileStorage storage2 = new PwsFileStorage(filename);
 		final PwsFileV3 file2 = new PwsFileV3(storage2, passphrase.toString());
 		file2.readAll();
-		System.out.println("Read records: " + file2.getRecordCount());
+		assertEquals(1000,file2.getRecordCount());
 	}
+
 
 	/**
 	 * Checks if a record with a new passphrase policy field (#16) can be

@@ -105,8 +105,8 @@ public final class PwsFileV3 extends PwsFile {
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException
 	 */
-	public PwsFileV3(PwsStorage storage, String aPassphrase) throws EndOfFileException,
-			IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
+	public PwsFileV3(final PwsStorage storage, final String aPassphrase) throws EndOfFileException,
+	IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
 		super(storage, aPassphrase);
 	}
 
@@ -130,8 +130,8 @@ public final class PwsFileV3 extends PwsFile {
 	}
 
 	@Override
-	protected void open(String aPassphrase) throws EndOfFileException, IOException,
-			UnsupportedFileVersionException {
+	protected void open(final String aPassphrase) throws EndOfFileException, IOException,
+	UnsupportedFileVersionException {
 		LOG.enterMethod("PwsFileV3.init");
 
 		setPassphrase(new StringBuilder(aPassphrase));
@@ -264,7 +264,7 @@ public final class PwsFileV3 extends PwsFile {
 
 	/**
 	 * Allocates a new, empty record unowned by any file. The record type is
-	 * {@link PwsRecordV2}.
+	 * {@link PwsRecordV3}.
 	 * 
 	 * @return A new empty record
 	 * 
@@ -276,7 +276,7 @@ public final class PwsFileV3 extends PwsFile {
 	}
 
 	/**
-	 * Reads the extra header present in version 2 files.
+	 * Reads the extra header present in version 3 files.
 	 * 
 	 * @param file the file to read the header from.
 	 * 
@@ -286,21 +286,21 @@ public final class PwsFileV3 extends PwsFile {
 	 *         header.
 	 */
 	@Override
-	protected void readExtraHeader(PwsFile file) throws EndOfFileException, IOException,
-			UnsupportedFileVersionException {
+	protected void readExtraHeader(final PwsFile file) throws EndOfFileException, IOException,
+	UnsupportedFileVersionException {
 		// headerRecord = (PwsRecordV3) readRecord();
 		headerRecord = new PwsRecordV3(this, true);
 	}
 
 	/**
-	 * Writes the extra version 2 header.
+	 * Writes the extra version 3 header.
 	 * 
 	 * @param file the file to write the header to.
 	 * 
 	 * @throws IOException if an error occurs whilst writing the header.
 	 */
 	@Override
-	protected void writeExtraHeader(PwsFile file) throws IOException {
+	protected void writeExtraHeader(final PwsFile file) throws IOException {
 		headerRecord.saveRecord(this);
 	}
 
@@ -317,7 +317,7 @@ public final class PwsFileV3 extends PwsFile {
 	 *         integral multiple of <code>BLOCK_LENGTH</code>.
 	 */
 	@Override
-	public void readDecryptedBytes(byte[] buff) throws EndOfFileException, IOException {
+	public void readDecryptedBytes(final byte[] buff) throws EndOfFileException, IOException {
 		if ((buff.length == 0) || ((buff.length % getBlockSize()) != 0)) {
 			throw new IllegalArgumentException(I18nHelper.getInstance().formatMessage("E00001"));
 		}
@@ -345,7 +345,7 @@ public final class PwsFileV3 extends PwsFile {
 	 * @throws IOException
 	 */
 	@Override
-	public void writeEncryptedBytes(byte[] buff) throws IOException {
+	public void writeEncryptedBytes(final byte[] buff) throws IOException {
 		if ((buff.length == 0) || ((buff.length % getBlockSize()) != 0)) {
 			throw new IllegalArgumentException(I18nHelper.getInstance().formatMessage("E00001"));
 		}
@@ -388,7 +388,7 @@ public final class PwsFileV3 extends PwsFile {
 	/**
 	 * @param headerV3 the headerV3 to set
 	 */
-	private void setHeaderV3(PwsFileHeaderV3 headerV3) {
+	private void setHeaderV3(final PwsFileHeaderV3 headerV3) {
 		try {
 			sealedHeaderV3 = new SealedObject(headerV3, getCipher(true));
 		} catch (final IllegalBlockSizeException e) {

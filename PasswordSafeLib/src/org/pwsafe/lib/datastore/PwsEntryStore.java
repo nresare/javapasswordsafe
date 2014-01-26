@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.file.PwsFieldType;
+import org.pwsafe.lib.file.PwsFile;
 
 /**
  * Provides a CRUD style access to PwsBeans.
@@ -36,4 +37,10 @@ public interface PwsEntryStore {
 	boolean removeEntry(final PwsEntryBean anEntry);
 
 	void clear();
+
+	/**
+	 * 
+	 * @return the PwwFile associated with the store-
+	 */
+	PwsFile getPwsFile();
 }

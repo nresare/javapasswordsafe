@@ -9,12 +9,14 @@
 package org.pwsafe.lib.datastore;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import junit.framework.TestCase;
 
 import org.pwsafe.lib.file.PwsFieldTypeV3;
 import org.pwsafe.lib.file.PwsFileFactory;
+import org.pwsafe.lib.file.PwsFileStorage;
 import org.pwsafe.lib.file.PwsFileV1;
 import org.pwsafe.lib.file.PwsFileV2;
 import org.pwsafe.lib.file.PwsFileV3;
@@ -22,7 +24,7 @@ import org.pwsafe.lib.file.PwsRecordV1;
 import org.pwsafe.lib.file.PwsRecordV2;
 import org.pwsafe.lib.file.PwsRecordV3;
 
-public class PwsDataStoreTest extends TestCase {
+public class PwsEntryStoreTest extends TestCase {
 
 	private String filename;
 	private StringBuilder password;
@@ -31,11 +33,12 @@ public class PwsDataStoreTest extends TestCase {
 	private PwsEntryStoreImpl entryStore;
 
 	@Override
-	public void setUp() {
-		filename = System.getProperty("user.dir") + File.separator + "sample3.psafe3";
+	public void setUp() throws IOException {
+		filename = File.createTempFile("sample3", "psafe3").getAbsolutePath();
 		password = new StringBuilder("Pa$$word");
 
 		pwsFile = (PwsFileV3) PwsFileFactory.newFile();
+		pwsFile.setStorage(new PwsFileStorage(filename));
 		pwsFile.setPassphrase(password);
 
 		entryStore = new PwsEntryStoreImpl(pwsFile);
@@ -46,7 +49,7 @@ public class PwsDataStoreTest extends TestCase {
 		deletePwsFile(filename);
 	}
 
-	private static void deletePwsFile(String filename) {
+	private static void deletePwsFile(final String filename) {
 		final File file = new File(filename);
 		file.delete();
 	}

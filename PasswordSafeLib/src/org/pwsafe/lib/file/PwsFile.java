@@ -135,6 +135,8 @@ public abstract class PwsFile {
 	private InMemoryKey memoryKey;
 	private byte[] memoryIv;
 
+	private final List<PwsLoadListener> loadListeners = new ArrayList<PwsLoadListener>();
+
 	/**
 	 * Constructs and initialises a new, empty PasswordSafe database in memory.
 	 */
@@ -153,8 +155,8 @@ public abstract class PwsFile {
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	protected PwsFile(PwsStorage aStorage, String aPassphrase) throws EndOfFileException,
-			IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
+	protected PwsFile(final PwsStorage aStorage, final String aPassphrase) throws EndOfFileException,
+	IOException, UnsupportedFileVersionException, NoSuchAlgorithmException {
 		LOG.enterMethod("PwsFile.PwsFile( String )");
 		storage = aStorage;
 		open(aPassphrase);
@@ -181,6 +183,7 @@ public abstract class PwsFile {
 		// recordSet.add( rec );
 		setModified();
 
+
 		LOG.leaveMethod("PwsFile.add");
 	}
 
@@ -205,7 +208,7 @@ public abstract class PwsFile {
 	 * 
 	 * @return A byte array of the correct length.
 	 */
-	static final byte[] allocateBuffer(int length) {
+	static final byte[] allocateBuffer(final int length) {
 		LOG.enterMethod("PwsFile.allocateBuffer");
 
 		int bLen;
@@ -229,7 +232,7 @@ public abstract class PwsFile {
 	 * 
 	 * @throws IllegalArgumentException if length &lt; zero.
 	 */
-	static final int calcBlockLength(int length) {
+	static final int calcBlockLength(final int length) {
 		LOG.enterMethod("PwsFile.calcBlockLength");
 
 		int result;
@@ -280,7 +283,7 @@ public abstract class PwsFile {
 		}
 	}
 
-	protected Cipher getCipher(boolean forWriting) {
+	protected Cipher getCipher(final boolean forWriting) {
 		if (memoryIv == null) {
 			memoryIv = new byte[8];
 			Util.newRandBytes(memoryIv);
@@ -334,7 +337,7 @@ public abstract class PwsFile {
 	 * 
 	 * @param storage An implementation of the PwsStorage interface.
 	 */
-	public void setStorage(PwsStorage storage) {
+	public void setStorage(final PwsStorage storage) {
 		this.storage = storage;
 	}
 
@@ -394,7 +397,7 @@ public abstract class PwsFile {
 	 * 
 	 * @return the PwsRecord at that index
 	 */
-	public PwsRecord getRecord(int index) {
+	public PwsRecord getRecord(final int index) {
 		getCipher(true);
 		SealedObject sealedRecord;
 		try {
@@ -436,7 +439,7 @@ public abstract class PwsFile {
 	 * @param index
 	 * @param aRecord
 	 */
-	public void set(int index, PwsRecord aRecord) {
+	public void set(final int index, final PwsRecord aRecord) {
 		// TODO validate here as well
 		final Cipher cipher = getCipher(true);
 		SealedObject sealedRecord;
@@ -462,8 +465,8 @@ public abstract class PwsFile {
 	 * @throws UnsupportedFileVersionException
 	 * @throws NoSuchAlgorithmException if no SHA-1 implementation is found.
 	 */
-	protected abstract void open(String aPassphrase) throws EndOfFileException, IOException,
-			UnsupportedFileVersionException, NoSuchAlgorithmException;
+	protected abstract void open(final String aPassphrase) throws EndOfFileException, IOException,
+	UnsupportedFileVersionException, NoSuchAlgorithmException;
 
 	/**
 	 * Reads all records from the file.
@@ -480,6 +483,9 @@ public abstract class PwsFile {
 
 				if (rec.isValid()) {
 					this.add(rec, c);
+				}
+				for (final PwsLoadListener loadListener : loadListeners) {
+					loadListener.loaded(rec);
 				}
 			}
 		} catch (final EndOfFileException e) {
@@ -514,7 +520,7 @@ public abstract class PwsFile {
 	 * @throws EndOfFileException If end of file occurs whilst reading the data.
 	 * @throws IOException If an error occurs whilst reading the file.
 	 */
-	public void readBytes(byte[] bytes) throws IOException, EndOfFileException {
+	public void readBytes(final byte[] bytes) throws IOException, EndOfFileException {
 		int count;
 
 		count = inStream.read(bytes);
@@ -542,7 +548,7 @@ public abstract class PwsFile {
 	 * @throws IllegalArgumentException If <code>buff.length</code> is not an
 	 *         integral multiple of <code>BLOCK_LENGTH</code>.
 	 */
-	public abstract void readDecryptedBytes(byte[] buff) throws EndOfFileException, IOException;
+	public abstract void readDecryptedBytes(final byte[] buff) throws EndOfFileException, IOException;
 
 	/**
 	 * Reads any additional header from the file. Subclasses should override
@@ -555,8 +561,8 @@ public abstract class PwsFile {
 	 * @throws UnsupportedFileVersionException If the file's version is
 	 *         unsupported.
 	 */
-	protected void readExtraHeader(PwsFile file) throws EndOfFileException, IOException,
-			UnsupportedFileVersionException {
+	protected void readExtraHeader(final PwsFile file) throws EndOfFileException, IOException,
+	UnsupportedFileVersionException {
 	}
 
 	/**
@@ -571,7 +577,7 @@ public abstract class PwsFile {
 	 *         cannot be handled.
 	 */
 	protected PwsRecord readRecord() throws EndOfFileException, IOException,
-			UnsupportedFileVersionException, PasswordSafeException {
+	UnsupportedFileVersionException, PasswordSafeException {
 		final PwsRecord rec = PwsRecord.read(this);
 
 		if (rec.isValid()) {
@@ -586,7 +592,7 @@ public abstract class PwsFile {
 	 * @param index
 	 * @return true if a record was removed
 	 */
-	public boolean removeRecord(int index) {
+	public boolean removeRecord(final int index) {
 		final boolean success = sealedRecords.remove(index) != null;
 		if (success) {
 			setModified();
@@ -604,7 +610,7 @@ public abstract class PwsFile {
 	 *         independently changed
 	 */
 	public abstract void save() throws IOException, NoSuchAlgorithmException,
-			ConcurrentModificationException;
+	ConcurrentModificationException;
 
 	/**
 	 * Set the flag to indicate that the file has been modified. There should
@@ -623,18 +629,18 @@ public abstract class PwsFile {
 	 * @param pass
 	 */
 	@Deprecated
-	public void setPassphrase(String pass) {
+	public void setPassphrase(final String pass) {
 		this.setPassphrase(new StringBuilder(pass));
 
 	}
 
 	/**
 	 * Sets the passphrase that will be used to encrypt the file when it is
-	 * saved.
+	 * saved. The passphrase will be cleared.
 	 * 
 	 * @param pass
 	 */
-	public void setPassphrase(StringBuilder pass) {
+	public void setPassphrase(final StringBuilder pass) {
 		// TODO: convert to byte[] first
 		try {
 			passphrase = new SealedObject(pass, getCipher(true));
@@ -654,7 +660,7 @@ public abstract class PwsFile {
 	 * 
 	 * @throws IOException
 	 */
-	public void writeBytes(byte[] buffer) throws IOException {
+	public void writeBytes(final byte[] buffer) throws IOException {
 		outStream.write(buffer);
 		LOG.debug1("Wrote " + buffer.length + " bytes");
 	}
@@ -666,7 +672,7 @@ public abstract class PwsFile {
 	 * 
 	 * @throws IOException
 	 */
-	public abstract void writeEncryptedBytes(byte[] buff) throws IOException;
+	public abstract void writeEncryptedBytes(final byte[] buff) throws IOException;
 
 	/**
 	 * Writes any additional header. This default implementation does nothing.
@@ -676,7 +682,7 @@ public abstract class PwsFile {
 	 * 
 	 * @throws IOException
 	 */
-	protected void writeExtraHeader(PwsFile file) throws IOException {
+	protected void writeExtraHeader(final PwsFile file) throws IOException {
 	}
 
 	/**
@@ -700,7 +706,7 @@ public abstract class PwsFile {
 	 * 
 	 * @param readOnly the readOnly to set
 	 */
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(final boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 
@@ -725,7 +731,7 @@ public abstract class PwsFile {
 		 * @param file the file this iterator is linked to.
 		 * @param iter the <code>Iterator</code> over the records.
 		 */
-		public FileIterator(PwsFile file, Iterator<SealedObject> iter) {
+		public FileIterator(final PwsFile file, final Iterator<SealedObject> iter) {
 			LOG.enterMethod("PwsFile$FileIterator");
 
 			this.file = file;
@@ -797,4 +803,13 @@ public abstract class PwsFile {
 		}
 	}
 
+	public void addLoadListener(final PwsLoadListener aLoadListener) {
+		if (aLoadListener != null) {
+			loadListeners.add(aLoadListener);
+		}
+	}
+
+	public void removeLoadListener(final PwsLoadListener aLoadListener) {
+		loadListeners.remove(aLoadListener);
+	}
 }

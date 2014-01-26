@@ -573,9 +573,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		getShell().setText(
 				PasswordSafeJFace.APP_NAME
 				+ Messages.getString("PasswordSafeJFace.AppTitle.Default")); //$NON-NLS-1$
-		final PwsFile newFile = PwsFileFactory.newFile();
-		newFile.setPassphrase(password);
-		this.setPwsFile(newFile);
+		final PwsEntryStore newEntryStore = PwsFileFactory.newStore();
+		newEntryStore.getPwsFile().setPassphrase(password);
+		this.setPwsEntryStore(newEntryStore);
 		this.setReadOnly(false);
 	}
 
@@ -603,9 +603,9 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	public void openFile(final String fileName, final StringBuilder password,
 			final boolean forReadOnly) throws Exception {
 
-		final PwsFile file = PwsFileFactory.loadFile(fileName, password);
+		final PwsEntryStore file = PwsFileFactory.loadStore(fileName, password);
 		getShell().setText(PasswordSafeJFace.APP_NAME + " - " + fileName); //$NON-NLS-1$
-		setPwsFile(file);
+		setPwsEntryStore(file);
 		setReadOnly(forReadOnly);
 		if (true) // TODO (!openedFromMRU)
 			UserPreferences.getInstance().setMostRecentFilename(fileName);
@@ -882,12 +882,22 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	}
 
 	/**
-	 * Sets the currently load pwsafe file.
+	 * Sets the currently loaded pws entry store.
 	 * 
-	 * @param pwsFile The pwsFile to set.
+	 * @param pwsEntryStore The pwsEntryStore to set.
 	 */
-	public void setPwsFile(final PwsFile pwsFile) {
-		this.pwsFile = pwsFile;
+	private void setPwsEntryStore(final PwsEntryStore pwsEntryStore) {
+		this.dataStore = pwsEntryStore;
+		pwsFile = pwsEntryStore.getPwsFile();
+		updateViewers();
+	}
+
+	/**
+	 * Clears the currently loaded store.
+	 * 
+	 */
+	public void clearPwsStore() {
+		this.pwsFile = null;
 		this.dataStore = PwsFileFactory.getStore(pwsFile);
 		updateViewers();
 	}

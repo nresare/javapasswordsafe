@@ -49,7 +49,7 @@ public class LockDbAction extends Action implements Runnable {
 				// period that so that it won't
 				PasswordSafeJFace.getApp().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						PasswordSafeJFace app = PasswordSafeJFace.getApp();
+						final PasswordSafeJFace app = PasswordSafeJFace.getApp();
 						if (!app.getShell().getMinimized()) {
 							PasswordSafeJFace.getApp().getShell().setMinimized(true);
 						}
@@ -64,12 +64,12 @@ public class LockDbAction extends Action implements Runnable {
 	}
 
 	public void performLock() {
-		PasswordSafeJFace app = PasswordSafeJFace.getApp();
+		final PasswordSafeJFace app = PasswordSafeJFace.getApp();
 		if (app.getPwsFile() != null) {
 			log.info(Messages.getString("LockDbAction.Log.Locking")); //$NON-NLS-1$
 			app.getPwsFile().dispose();
 			app.clearView();
-			app.setPwsFile(null);
+			app.clearPwsStore();
 			app.setLocked(true);
 		}
 	}
