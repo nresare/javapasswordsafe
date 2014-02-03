@@ -11,7 +11,13 @@ import java.util.Comparator;
 
 import org.pwsafe.lib.datastore.PwsEntryBean;
 
-public class EqualsIgnoreCaseComparator implements Comparator {
+/**
+ * Compares two PwsEntryBeans by title only.
+ * Works well for table.
+ * 
+ * @author roxon
+ */
+public class PwsEntryBeanTitleComparator implements Comparator<PwsEntryBean> {
 
 	/**
 	 * Compares its two arguments for order. Returns a negative integer, zero,
@@ -54,21 +60,17 @@ public class EqualsIgnoreCaseComparator implements Comparator {
 	 * @throws ClassCastException if the arguments' types prevent them from
 	 *         being compared by this comparator.
 	 */
-	public int compare(final Object o1, final Object o2) {
-		int returnValue;
-		if (o1 instanceof PwsEntryBean && o2 instanceof PwsEntryBean) {
-			returnValue = ((PwsEntryBean) o1).getTitle()
-					.compareTo((((PwsEntryBean) o2).getTitle()));
-			if (returnValue == 0) {
-				// They're in the same directory
-				returnValue = ((PwsEntryBean) o1).getGroup().compareTo(
-						(((PwsEntryBean) o2).getGroup()));
-			}
+	public int compare(final PwsEntryBean o1, final PwsEntryBean o2) {
+		return nullSafeCompare(o1.getTitle(), o2.getTitle());
+	}
+
+	private int nullSafeCompare (final String one, final String two) {
+		if (one != null) {
+			return one.compareTo(two);
 		} else {
-			throw new ClassCastException(
-					"invalid types for comparison by EqualsIgnoreCaseComparator");
+			return two == null ? 0 : -1;
 		}
-		return returnValue;
+
 	}
 
 }

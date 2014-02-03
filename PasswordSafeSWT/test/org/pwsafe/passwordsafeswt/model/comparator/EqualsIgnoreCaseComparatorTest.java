@@ -13,43 +13,43 @@ import org.pwsafe.lib.datastore.PwsEntryBean;
  */
 public class EqualsIgnoreCaseComparatorTest extends TestCase {
 
-    private EqualsIgnoreCaseComparator comparator;
+	private PwsEntryBeanGroupTitleComparator comparator;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        comparator = new EqualsIgnoreCaseComparator();
-    }
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		comparator = new PwsEntryBeanGroupTitleComparator();
+	}
 
-    public void testCompareEqual() {
-        PwsEntryBean o1 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
-        o1.setTitle( "aaaa" );
-        PwsEntryBean o2 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
-        o2.setTitle( "aaaa" );
+	public void testCompareEqual() {
+		final PwsEntryBean o1 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
+		o1.setTitle( "aaaa" );
+		final PwsEntryBean o2 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
+		o2.setTitle( "aaaa" );
 
-        assertEquals( 0, comparator.compare( o1, o2 ) );
-        assertEquals( 0, comparator.compare( o2, o1 ) );
-    }
+		assertEquals( 0, comparator.compare( o1, o2 ) );
+		assertEquals( 0, comparator.compare( o2, o1 ) );
+	}
 
 
-    public void testCompareDifferentGroup() {
-        PwsEntryBean o1 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
-        o1.setTitle( "aaaa" );
-        PwsEntryBean o2 = new PwsEntryBean("abcd.def", "username", new StringBuilder("password"), "notes" );
-        o2.setTitle( "aaaa" );
-        // todo check this is the right way around
-        assertTrue( comparator.compare( o1, o2 ) < 0 );
-        assertTrue( comparator.compare( o2, o1 ) > 0 );
-    }
+	public void testCompareDifferentGroup() {
+		final PwsEntryBean o1 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
+		o1.setTitle( "aaaa" );
+		final PwsEntryBean o2 = new PwsEntryBean("abcd.def", "username", new StringBuilder("password"), "notes" );
+		o2.setTitle( "aaaa" );
+		// todo check this is the right way around
+		assertTrue( comparator.compare( o1, o2 ) < 0 );
+		assertTrue( comparator.compare( o2, o1 ) > 0 );
+	}
 
-    public void testCompareDifferentTitle() {
-        PwsEntryBean o1 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
-        o1.setTitle( "aaaa" );
-        PwsEntryBean o2 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
-        o2.setTitle( "bbbb" );
-        assertTrue( comparator.compare( o1, o2 ) < 0 );
-        assertTrue( comparator.compare( o2, o1 ) > 0 );
-    }
+	public void testCompareDifferentTitle() {
+		final PwsEntryBean o1 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
+		o1.setTitle( "aaaa" );
+		final PwsEntryBean o2 = new PwsEntryBean("abcd", "username", new StringBuilder("password"), "notes" );
+		o2.setTitle( "bbbb" );
+		assertTrue( comparator.compare( o1, o2 ) < 0 );
+		assertTrue( comparator.compare( o2, o1 ) > 0 );
+	}
 
 
 

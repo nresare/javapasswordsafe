@@ -7,9 +7,14 @@
  */
 package org.pwsafe.passwordsafeswt.model;
 
+import java.text.SimpleDateFormat;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.pwsafe.lib.datastore.PwsEntryBean;
+import org.pwsafe.passwordsafeswt.preference.JpwPreferenceConstants;
 
 /**
  * Label Provider for the password Table.
@@ -30,6 +35,9 @@ public class PasswordTableLabelProvider extends AbstractTableLabelProvider {
 	public String getColumnText(final Object element, final int columnIndex) {
 		String columnString = null;
 
+		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
+		final boolean showNotes = thePrefs.getBoolean(JpwPreferenceConstants.SHOW_NOTES_IN_LIST);
+
 		if (element instanceof PwsEntryBean) {
 			final PwsEntryBean entry = (PwsEntryBean) element;
 			switch (columnIndex) {
@@ -40,10 +48,20 @@ public class PasswordTableLabelProvider extends AbstractTableLabelProvider {
 				columnString = entry.getUsername();
 				break;
 			case 2:
-				columnString = entry.getNotes();
+				if (showNotes) {
+					columnString = entry.getNotes();
+				} else {
+					if (entry.getLastChange() != null) {
+						final SimpleDateFormat dateformat = new SimpleDateFormat("YYYY-MM-dd");
+						columnString = dateformat.format(entry.getLastChange());
+					}
+				}
 				break;
 			case 3:
-				columnString = entry.getPassword() != null ? entry.getPassword().toString() : null;
+				if (entry.getLastChange() != null) {
+					final SimpleDateFormat dateformat = new SimpleDateFormat("YYYY-MM-dd");
+					columnString = dateformat.format(entry.getLastChange());
+				}
 			}
 		} else {
 			log.error("Unknown object of type " + element.getClass() + ": " + element);
