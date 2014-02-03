@@ -285,7 +285,7 @@ public class PwsEntryBean implements Cloneable {
 			return (PwsEntryBean) super.clone();
 		} catch (final CloneNotSupportedException e) {
 			throw new Error(e);// should never happen, otherwise there is a
-								// serious problem
+			// serious problem
 		}
 	}
 
@@ -604,9 +604,9 @@ public class PwsEntryBean implements Cloneable {
 
 			final String password = getSafeValue(v3, PwsFieldTypeV3.PASSWORD);
 			newEntry.setPassword(new StringBuilder(password)); // TODO: change
-																// PwsRecord to
-																// StringBuilder
-																// as well?
+			// PwsRecord to
+			// StringBuilder
+			// as well?
 
 			final String notes = getSafeValue(v3, PwsFieldTypeV3.NOTES);
 			newEntry.setNotes(notes);
@@ -704,6 +704,9 @@ public class PwsEntryBean implements Cloneable {
 					break;
 				case PASSWORD_LIFETIME:
 					newEntry.setExpires(getSafeDate(v3, PwsFieldTypeV3.PASSWORD_LIFETIME));
+					break;
+				case LAST_MOD_TIME:
+					newEntry.setLastChange(getSafeDate(v3, PwsFieldTypeV3.LAST_MOD_TIME));
 					break;
 				default:
 					log.warn("Ignored Sparse field type " + theType);

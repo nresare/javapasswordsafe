@@ -37,7 +37,7 @@ public class PwsEntryStoreImpl implements PwsEntryStore, PwsLoadListener {
 			PwsFieldTypeV2.NOTES);
 	private static final EnumSet<PwsFieldTypeV3> DEFAULT_V3_SPARSE_FIELDS = EnumSet.of(
 			PwsFieldTypeV3.TITLE, PwsFieldTypeV3.GROUP, PwsFieldTypeV3.USERNAME,
-			PwsFieldTypeV3.NOTES, PwsFieldTypeV3.URL, PwsFieldTypeV3.PASSWORD_LIFETIME);
+			PwsFieldTypeV3.NOTES, PwsFieldTypeV3.URL, PwsFieldTypeV3.PASSWORD_LIFETIME, PwsFieldTypeV3.LAST_MOD_TIME);
 
 	PwsFile pwsFile;
 
