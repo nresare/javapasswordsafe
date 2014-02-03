@@ -980,14 +980,21 @@ public class PasswordSafeJFace extends ApplicationWindow {
 		tableColumn_1.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, 2));
 		WidgetPreferences.tuneTableColumn(tableColumn_1, getClass(), "table/userName"); //$NON-NLS-1$
 
+		int columns = 2;
 		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 		if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_NOTES_IN_LIST)) {
 			final TableColumn tableColumn_2 = new TableColumn(table, SWT.NONE);
 			tableColumn_2.setWidth(100);
 			tableColumn_2.setText(Messages.getString("PasswordSafeJFace.Column.Notes")); //$NON-NLS-1$
-			tableColumn_2.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, 3));
+			tableColumn_2.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, columns++));
 			WidgetPreferences.tuneTableColumn(tableColumn_2, getClass(), "table/notes"); //$NON-NLS-1$
 		}
+
+		final TableColumn tableColumn_3 = new TableColumn(table, SWT.NONE);
+		tableColumn_3.setWidth(100);
+		tableColumn_3.setText(Messages.getString("PasswordSafeJFace.Column.LastChanged")); //$NON-NLS-1$
+		tableColumn_3.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, columns++));
+		WidgetPreferences.tuneTableColumn(tableColumn_3, getClass(), "table/lastChange"); //$NON-NLS-1$
 
 		// Sort on first column
 		final PasswordTableSorter pts = (PasswordTableSorter) tableViewer.getSorter();
