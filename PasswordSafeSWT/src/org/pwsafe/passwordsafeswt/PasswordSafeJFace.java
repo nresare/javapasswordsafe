@@ -968,33 +968,33 @@ public class PasswordSafeJFace extends ApplicationWindow {
 
 		viewer = tableViewer;
 
-		final TableColumn tableColumn = new TableColumn(table, SWT.NONE);
-		tableColumn.setWidth(100);
-		tableColumn.setText(Messages.getString("PasswordSafeJFace.Column.Title")); //$NON-NLS-1$
-		tableColumn.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, 1));
-		WidgetPreferences.tuneTableColumn(tableColumn, getClass(), "table/title"); //$NON-NLS-1$
-
 		final TableColumn tableColumn_1 = new TableColumn(table, SWT.NONE);
 		tableColumn_1.setWidth(100);
-		tableColumn_1.setText(Messages.getString("PasswordSafeJFace.Column.UserName")); //$NON-NLS-1$
-		tableColumn_1.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, 2));
-		WidgetPreferences.tuneTableColumn(tableColumn_1, getClass(), "table/userName"); //$NON-NLS-1$
+		tableColumn_1.setText(Messages.getString("PasswordSafeJFace.Column.Title")); //$NON-NLS-1$
+		tableColumn_1.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, 1));
+		WidgetPreferences.tuneTableColumn(tableColumn_1, getClass(), "table/title"); //$NON-NLS-1$
 
-		int columns = 2;
+		final TableColumn tableColumn_2 = new TableColumn(table, SWT.NONE);
+		tableColumn_2.setWidth(100);
+		tableColumn_2.setText(Messages.getString("PasswordSafeJFace.Column.UserName")); //$NON-NLS-1$
+		tableColumn_2.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, 2));
+		WidgetPreferences.tuneTableColumn(tableColumn_2, getClass(), "table/userName"); //$NON-NLS-1$
+
+		int columns = 3;
 		final IPreferenceStore thePrefs = JFacePreferences.getPreferenceStore();
 		if (thePrefs.getBoolean(JpwPreferenceConstants.SHOW_NOTES_IN_LIST)) {
-			final TableColumn tableColumn_2 = new TableColumn(table, SWT.NONE);
-			tableColumn_2.setWidth(100);
-			tableColumn_2.setText(Messages.getString("PasswordSafeJFace.Column.Notes")); //$NON-NLS-1$
-			tableColumn_2.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, columns++));
-			WidgetPreferences.tuneTableColumn(tableColumn_2, getClass(), "table/notes"); //$NON-NLS-1$
+			final TableColumn tableColumn_3 = new TableColumn(table, SWT.NONE);
+			tableColumn_3.setWidth(100);
+			tableColumn_3.setText(Messages.getString("PasswordSafeJFace.Column.Notes")); //$NON-NLS-1$
+			tableColumn_3.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, columns++));
+			WidgetPreferences.tuneTableColumn(tableColumn_3, getClass(), "table/notes"); //$NON-NLS-1$
 		}
 
-		final TableColumn tableColumn_3 = new TableColumn(table, SWT.NONE);
-		tableColumn_3.setWidth(100);
-		tableColumn_3.setText(Messages.getString("PasswordSafeJFace.Column.LastChanged")); //$NON-NLS-1$
-		tableColumn_3.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, columns++));
-		WidgetPreferences.tuneTableColumn(tableColumn_3, getClass(), "table/lastChange"); //$NON-NLS-1$
+		final TableColumn tableColumn_4 = new TableColumn(table, SWT.NONE);
+		tableColumn_4.setWidth(100);
+		tableColumn_4.setText(Messages.getString("PasswordSafeJFace.Column.LastChanged")); //$NON-NLS-1$
+		tableColumn_4.addSelectionListener(new TableColumnSelectionAdaptor(tableViewer, columns++));
+		WidgetPreferences.tuneTableColumn(tableColumn_4, getClass(), "table/lastChange"); //$NON-NLS-1$
 
 		// Sort on first column
 		final PasswordTableSorter pts = (PasswordTableSorter) tableViewer.getSorter();
