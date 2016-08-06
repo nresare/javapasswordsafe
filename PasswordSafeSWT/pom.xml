@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.pwsafe</groupId>
+        <artifactId>javapasswordsafe-parent</artifactId>
+        <version>0.8.2-SNAPSHOT</version>
+    </parent>
+
+    <name>Java PasswordSafe library</name>
+    <artifactId>javapasswordsafe-swt</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>javapasswordsafe-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.scout.sdk.deps</groupId>
+            <artifactId>org.eclipse.jface</artifactId>
+            <version>3.12.0.v20160518-1929</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.scout.sdk.deps</groupId>
+            <artifactId>org.eclipse.osgi</artifactId>
+            <version>3.11.0.v20160603-1336</version>
+        </dependency>
+        <dependency>
+            <groupId>au.com.bytecode</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.scout.sdk.deps</groupId>
+            <artifactId>org.eclipse.equinox.preferences</artifactId>
+            <version>3.6.0.v20160120-1756</version>
+        </dependency>
+    </dependencies>
+</project>
