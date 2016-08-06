@@ -9,9 +9,9 @@
  */
 package org.pwsafe.lib.file;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 
 import org.pwsafe.lib.Log;
@@ -20,10 +20,10 @@ import org.pwsafe.lib.exception.EndOfFileException;
 import org.pwsafe.lib.exception.PasswordSafeException;
 import org.pwsafe.lib.exception.UnsupportedFileVersionException;
 
-import com.amazonaws.crypto.Base64;
-import com.amazonaws.s3.S3;
-import com.amazonaws.s3.S3Bucket;
-import com.amazonaws.s3.S3Object;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
 /**
  * This is an implementation of the storage interface that uses S3 as the
@@ -71,7 +71,7 @@ public class PwsS3Storage implements PwsStorage {
 			sha1.update(kb, 0, kb.length);
 			sha1.update(sb, 0, sb.length);
 			sha1.finalize();
-			String hash = Base64.encodeBytes(sha1.getDigest());
+			String hash = new String(Base64.getEncoder().encode(sha1.getDigest()));
 			/* trim the last char of the hash */
 			hash = hash.substring(0, hash.length() - 2);
 			/*
@@ -109,7 +109,7 @@ public class PwsS3Storage implements PwsStorage {
 	/**
 	 * This object provides the interface to S3.
 	 */
-	private S3 s3;
+	private AmazonS3Client s3;
 
 	/**
 	 * These are the details about the amazon account required to access the S3
@@ -163,7 +163,7 @@ public class PwsS3Storage implements PwsStorage {
 			final String secretKey = theAccountRecord.getField(PwsRecordV3.PASSWORD).toString();
 			account = new AccountDetails(bucket, keyId, secretKey);
 			/** Note the use of HTTPS in the connection. */
-			s3 = new S3(S3.HTTPS_URL, account.keyId, account.secretKey);
+			s3 = new AmazonS3Client(new BasicAWSCredentials(account.keyId, account.secretKey));
 		} else {
 			account = acc;
 			localFile = new PwsFileV3();
@@ -187,21 +187,10 @@ public class PwsS3Storage implements PwsStorage {
 			if (acc != null && acc.bucketTitle != null && acc.keyId != null
 					&& acc.secretKey != null) {
 				/** Note the use of HTTPS in the connection. */
-				s3 = new S3(S3.HTTPS_URL, account.keyId, account.secretKey);
+				s3 = new AmazonS3Client(new BasicAWSCredentials(account.keyId, account.secretKey));
 				final String hash = account.getHashedName();
-				S3Bucket aBucket = null;
 				try {
-					aBucket = s3.listBucket(hash);
-				} catch (final Exception e) {
-					// probably no bucket - only log if unknown exception
-					if (!e.getMessage().contains("NoSuchBucket")) {
-						LOG.error("unexpected Error on S3 Bucket opening:", e);
-					}
-				}
-				try {
-					if (aBucket != null) {
-						// FIXME: also allow the use of existing s3 safes,
-						// even without local credentials
+					if (s3.doesBucketExist(hash)) {
 						LOG.debug1("Bucket " + hash + " found.");
 					} else {
 						LOG.debug1("Bucket " + hash + " not found, creating...");
@@ -231,14 +220,23 @@ public class PwsS3Storage implements PwsStorage {
 		try {
 			/* Get the S3 object */
 			final S3Object obj = s3.getObject(account.getHashedName(), DEFAULT_KEY);
-			/* Grab the associated data */
-			final String data = obj.getData();
-			/* Decode the string into bytes */
-			final byte[] bytes = Base64.decode(data.getBytes());
-			return bytes;
+			return readBase64BucketData(obj);
 		} catch (final Exception e) {
 			throw new IOException("Unable to load bucket " + account.getHashedName() + ": "
 					+ e.getMessage());
+		}
+	}
+
+	private byte[] readBase64BucketData(S3Object object) throws IOException {
+		try (S3ObjectInputStream is = object.getObjectContent();
+		     ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			byte[] buf = new byte[8192];
+			int bytesRead = is.read(buf);
+			while (bytesRead > 0) {
+				baos.write(buf, 0, bytesRead);
+				bytesRead = is.read(buf);
+			}
+			return Base64.getDecoder().decode(baos.toByteArray());
 		}
 	}
 
@@ -247,10 +245,10 @@ public class PwsS3Storage implements PwsStorage {
 	 */
 	public boolean save(byte[] bytes) {
 		/* Turn the bytes into a String for S3 */
-		final String data = Base64.encodeBytes(bytes);
+		final String data = new String(Base64.getEncoder().encode(bytes));
 		try {
 			/* Upload the S3 object */
-			s3.putObjectInline(account.getHashedName(), DEFAULT_KEY, data);
+			s3.putObject(account.getHashedName(), DEFAULT_KEY, data);
 			return true;
 		} catch (final Exception e) {
 			e.printStackTrace(System.err);
@@ -290,15 +288,13 @@ public class PwsS3Storage implements PwsStorage {
 	public boolean delete() throws IOException {
 		final String hash = account.getHashedName();
 		try {
-			if (myBucketExists()) {
+			if (s3.doesBucketExist(hash)) {
 				s3.deleteObject(hash, DEFAULT_KEY);
 				s3.deleteBucket(hash);
 				return true;
 			} else {
 				return false;
 			}
-		} catch (final IOException anIoEx) {
-			throw anIoEx;
 		} catch (final Exception anEx) {
 			throw new IOException("Unable to delete bucket " + account.getHashedName() + ": "
 					+ anEx.getMessage());
@@ -317,15 +313,13 @@ public class PwsS3Storage implements PwsStorage {
 	public boolean deleteBucket() throws IOException {
 		final String hash = account.getHashedName();
 		try {
-			if (myBucketExists()) {
+			if (s3.doesBucketExist(hash)) {
 				s3.deleteBucket(hash);
 				return true;
 			} else {
 				return false;
 			}
 
-		} catch (final IOException anIoEx) {
-			throw anIoEx;
 		} catch (final Exception anEx) {
 			throw new IOException("Unable to delete bucket " + account.getHashedName() + ": "
 					+ anEx.getMessage());
@@ -333,11 +327,4 @@ public class PwsS3Storage implements PwsStorage {
 		}
 	}
 
-	private boolean myBucketExists() {
-		try {
-			return s3.listBucket(account.getHashedName()) != null;
-		} catch (final Exception e) {
-			return false;
-		}
-	}
 }

@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 
 import org.pwsafe.lib.Util;
 
-import com.amazonaws.crypto.Base64;
+import java.util.Base64;
 
 public class StreamTests extends TestCase {
 	public void testCryptoStreams() throws Exception {
@@ -62,7 +62,7 @@ public class StreamTests extends TestCase {
 
 	public void testSignedBytes() throws Exception {
 		final String test = "Y8QcrYP/OGZT/8tdcobZRoGB";
-		final byte[] data = Base64.decodeData(test);
+		final byte[] data = Base64.getDecoder().decode(test);
 		runSingleTest(data);
 	}
 }

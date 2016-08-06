@@ -1,15 +1,16 @@
 package org.pwsafe.lib.file;
 
 import java.io.File;
-import java.util.Vector;
 
 import junit.framework.TestCase;
 
 import org.bouncycastle.util.Arrays;
+import org.junit.Ignore;
 import org.pwsafe.lib.file.PwsS3Storage.AccountDetails;
 
-import com.amazonaws.s3.S3;
-import com.amazonaws.s3.S3Bucket;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 /**
  * This test is NOT part of the standard test suite. In order to use it, add the
@@ -26,6 +27,7 @@ import com.amazonaws.s3.S3Bucket;
  * @author roxon
  * 
  */
+@Ignore
 public class S3FileTest extends TestCase {
 
 	private static final String PASSPHRASE = "test";
@@ -48,20 +50,14 @@ public class S3FileTest extends TestCase {
 		theFile.delete();
 
 		if (s3Account != null) {
-			final S3 s3 = new S3(S3.HTTPS_URL, s3Account.keyId, s3Account.secretKey);
-			S3Bucket bucket = null;
-			try {
-				bucket = s3.listBucket(s3Account.getHashedName());
-			} catch (final Exception e) {
-				// ok - already gone
-			}
-			if (bucket != null) {
-				final Vector names = bucket.getNames();
-				for (int i = 0; i < names.size(); i++) {
-					final Object o = names.get(i);
-					s3.deleteObject(bucket.getBucketName(), o.toString());
+			final AmazonS3Client s3 = new AmazonS3Client(
+					new BasicAWSCredentials(s3Account.keyId, s3Account.secretKey));
+			String hash = s3Account.getHashedName();
+			if (s3.doesBucketExist(hash)) {
+				for (S3ObjectSummary summary : s3.listObjects(hash).getObjectSummaries()) {
+					s3.deleteObject(s3Account.getHashedName(), summary.getKey());
 				}
-				s3.deleteBucket(bucket.getBucketName());
+
 			}
 		}
 
