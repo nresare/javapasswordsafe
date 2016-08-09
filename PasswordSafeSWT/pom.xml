@@ -45,9 +45,9 @@
             <version>3.6.0.v20160120-1756</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.swt.org.eclipse.swt.cocoa.macosx.x86_64.4.3.swt</groupId>
-            <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
-            <version>4.3</version>
+            <groupId>com.resare.repackage</groupId>
+            <artifactId>org.eclipse.swt.macosx.x86_64</artifactId>
+            <version>3.105.0.v20160603-0902</version>
         </dependency>
     </dependencies>
 </project>
