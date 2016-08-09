@@ -8,7 +8,7 @@
         <version>0.8.2-SNAPSHOT</version>
     </parent>
 
-    <name>Java PasswordSafe library</name>
+    <name>JavaPasswordSafe</name>
     <artifactId>javapasswordsafe-swt</artifactId>
     <packaging>jar</packaging>
 
@@ -64,6 +64,7 @@
                             <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk</jrePath>
                             <generateDiskImageFile>true</generateDiskImageFile>
                             <jvmOptions>-XstartOnFirstThread</jvmOptions>
+                            <iconFile>PasswordSafe.icns</iconFile>
                         </configuration>
                         <executions>
                             <execution>
