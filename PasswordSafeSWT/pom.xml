@@ -80,7 +80,9 @@
                             <mainClass>org.pwsafe.passwordsafeswt.PasswordSafeJFace</mainClass>
                             <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk</jrePath>
                             <generateDiskImageFile>true</generateDiskImageFile>
-                            <jvmOptions>-XstartOnFirstThread</jvmOptions>
+                            <jvmOptions>
+                               <param>-XstartOnFirstThread</param>
+                            </jvmOptions>
                             <iconFile>PasswordSafe.icns</iconFile>
                         </configuration>
                         <executions>
