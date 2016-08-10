@@ -119,9 +119,6 @@ public class PassphraseUtils {
 		allChars = new char[typeCount][];
 		typesSeen = new boolean[4];
 
-		for (int ii = 0; ii < typeCount; ++ii) {
-			typesSeen[ii] = true;
-		}
 
 		if (policy.easyview) {
 			int ii = 0;
@@ -156,6 +153,10 @@ public class PassphraseUtils {
 		}
 
 		do {
+			for (int ii = 0; ii < typeCount; ++ii) {
+				typesSeen[ii] = true;
+			}
+
 			password.delete(0, password.length());
 
 			for (int ii = 0; ii < policy.length; ++ii) {

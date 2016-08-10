@@ -23,7 +23,9 @@ public class PassphraseUtilsTest extends TestCase {
 	 *
 	 */
 	public final void testMakePassword1() {
-		makePassword(new PassphrasePolicy());
+		for (int i = 0; i < 1024; i++) {
+			makePassword(new PassphrasePolicy());
+		}
 	}
 
 	/**
