@@ -1,0 +1,191 @@
+package org.pwsafe.util;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+import java.util.List;
+import junit.framework.TestCase;
+import org.junit.Test;
+import org.pwsafe.lib.exception.InvalidPassphrasePolicy;
+
+/**
+ * Tests PasswordUtils
+ */
+public class PasswordUtilsTest  {
+
+  /**
+   *
+   */
+  @Test
+  public final void testMakePassword1() {
+    for (int i = 0; i < 1024; i++) {
+      makePassword(new PassphrasePolicy());
+    }
+  }
+
+  /**
+   *
+   */
+  @Test
+  public final void testMakePassword2() {
+    PassphrasePolicy policy;
+
+    policy = new PassphrasePolicy();
+
+    policy.length = 17;
+
+    makePassword(policy);
+  }
+
+  /**
+   *
+   */
+  @Test
+  public final void testMakePassword3() {
+    PassphrasePolicy policy;
+
+    policy = new PassphrasePolicy();
+
+    policy.length = 64;
+    policy.lowercaseChars = false;
+    policy.digitChars = false;
+    policy.symbolChars = false;
+
+    makePassword(policy);
+  }
+
+  /**
+   *
+   */
+  @Test
+  public final void testMakePassword4() {
+    PassphrasePolicy policy;
+
+    policy = new PassphrasePolicy();
+
+    policy.length = 1;
+    policy.lowercaseChars = false;
+    policy.digitChars = false;
+    policy.symbolChars = false;
+
+    makePassword(policy);
+  }
+
+  /**
+   *
+   */
+  @Test
+  public final void testIsWeakPassword1() {
+    assertTrue(!PassphraseUtils.isWeakPassword("aB\\q"));
+  }
+
+  /**
+   *
+   */
+  @Test
+  public final void testIsWeakPassword2() {
+    assertTrue(PassphraseUtils.isWeakPassword("aB\\"));
+  }
+
+  /**
+   *
+   */
+  @Test
+  public final void testIsWeakPassword3() {
+    assertTrue(!PassphraseUtils.isWeakPassword("Th1s is not a weak password."));
+  }
+
+  /**
+   *
+   */
+  @Test
+  public final void testIsWeakPassword4() {
+    assertTrue(PassphraseUtils.isWeakPassword("this is a weak password"));
+  }
+
+
+
+  @Test
+  public void testRegular() {
+    testAlphabets(Arrays.asList("abc", "123"), 2);
+    testAlphabets(Arrays.asList("abc", "123"), 5);
+    testAlphabets(Arrays.asList("abc"), 1);
+    testAlphabets(Arrays.asList("abc"), 5);
+    testAlphabets(Arrays.asList("abc", "123", "#€%"), 3);
+    testAlphabets(Arrays.asList("abc", "123", "#€%"), 5);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testTooShort() {
+    testAlphabets(Arrays.asList("abc", "123"), 1);
+  }
+
+  private void testAlphabets(List<String> alphabets, int length) {
+    for (int i = 0; i < 1000; i++) {
+      String password = PasswordUtils.makePassword(length, alphabets);
+      assertEquals(length, password.length());
+      for (String s : alphabets) {
+        boolean seen = false;
+        for (char c : password.toCharArray()) {
+          if (s.indexOf(c) != -1) {
+            seen = true;
+          }
+        }
+        if (!seen) {
+          fail("did not see char from %s in %s");
+        }
+      }
+    }
+  }
+
+  /**
+   * Runs a single password policy test.
+   *
+   * @param policy the password policy to use.
+   */
+  private final void makePassword(PassphrasePolicy policy) {
+    try {
+      boolean digitSeen;
+      boolean ucCharSeen;
+      boolean lcCharSeen;
+      boolean symbolSeen;
+      String passphrase;
+
+      passphrase = PasswordUtils.makePassword(policy);
+      digitSeen = false;
+      ucCharSeen = false;
+      lcCharSeen = false;
+      symbolSeen = false;
+
+      assertEquals("Generated password is the wrong length", passphrase.length(),
+                   policy.length);
+
+      for (int ii = 0; ii < passphrase.length(); ++ii) {
+        char c;
+
+        c = passphrase.charAt(ii);
+
+        if (Character.isDigit(c)) {
+          digitSeen = true;
+        } else if (Character.isUpperCase(c)) {
+          ucCharSeen = true;
+        } else if (Character.isLowerCase(c)) {
+          lcCharSeen = true;
+        } else {
+          symbolSeen = true;
+        }
+      }
+
+      assertTrue(
+          "Password doesn\'t contain at least one character from each required category",
+          !((ucCharSeen ^ policy.uppercaseChars) | (lcCharSeen ^ policy.lowercaseChars)
+            | (digitSeen ^ policy.digitChars) | (symbolSeen ^ policy.symbolChars)));
+    } catch (final InvalidPassphrasePolicy e) {
+      fail("Passphrase policy is invalid");
+    }
+  }
+
+
+}
