@@ -31,17 +31,18 @@ public class PwsFileV3Test extends TestCase {
 	private static final Log log = Log.getInstance(PwsFileV3Test.class.getName());
 
 	private String filename;
-	private String passphrase;
+	final private String PASSPHRASE = "Pa$$word";
 
 	private PwsFileV3 pwsFile;
 
 	@Override
-	public void setUp() {
-		filename = System.getProperty("user.dir") + File.separator + "sample3.psafe3";
-		passphrase = "Pa$$word";
+	public void setUp() throws IOException {
+		File tmpFile = File.createTempFile("sample3-", ".psafe3");
+		assertTrue(tmpFile.delete());
+		filename = tmpFile.getAbsolutePath();
 
 		try {
-			pwsFile = TestUtils.createPwsFileV3(filename, new StringBuilder(passphrase));
+			pwsFile = TestUtils.createPwsFileV3(filename, new StringBuilder(PASSPHRASE));
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -57,6 +58,12 @@ public class PwsFileV3Test extends TestCase {
 		final File file = new File(filename);
 		if (file.exists()) {
 			assertTrue("Couldn't delete testfile", file.delete());
+		}
+		// when a file exists and a change is saved, a backup file gets created. Let's remove
+		// that too
+		final File backupFileName = new File(filename + "~");
+		if (backupFileName.exists()) {
+			assertTrue(backupFileName.delete());
 		}
 	}
 
@@ -77,11 +84,11 @@ public class PwsFileV3Test extends TestCase {
 		assertEquals(myPassphrase, pwsFile2.getPassphrase());
 		pwsFile2.close();
 
-		// should fail with old passphrase:
+		// should fail with old PASSPHRASE:
 		storage2 = new PwsFileStorage(filename);
 		try {
-			pwsFile2 = new PwsFileV3(storage2, passphrase);
-			fail("passphrase change failed !?");
+			pwsFile2 = new PwsFileV3(storage2, PASSPHRASE);
+			fail("PASSPHRASE change failed !?");
 		} catch (final IOException anEx) {
 			// ok
 		}
@@ -144,7 +151,7 @@ public class PwsFileV3Test extends TestCase {
 		pwsFile.dispose();
 
 		final PwsFileStorage storage2 = new PwsFileStorage(filename);
-		final PwsFileV3 pwsFile2 = new PwsFileV3(storage2, passphrase);
+		final PwsFileV3 pwsFile2 = new PwsFileV3(storage2, PASSPHRASE);
 		pwsFile2.readAll();
 		pwsFile2.close();
 
@@ -161,7 +168,7 @@ public class PwsFileV3Test extends TestCase {
 
 	public void testLargeFile() throws Exception {
 		final PwsFileV3 file = (PwsFileV3) PwsFileFactory.newFile();
-		file.setPassphrase(new StringBuilder(passphrase));
+		file.setPassphrase(new StringBuilder(PASSPHRASE));
 		final int amount = 1000;
 		TestUtils.addDummyRecords(file, amount);
 
@@ -174,14 +181,14 @@ public class PwsFileV3Test extends TestCase {
 		file.close();
 
 		final PwsFileStorage storage2 = new PwsFileStorage(filename);
-		final PwsFileV3 file2 = new PwsFileV3(storage2, passphrase.toString());
+		final PwsFileV3 file2 = new PwsFileV3(storage2, PASSPHRASE.toString());
 		file2.readAll();
 		assertEquals(1000,file2.getRecordCount());
 	}
 
 
 	/**
-	 * Checks if a record with a new passphrase policy field (#16) can be
+	 * Checks if a record with a new PASSPHRASE policy field (#16) can be
 	 * loaded.
 	 * 
 	 * @throws Exception
