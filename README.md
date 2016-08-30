@@ -9,6 +9,10 @@ https://github.com/nresare/javapasswordsafe
 This is a re-implementation of [PasswordSafe](https://pwsafe.org) and share many of the features 
 and the file format of the original original project.
 
+So far this fork has focused on my immediate needs, an easy-to-install macOS version. I would
+be very happy to accept contributions adapting packaging to work with other targets such as Linux
+or Windows.
+
 ## Why a fork?
 
 The original project was very difficult to work with, which seems to have prevented work fixing
@@ -24,8 +28,21 @@ easier to work with.
 
 The intention of this is not to create a hostile fork, if my ideas turns out to be workable I'm more
 than happy to work with the original developers to eventually unify development into a single
-project once more.
+project once more. So far, however, the upstream maintainers has not been responding to contact
+attempts.
 
+## Versioning
+
+To avoid clobbering the upstream version numbering, should upstream development pick up at some
+point, I have opted for making releases with the pre-release tag 'nresare' to the upcoming upstream
+version followed by a simple integer version number according to paragraph 9 semver.org 2.0.0 spec.
+
+## How to build?
+
+Building should be simple, provided a recent version of maven. Building and running unit tests
+should be as simple as executing `mvn verify`. If you want to build an macOS dmg you just need to
+enable the macos-app profile with `mvn package -Pmacos-app`. Note that you will proabaly need to
+update jrePath towards the end of PasswordSafeSWT/pom.xml unless you have version 1.8.0_102.
 
 ## What has been done in the fork?
 
@@ -40,14 +57,15 @@ git for-each-ref --format="%(refname:short) %(objectname)" refs/remotes/origin/t
 2. Maven build configuration has been added
 3. Needed dependencies has been added from maven central for PasswordSafeLib to be built and tests
    run.
-4. S3 client code has bee ported to aws-java-sdk-s3 (the previous s3.jar seemed ancient an not available from anyhwere)
+4. S3 client code has bee ported to aws-java-sdk-s3 (the previous s3.jar seemed ancient and not
+   available from anyhwere)
+5. Work on the unit tests to not leave files around (not finished)
+6. ..various other things. Look at the commits :)
 
 ## What is left to be done?
 
 1. Figure out the license chaos of the various components.
 2. Investigate the possibility to use crypto classes included in recent JVMs instead of bouncycastle
 3. Investigate the possibility to create and release this project on the macOS App Store.
-4. PassphraseUtilsTest is flaky (sometimes a password is legitimately missing chars of a certain
-   class)
-5. A test run leaves files behind.
+4. A test run still leaves some files behind.
 
