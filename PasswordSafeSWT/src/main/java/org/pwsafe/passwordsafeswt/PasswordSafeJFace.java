@@ -547,12 +547,16 @@ public class PasswordSafeJFace extends ApplicationWindow {
 	protected void configureShell(final Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PasswordSafeJFace.APP_NAME);
-		final Image jpwIcon = IOUtils.getImage(PasswordSafeJFace.class,
-				"/org/pwsafe/passwordsafeswt/images/cpane.ico"); //$NON-NLS-1$
-		newShell.setImage(jpwIcon);
-		// provide it for the rest of jpwsafe:
-		JFaceResources.getImageRegistry().put(JPW_ICON, jpwIcon);
-		Window.setDefaultImage(jpwIcon);
+		// in macOS, the icon gets installed into the .app and this lower resolution one
+		// just gets in the way.
+		if (!System.getProperty("os.name").toLowerCase().contains("mac")) {
+			final Image jpwIcon = IOUtils.getImage(PasswordSafeJFace.class,
+					"/org/pwsafe/passwordsafeswt/images/cpane.ico"); //$NON-NLS-1$
+			newShell.setImage(jpwIcon);
+			// provide it for the rest of jpwsafe:
+			JFaceResources.getImageRegistry().put(JPW_ICON, jpwIcon);
+			Window.setDefaultImage(jpwIcon);
+		}
 		WidgetPreferences.tuneShell(newShell, getClass());
 		startOpeningDialogThread(newShell);
 	}
