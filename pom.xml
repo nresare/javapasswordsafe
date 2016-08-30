@@ -10,6 +10,13 @@
     <version>0.8.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <scm>
+       <url>https://github.com/nresare/javapasswordsafe</url>
+       <connection>scm:git:git@github.com:nresare/javapasswordsafe.git</connection>
+       <developerConnection>scm:git:git@github.com:nresare/javapasswordsafe.git</developerConnection>
+    </scm>
+
+
     <modules>
         <module>PasswordSafeLib</module>
         <module>PasswordSafeSWT</module>
