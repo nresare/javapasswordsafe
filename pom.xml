@@ -7,7 +7,7 @@
 
     <groupId>org.pwsafe</groupId>
     <artifactId>javapasswordsafe-parent</artifactId>
-    <version>0.8.2-nresare.0</version>
+    <version>0.8.2-nresare.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
