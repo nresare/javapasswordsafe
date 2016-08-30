@@ -75,7 +75,7 @@
                     <plugin>
                         <groupId>sh.tak.appbundler</groupId>
                         <artifactId>appbundle-maven-plugin</artifactId>
-                        <version>1.1.0</version>
+                        <version>1.1.1</version>
                         <configuration>
                             <mainClass>org.pwsafe.passwordsafeswt.PasswordSafeJFace</mainClass>
                             <jrePath>/Library/Java/JavaVirtualMachines/jdk1.8.0_102.jdk</jrePath>
@@ -83,7 +83,7 @@
                             <jvmOptions>
                                <param>-XstartOnFirstThread</param>
                             </jvmOptions>
-                            <iconFile>PasswordSafe.icns</iconFile>
+                            <iconFile>resources/PasswordSafe.icns</iconFile>
                         </configuration>
                         <executions>
                             <execution>
