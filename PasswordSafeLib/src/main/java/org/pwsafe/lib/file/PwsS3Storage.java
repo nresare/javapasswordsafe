@@ -71,14 +71,14 @@ public class PwsS3Storage implements PwsStorage {
 			sha1.update(kb, 0, kb.length);
 			sha1.update(sb, 0, sb.length);
 			sha1.finalize();
-			String hash = new String(Base64.getEncoder().encode(sha1.getDigest()));
+			String hash = new String(Base64.getEncoder().encode(sha1.getDigest())).toLowerCase();
 			/* trim the last char of the hash */
 			hash = hash.substring(0, hash.length() - 2);
 			/*
 			 * We don't want any slashes in the name because that confuses
 			 * things. Same with plus signs.
 			 */
-			hash = hash.replace('/', '_');
+			hash = hash.replace('/', '-');
 			hash = hash.replace('+', '-');
 			hashedBucket = "jps3-" + hash + "-" + bucket;
 			keyId = id;
