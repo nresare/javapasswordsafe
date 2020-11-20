@@ -1,0 +1,5 @@
+allprojects {
+    group = 'org.pwsafe'
+    version = '0.8.2-nresare.2-SNAPSHOT'
+}
+

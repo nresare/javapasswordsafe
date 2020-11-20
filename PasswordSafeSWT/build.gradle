@@ -1,0 +1,63 @@
+plugins {
+    id "java"
+}
+
+dependencies {
+    implementation 'commons-logging:commons-logging-api:1.1'
+    implementation project(':PasswordSafeLib')
+    implementation 'au.com.bytecode:opencsv:2.4'
+    //implementation 'org.eclipse.scout.sdk.deps:org.eclipse.equinox.preferences:3.6.0.v20160120-1756'
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation('org.eclipse.platform:org.eclipse.swt.cocoa.macosx.x86_64:3.115.0') {
+        // this might look a bit odd, but this dependency brings in org.eclipse.swt
+        // which in turn has the parameterized platform dependency that gradle does
+        // not seemingly support.
+        exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt.${osgi.platform}'
+    }
+    implementation('org.eclipse.platform:org.eclipse.jface:3.21.0') {
+          exclude group: 'org.eclipse.platform', module: 'org.eclipse.swt'
+    }
+    implementation 'org.eclipse.platform:org.eclipse.osgi:3.16.0'
+    implementation 'org.eclipse.platform:org.eclipse.equinox.preferences:3.8.0'
+
+    testImplementation 'junit:junit:4.12'
+}
+
+def appDir = project.file("$buildDir/app/$project.name-${project.version}.app/Contents")
+def resources = project.file("resources")
+// unpacked from https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jre_x64_mac_hotspot_11.0.9.1_1.tar.gz
+def javaRuntimeSourceDir = new File("${System.getenv("HOME")}/Downloads/jdk-11.0.9.1+1-jre")
+
+task copyJarsToApp(type: Copy) {
+    dependsOn jar
+    from jar
+    from configurations.runtimeClasspath
+    into "$appDir/Java"
+}
+task copyPlist(type: Copy) {
+    from "$resources/Info.plist" into appDir
+}
+task copyLauncher(type: Copy) {
+    from "$resources/launcher.sh" into "$appDir/MacOS"
+}
+task copyIcon(type: Copy) {
+    from "$resources/PasswordSafe.icns" into "$appDir/Resources"
+}
+task copyJre(type: Copy) {
+    from "$javaRuntimeSourceDir/Contents/Home" into "$appDir/$javaRuntimeSourceDir.name"
+}
+task dmg(type: Exec) {
+    outputs.file("$buildDir/$project.name-${project.version}.dmg")
+    inputs.dir(appDir)
+
+    dependsOn copyJarsToApp, copyPlist, copyLauncher, copyIcon, copyJre
+    doFirst {
+        delete outputs
+    }
+
+    commandLine "hdiutil", "create", "-srcfolder",
+            "$buildDir/app",
+            "-format", "UDZO", "-fs", "HFS+",
+            "-volname", project.name,
+            "$buildDir/$project.name-${project.version}.dmg"
+}
