@@ -22,7 +22,7 @@ dependencies {
     implementation 'org.eclipse.platform:org.eclipse.osgi:3.16.0'
     implementation 'org.eclipse.platform:org.eclipse.equinox.preferences:3.8.0'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junitVersion"
 }
 
 def appDir = project.file("$buildDir/app/$project.name-${project.version}.app/Contents")
