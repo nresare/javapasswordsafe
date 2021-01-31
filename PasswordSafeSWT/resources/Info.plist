@@ -6,6 +6,8 @@
         <string>English</string>
         <key>CFBundleExecutable</key>
         <string>launcher.sh</string>
+        <key>CFBundleIconFile</key>
+        <string>PasswordSafe.icns</string>
         <key>CFBundleDisplayName</key>
         <string>JavaPasswordSafe</string>
         <key>CFBundleInfoDictionaryVersion</key>
@@ -15,7 +17,7 @@
         <key>CFBundlePackageType</key>
         <string>APPL</string>
         <key>CFBundleShortVersionString</key>
-        <string>0.8.2-nresare.0</string>
+        <string>@version@</string>
         <key>CFBundleSignature</key>
         <string>????</string>
         <key>CFBundleVersion</key>

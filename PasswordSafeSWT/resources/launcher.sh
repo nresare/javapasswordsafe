@@ -2,7 +2,7 @@
 
 LAUNCHER_DIR=$(dirname "$0")
 CONTENTS_DIR=$LAUNCHER_DIR/..
-JAVA_HOME=jdk-11.0.10+9-jre
+JAVA_HOME=@javaRuntimeVersion@
 
 exec "$CONTENTS_DIR"/$JAVA_HOME/bin/java \
   -cp "$CONTENTS_DIR/Java/*" \
