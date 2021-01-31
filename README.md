@@ -7,7 +7,7 @@ The fork is maintained by Noa Resare and is currently available from
 https://github.com/nresare/javapasswordsafe
 
 This is a re-implementation of [PasswordSafe](https://pwsafe.org) and share many of the features 
-and the file format of the original original project.
+and the file format of the original  project.
 
 So far this fork has focused on my immediate needs, an easy-to-install macOS version. I would
 be very happy to accept contributions adapting packaging to work with other targets such as Linux
@@ -39,10 +39,11 @@ version followed by a simple integer version number according to paragraph 9 sem
 
 ## How to build?
 
-Building should be simple, provided a recent version of maven. Building and running unit tests
-should be as simple as executing `mvn verify`. If you want to build an macOS dmg you just need to
-enable the macos-app profile with `mvn package -Pmacos-app`. Note that you will proabaly need to
-update jrePath towards the end of PasswordSafeSWT/pom.xml unless you have version 1.8.0_102.
+Building should be simple, provided your `JAVA_HOME` points to a recent java. Building and running unit tests
+should be as simple as executing `./gradlew check`. There is a target for building a macOS disk image
+containing an .app with an embedded java runtime environment. To build it you need to download an appropriate
+java runtime environment, see the comment in `PasswordSafeSWT/build.gradle` and execute the `./gradlew dmg`
+target.
 
 ## What has been done in the fork?
 
@@ -54,12 +55,10 @@ git for-each-ref --format="%(refname:short) %(objectname)" refs/remotes/origin/t
  |  cut -d / -f 3- | while read ref; do git tag -a $ref -m 'import tag from svn'; done
 
 ```
-2. Maven build configuration has been added
+2. Gradle build configuration has been added
 3. Needed dependencies has been added from maven central for PasswordSafeLib to be built and tests
    run.
-4. S3 client code has bee ported to aws-java-sdk-s3 (the previous s3.jar seemed ancient and not
-   available from anyhwere)
-5. Work on the unit tests to not leave files around (not finished)
+4. Work on the unit tests to not leave files around (not finished)
 6. ..various other things. Look at the commits :)
 
 ## What is left to be done?
